@@ -5,3 +5,5 @@
 !.elasticbeanstalk/*.global.yml
 
 __pycache__/
+
+db.sqlite3
