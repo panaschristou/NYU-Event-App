@@ -4,4 +4,4 @@
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 
-psycopg2 -binary
+__pycache__/
