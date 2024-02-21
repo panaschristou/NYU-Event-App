@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure--1vz#!np5i3v)p_(cclo9t8a40^ufcl#!tdkfq$p@6-=)ck@gf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['nyu-event.us-east-1.elasticbeanstalk']
+ALLOWED_HOSTS = ['127.0.0.1','nyu-event.us-east-1.elasticbeanstalk']
 
 
 # Application definition
@@ -50,9 +50,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'nyu_event.urls'
-
-
-
 
 
 
@@ -95,8 +92,8 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'nyu_event',
-            'USER': 'yangtianfan',
-            'PASSWORD': 'Ytf@0831',
+            'USER': 'postgres',
+            'PASSWORD': 'Ytf@0930',
             'HOST': 'localhost',
             'PORT': '5432',
     }
