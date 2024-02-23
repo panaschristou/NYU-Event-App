@@ -3,12 +3,18 @@ from django.contrib.auth.models import User
 
 # Event model
 class Event(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-    date_time = models.DateTimeField()
-    location = models.CharField(max_length=255)
-    nyu_discount_url = models.URLField()
-    image_url = models.URLField(null=True, blank=True)  
+    title = models.CharField(max_length=100)
+    category = models.CharField(max_length=50)
+    description = models.TextField(blank=True)
+    open_date = models.DateField()
+    close_date = models.DateField (null=True, blank=True)
+    location = models.CharField(max_length=100)
+    availability = models.CharField(max_length=10)
+    external_link = models.URLField(blank=True)
+    image_url = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.title
 
 # Review model
 class Review(models.Model):
