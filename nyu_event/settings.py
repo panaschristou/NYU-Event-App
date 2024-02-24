@@ -93,7 +93,7 @@ else:
                         'USER': 'postgres',
                         'PASSWORD': 'Ytf@0930',
                         'HOST': 'localhost',
-                        'PORT': '5432',
+                        'PORT': '5431',
                 }
     }
 
