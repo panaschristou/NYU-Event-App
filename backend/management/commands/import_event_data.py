@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
+from django.core.exceptions import ValidationError
 from backend.models import Event
 import json
+from dateutil import parser
 
 class Command(BaseCommand):
     help = 'Import events from a JSON file'
@@ -13,16 +15,25 @@ class Command(BaseCommand):
         with open(json_file_path, 'r') as file:
             events_data = json.load(file)
             for event_data in events_data:
-                close_date = event_data['close_date'] if event_data['close_date'] else None
-                Event.objects.create(
-                    title=event_data['title'],
-                    category=event_data['category'],
-                    description=event_data['description'],
-                    open_date=event_data['open_date'],
-                    close_date=close_date,
-                    location=event_data['location'],
-                    availability=event_data['availability'],
-                    external_link=event_data['external_link'],
-                    image_url=event_data['image_url']
-                )
-        self.stdout.write(self.style.SUCCESS('Successfully imported events'))
+                try:
+                    # Check if close_date is neither None nor an empty string
+                    close_date = None
+                    if event_data['close_date'] and event_data['close_date'].strip():
+                        close_date = parser.parse(event_data['close_date']).date()
+
+                    event = Event.objects.create(
+                        title=event_data['title'],
+                        category=event_data['category'],
+                        description=event_data['description'],
+                        open_date=parser.parse(event_data['open_date']).date(),
+                        close_date=close_date,
+                        location=event_data['location'],
+                        availability=event_data['availability'],
+                        external_link=event_data['external_link'],
+                        image_url=event_data['image_url']
+                    )
+                    self.stdout.write(self.style.SUCCESS(f"Successfully imported event: {event.title}"))
+                except ValidationError as e:
+                    self.stdout.write(self.style.ERROR(f"Error importing event: {e}"))
+
+
