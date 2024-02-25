@@ -1,11 +1,19 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
-from .models import User
+from .models import User, Event
 # from .forms import CustomUserCreationForm
 
 # Create your views here.
+
+def index(request):
+    events = Event.objects.all().order_by('-title')  # Assuming you want the newest events first
+    return render(request, 'index.html', {'events': events})
+
+def event_detail(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    return render(request, 'event_detail.html', {'event': event})
 
 # def login(request, user):
 # 	if request.method == "POST":
