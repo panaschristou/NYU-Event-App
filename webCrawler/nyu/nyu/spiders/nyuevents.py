@@ -8,7 +8,10 @@ event_detail_script = """
     function main(splash, args)  
       splash:go(args.url)
     
-      -- custom rendering script logic...
+    #   while not splash:select(".promo-image").attrib["src"] do
+    #     splash:wait(0.2)
+    #     print("waiting...")
+    #   end
       
       return splash:html()
     end
@@ -57,8 +60,10 @@ class NyueventsSpider(scrapy.Spider):
         einfo["category"] = response.css(
             ".lw_cal_event_tags .lw_cal_app_link::text"
         ).getall()
-        einfo["external_link"] = response.css(
-            "#lw_cal_event_rightcol .log-in-to-buy"
-        ).attrib["href"]
-        einfo["image_url"] = response.css("img.promo-image").attrib["src"]
+        external_link = response.css("#lw_cal_event_rightcol .log-in-to-buy").attrib[
+            "href"
+        ]
+        einfo["external_link"] = external_link if external_link else ""
+        image = response.css("img.promo-image").attrib["src"]
+        einfo["image_url"] = image if image else ""
         yield einfo
