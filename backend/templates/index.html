@@ -1,0 +1,13 @@
+<!-- templates/backend/index.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Events Index</h1>
+  <ul>
+    {% for event in events %}
+      <li>
+        <a href="{% url 'event_detail' event.id %}" class="btn btn-outline-dark">{{ event.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
