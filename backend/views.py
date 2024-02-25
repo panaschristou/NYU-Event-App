@@ -36,7 +36,7 @@ def login_user(request):
 		user = authenticate(request, username=username, password=password)
 		if user is not None:
 			login(request, user)
-			return redirect('register')
+			return redirect('index')
 		else:
 			messages.success(request, ("There Was An Error Logging In, Try Again..."))	
 			return redirect('login')
