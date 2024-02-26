@@ -20,6 +20,11 @@ class Command(BaseCommand):
                     close_date = None
                     if event_data['close_date'] and event_data['close_date'].strip():
                         close_date = parser.parse(event_data['close_date']).date()
+                    
+                    # Check if avg_rating is blank or not provided and set it to None if true
+                    avg_rating = None
+                    if 'avg_rating' in event_data and event_data['avg_rating'] not in (None, '', ' '):
+                        avg_rating = event_data['avg_rating']
 
                     event = Event.objects.create(
                         title=event_data['title'],
@@ -30,7 +35,8 @@ class Command(BaseCommand):
                         location=event_data['location'],
                         availability=event_data['availability'],
                         external_link=event_data['external_link'],
-                        image_url=event_data['image_url']
+                        image_url=event_data['image_url'],
+                        avg_rating=avg_rating
                     )
                     self.stdout.write(self.style.SUCCESS(f"Successfully imported event: {event.title}"))
                 except ValidationError as e:

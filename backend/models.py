@@ -13,6 +13,7 @@ class Event(models.Model):
     availability = models.CharField(max_length=10, default='available')
     external_link = models.URLField(blank=True)
     image_url = models.URLField(blank=True)
+    avg_rating = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return self.title
