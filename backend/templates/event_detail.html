@@ -1,0 +1,15 @@
+<!-- templates/backend/event_detail.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 >{{ event.title }}</h1>
+  <p><b>Category:</b> {{ event.category }}</p>
+  <p><b>Show Start Date:</b> {{ event.open_date }}</p>
+  <p><b>Show End Date:</b> {{ event.close_date }}</p>
+  <p><b>Location:</b> {{ event.location }}</p>
+  <p><b>Availability:</b> {{ event.availability }}</p>
+  <p><b>Description:</b> <br> {{ event.description }}</p>
+  <!-- Add more event details here as needed -->
+
+  <a href="{% url 'index' %}" class="btn btn-primary">Back to Events List</a>
+{% endblock %}
