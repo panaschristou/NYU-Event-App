@@ -4,7 +4,7 @@ myenv/
 
 __pycache__/
 
-db.sqlite3
+
 
 
 # Elastic Beanstalk Files
