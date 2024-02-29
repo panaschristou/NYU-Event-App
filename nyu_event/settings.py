@@ -26,7 +26,12 @@ SECRET_KEY = "django-insecure-)xupkhj9fng(-1@1#)9$^$)lrb3-p^dul6pnd$cl0q*2hs1f9@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ["post-dev.us-east-1.elasticbeanstalk.com", "127.0.0.1"]
+=======
+# ALLOWED_HOSTS = ['*','nyu-event-dev.us-east-1.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['127.0.0.1','postgres-dev.us-east-1.elasticbeanstalk.com']
+>>>>>>> bb106f2e (switch to postgress)
 
 
 # Application definition
@@ -110,28 +115,9 @@ else:
         }
     }
 
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
-]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
