@@ -26,12 +26,8 @@ SECRET_KEY = "django-insecure-)xupkhj9fng(-1@1#)9$^$)lrb3-p^dul6pnd$cl0q*2hs1f9@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-<<<<<<< HEAD
-ALLOWED_HOSTS = ["post-dev.us-east-1.elasticbeanstalk.com", "127.0.0.1"]
-=======
 # ALLOWED_HOSTS = ['*','nyu-event-dev.us-east-1.elasticbeanstalk.com']
-ALLOWED_HOSTS = ['127.0.0.1','postgres-dev.us-east-1.elasticbeanstalk.com']
->>>>>>> bb106f2e (switch to postgress)
+ALLOWED_HOSTS = ["127.0.0.1", "postgres-dev.us-east-1.elasticbeanstalk.com"]
 
 
 # Application definition
