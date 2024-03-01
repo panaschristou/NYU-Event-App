@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+import ssl
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'verify_email.apps.VerifyEmailConfig',
 ]
 
 MIDDLEWARE = [
@@ -53,8 +55,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'nyu_event.urls'
 
+AUTHENTICATION_BACKENDS = ['backend.backends.EmailBackend']
 
-
+# settings.py
 
 TEMPLATES = [
     {
@@ -150,3 +153,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#Emailing settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587  # SMTP port (usually 587 for TLS)
+EMAIL_USE_TLS = True  # Using TLS for encryption
+EMAIL_HOST_USER = 'nyuevents24@gmail.com'
+EMAIL_HOST_PASSWORD = 'ogtoqvpmcniroelh'
+
+DEFAULT_FROM_EMAIL = 'nyuevents24@gmail.com'
