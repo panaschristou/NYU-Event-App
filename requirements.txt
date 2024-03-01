@@ -3,3 +3,7 @@ Pillow==9.0.1
 django-tables2==2.4.1
 django-crispy-forms==1.14.0
 psycopg2-binary==2.9.3
+black==22.3.0
+flake8==7.0.0
+coverage==6.5.0 # required for coveralls to work 
+coveralls==3.3.1
