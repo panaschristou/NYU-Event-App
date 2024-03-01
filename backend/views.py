@@ -15,6 +15,11 @@ def event_detail(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     return render(request, 'event_detail.html', {'event': event})
 
+def search_results(request):
+    search_query = request.GET.get('search_events', '').strip() 
+    events = Event.objects.filter(title__icontains=search_query) if search_query else Event.objects.none()
+    return render(request, 'search_results.html', {'events': events})
+
 # def login(request, user):
 # 	if request.method == "POST":
 # 		username = request.POST['username']

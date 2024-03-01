@@ -3,6 +3,12 @@
 
 {% block content %}
   <h1>Events Index</h1>
+
+  <form action="{% url 'search_results' %}" method="get">
+    <input type="text" name="search_events" placeholder="Search events" value="{{ request.GET.search }}">
+    <button type="submit">Search</button>
+  </form>
+
   <ul>
     {% for event in events %}
       <li>
