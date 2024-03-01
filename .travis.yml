@@ -40,4 +40,4 @@ deploy:
   env: "postgres-dev"
   bucket_name: "elasticbeanstalk-us-east-1-891377257918"
   on:
-    branch: main  # Deploy only from the main branch
+    branch: develop  # Deploy only from the main branch
