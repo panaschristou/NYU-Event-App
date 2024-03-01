@@ -6,11 +6,11 @@ from django.contrib.auth.models import User
 # Event model
 class Event(models.Model):
     title = models.CharField(max_length=100)
-    category = models.CharField(max_length=50, default="Category not defined")
+    category = models.CharField(max_length=1000, default="Category not defined")
     description = models.TextField(blank=True)
     open_date = models.DateField(default=datetime.date.today)
     close_date = models.DateField(null=True, blank=True)
-    location = models.CharField(max_length=100)
+    location = models.CharField(max_length=1000)
     availability = models.CharField(max_length=10, default="available")
     external_link = models.URLField(blank=True)
     image_url = models.URLField(blank=True)
