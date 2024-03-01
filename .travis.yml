@@ -9,6 +9,12 @@ env:
 install:
   - pip install -r requirements.txt
 
+services:
+  - postgresql
+
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
+
 script:
   - black --check .
   - flake8 .
