@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('backend', '0001_initial'),
+        ("backend", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='event',
-            name='category',
-            field=models.CharField(default='Category not defined', max_length=1000),
+            model_name="event",
+            name="category",
+            field=models.CharField(default="Category not defined", max_length=1000),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='location',
+            model_name="event",
+            name="location",
             field=models.CharField(max_length=1000),
         ),
     ]
