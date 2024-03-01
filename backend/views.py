@@ -12,7 +12,6 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
-# Create your views here.
 
 def index(request):
     events = Event.objects.all().order_by('-title')  # Assuming you want the newest events first
@@ -22,6 +21,7 @@ def event_detail(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     return render(request, 'event_detail.html', {'event': event})
 
+#This code snippet is called once the verification link is accessed by the user, to confirm the validity of the link.
 def activate(request, uidb64, token):
     User = get_user_model()
     try:
@@ -41,6 +41,7 @@ def activate(request, uidb64, token):
 
     return redirect('login')
 
+#This code snippet is responsible for generating and sending the verification email.
 def activateEmail(request, user, to_email):
     mail_subject = "Activate your user account"
     message = render_to_string("template_activate_account.html", {
@@ -52,13 +53,13 @@ def activateEmail(request, user, to_email):
     })
     email = EmailMessage(mail_subject, message, to=[to_email])
     if email.send():
-        messages.success(request, f'Dear <b>{user}</b>, please go to you email <b>{to_email}</b> inbox and click on \
-                received activation link to confirm and complete the registration. <b>Note:</b> Check your spam folder.')
+        messages.success(request, f'Dear {user}, please go to you email {to_email} inbox and click on \
+                received activation link to confirm and complete the registration. Note: Check your spam folder.')
     else:
         messages.error(request, f'Problem sending email to {to_email}, check if you typed it correctly.')
 
 
-
+#Register new user
 def register_user(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
@@ -83,6 +84,7 @@ def register_user(request):
         context={"form": form}
         )
 
+#Login existing user
 def login_user(request):
 	if request.method == "POST":
 		username = request.POST['username']
