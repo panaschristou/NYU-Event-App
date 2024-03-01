@@ -7,61 +7,61 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('backend', '0001_initial'),
+        ("backend", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='event',
-            name='date_time',
+            model_name="event",
+            name="date_time",
         ),
         migrations.RemoveField(
-            model_name='event',
-            name='nyu_discount_url',
+            model_name="event",
+            name="nyu_discount_url",
         ),
         migrations.AddField(
-            model_name='event',
-            name='availability',
-            field=models.CharField(default='available', max_length=10),
+            model_name="event",
+            name="availability",
+            field=models.CharField(default="available", max_length=10),
         ),
         migrations.AddField(
-            model_name='event',
-            name='category',
-            field=models.CharField(default='Category not defined', max_length=50),
+            model_name="event",
+            name="category",
+            field=models.CharField(default="Category not defined", max_length=50),
         ),
         migrations.AddField(
-            model_name='event',
-            name='close_date',
+            model_name="event",
+            name="close_date",
             field=models.DateField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='event',
-            name='external_link',
+            model_name="event",
+            name="external_link",
             field=models.URLField(blank=True),
         ),
         migrations.AddField(
-            model_name='event',
-            name='open_date',
+            model_name="event",
+            name="open_date",
             field=models.DateField(default=datetime.date.today),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='description',
+            model_name="event",
+            name="description",
             field=models.TextField(blank=True),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='image_url',
+            model_name="event",
+            name="image_url",
             field=models.URLField(blank=True),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='location',
+            model_name="event",
+            name="location",
             field=models.CharField(max_length=100),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='title',
+            model_name="event",
+            name="title",
             field=models.CharField(max_length=100),
         ),
     ]

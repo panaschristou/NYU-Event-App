@@ -5,14 +5,14 @@ from scrapy_splash import SplashRequest
 from ..items import NyuEvent
 
 event_detail_script = """
-    function main(splash, args)  
+    function main(splash, args)
       splash:go(args.url)
-    
+
     #   while not splash:select(".promo-image").attrib["src"] do
     #     splash:wait(0.2)
     #     print("waiting...")
     #   end
-      
+
       return splash:html()
     end
 """
