@@ -7,7 +7,6 @@ def itemPure(item):
 
 class IbdbSpider(scrapy.Spider):
     name = "ibdb"
-    allowed_domains = ["www.ibdb.com"]
     start_urls = ["https://www.ibdb.com/shows"]
 
     def parse(self, response):
@@ -27,12 +26,12 @@ class IbdbSpider(scrapy.Spider):
                     callback=self.parseBroadwayProduction,
                     meta={"sinfo": sinfo},
                 )
-            elif sinfo["href"].startswith("/tour-production/"):
-                yield scrapy.Request(
-                    "https://www.ibdb.com/" + sinfo["href"],
-                    callback=self.parseTourProduction,
-                    meta={"sinfo": sinfo},
-                )
+            # elif sinfo["href"].startswith("/tour-production/"):
+            #     yield scrapy.Request(
+            #         "https://www.ibdb.com/" + sinfo["href"],
+            #         callback=self.parseTourProduction,
+            #         meta={"sinfo": sinfo},
+            #     )
 
     def parseBroadwayProduction(self, response):
         sinfo = response.meta["sinfo"]
@@ -51,11 +50,25 @@ class IbdbSpider(scrapy.Spider):
         sinfo["close_date"] = itemPure(
             response.css(".vertical-divider .xt-main-title::text").get()
         )
-        sinfo["location"] = response.css("#venues a::text").get()
-        location_href = response.css("#venues a")
-        sinfo["location_href"] = (
-            location_href.attrib["href"] if "href" in location_href.attrib else ""
-        )
+        if (
+            len(sinfo["external_links"]) > 0
+            and "broadway.org" in sinfo["external_links"][0]["href"]
+        ):
+            yield scrapy.Request(
+                sinfo["external_links"][0]["href"],
+                callback=self.parseBroadway,
+                meta={"sinfo": sinfo},
+            )
+        else:
+            yield sinfo
+
+    def parseBroadway(self, response):
+        sinfo = response.meta["sinfo"]
+        location = response.css(".col-lg-6.col-md-9 p")
+        location = location.css("a::text,::text").getall()[:3]
+        location = list(map(str.strip, location))
+        sinfo["location"] = ", ".join(location)
+        sinfo["description"] = itemPure(response.css(".black-text p::text").get())
         yield sinfo
 
     def parseTourProduction(self, response):
