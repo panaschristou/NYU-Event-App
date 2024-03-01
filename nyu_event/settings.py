@@ -106,7 +106,7 @@ else:
             "USER": "nyu_event",
             "PASSWORD": "complexpassword123",
             "HOST": "localhost",
-            "PORT": "5433",
+            "PORT": "5432",
         }
     }
 
