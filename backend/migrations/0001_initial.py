@@ -27,14 +27,6 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-<<<<<<< HEAD
-                ("title", models.CharField(max_length=255)),
-                ("description", models.TextField()),
-                ("date_time", models.DateTimeField()),
-                ("location", models.CharField(max_length=255)),
-                ("nyu_discount_url", models.URLField()),
-                ("image_url", models.URLField(blank=True, null=True)),
-=======
                 ("title", models.CharField(max_length=100)),
                 (
                     "category",
@@ -48,7 +40,6 @@ class Migration(migrations.Migration):
                 ("external_link", models.URLField(blank=True)),
                 ("image_url", models.URLField(blank=True)),
                 ("avg_rating", models.FloatField(blank=True, null=True)),
->>>>>>> bb106f2e (switch to postgress)
             ],
         ),
         migrations.CreateModel(
