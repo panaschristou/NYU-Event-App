@@ -17,7 +17,7 @@ class IbdbSpider(scrapy.Spider):
                         len("background-image: url(") : -1
                     ]
                 ),
-                "titile": itemPure(show.css("i::text").get()),
+                "title": itemPure(show.css("i::text").get()),
                 "href": itemPure(show.css("a").attrib["href"]),
             }
             if sinfo["href"].startswith("/broadway-production/"):

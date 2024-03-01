@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         json_file_path = options["json_file"]
-        with open(json_file_path, "r") as file:
+        with open(json_file_path, "r", encoding="utf-8") as file:
             events_data = json.load(file)
             for event_data in events_data:
                 try:
@@ -33,15 +33,35 @@ class Command(BaseCommand):
                     ):
                         avg_rating = event_data["avg_rating"]
 
+                    availability = (
+                        event_data["availability"]
+                        if "availability" in event_data
+                        else "current"
+                    )
+
+                    location = (
+                        event_data["location"] if "location" in event_data else ""
+                    )
+
+                    description = (
+                        event_data["description"] if "description" in event_data else ""
+                    )
+
+                    external_link = (
+                        event_data["external_links"][0]["href"]
+                        if event_data["external_links"]
+                        else ""
+                    )
+
                     event = Event.objects.create(
                         title=event_data["title"],
                         category=event_data["category"],
-                        description=event_data["description"],
+                        description=description,
                         open_date=parser.parse(event_data["open_date"]).date(),
                         close_date=close_date,
-                        location=event_data["location"],
-                        availability=event_data["availability"],
-                        external_link=event_data["external_link"],
+                        location=location,
+                        availability=availability,
+                        external_link=external_link,
                         image_url=event_data["image_url"],
                         avg_rating=avg_rating,
                     )
