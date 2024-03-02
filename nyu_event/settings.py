@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import ssl
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -32,13 +33,13 @@ ALLOWED_HOSTS = ["post-dev.us-east-1.elasticbeanstalk.com", "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
-    'backend.apps.BackendConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "backend.apps.BackendConfig",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 ]
 
 MIDDLEWARE = [
@@ -51,9 +52,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'nyu_event.urls'
+ROOT_URLCONF = "nyu_event.urls"
 
-AUTHENTICATION_BACKENDS = ['backend.backends.EmailBackend']
+AUTHENTICATION_BACKENDS = ["backend.backends.EmailBackend"]
 
 TEMPLATES = [
     {
@@ -150,15 +151,15 @@ STATIC_URL = "static/"
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-#Emailing settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# Emailing settings
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587  # SMTP port (usually 587 for TLS)
 EMAIL_USE_TLS = True  # Using TLS for encryption
-EMAIL_HOST_USER = 'nyuevents24@gmail.com'
-EMAIL_HOST_PASSWORD = 'ogtoqvpmcniroelh'
+EMAIL_HOST_USER = "nyuevents24@gmail.com"
+EMAIL_HOST_PASSWORD = "ogtoqvpmcniroelh"
 
-DEFAULT_FROM_EMAIL = 'nyuevents24@gmail.com'
+DEFAULT_FROM_EMAIL = "nyuevents24@gmail.com"
