@@ -1,4 +1,4 @@
-# Scrapy settings for nyu project
+# Scrapy settings for show project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,14 +7,14 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "nyu"
+BOT_NAME = "show"
 
-SPIDER_MODULES = ["nyu.spiders"]
-NEWSPIDER_MODULE = "nyu.spiders"
+SPIDER_MODULES = ["show.spiders"]
+NEWSPIDER_MODULE = "show.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-# USER_AGENT = "nyu (+http://www.yourdomain.com)"
+# USER_AGENT = "show (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -45,13 +45,13 @@ ROBOTSTXT_OBEY = True
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 # SPIDER_MIDDLEWARES = {
-#    "nyu.middlewares.NyuSpiderMiddleware": 543,
+#    "show.middlewares.ShowSpiderMiddleware": 543,
 # }
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 # DOWNLOADER_MIDDLEWARES = {
-#    "nyu.middlewares.NyuDownloaderMiddleware": 543,
+#    "show.middlewares.ShowDownloaderMiddleware": 543,
 # }
 
 # Enable or disable extensions
@@ -63,7 +63,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 # ITEM_PIPELINES = {
-#    "nyu.pipelines.NyuPipeline": 300,
+#    "show.pipelines.ShowPipeline": 300,
 # }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -91,24 +91,3 @@ ROBOTSTXT_OBEY = True
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
-
-# SPLASH CONFIG
-# set the Splash local server endpoint
-SPLASH_URL = "http://localhost:8050"
-
-# enable the Splash downloader middleware and
-# give it a higher priority than HttpCompressionMiddleware
-DOWNLOADER_MIDDLEWARES = {
-    "scrapy_splash.SplashCookiesMiddleware": 723,
-    "scrapy_splash.SplashMiddleware": 725,
-    "scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware": 810,
-}
-
-# enable the Splash deduplication argument filter to
-# make Scrapy Splash saves spice disk on cached requests
-SPIDER_MIDDLEWARES = {
-    "scrapy_splash.SplashDeduplicateArgsMiddleware": 100,
-}
-
-# set the Splash deduplication class
-DUPEFILTER_CLASS = "scrapy_splash.SplashAwareDupeFilter"
