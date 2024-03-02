@@ -37,10 +37,13 @@
                 <p><strong>Location:</strong> {{ event.location }}</p>
                 <p><strong>Availability:</strong> {{ event.availability }}</p>
                 <p class="mb-4"><strong>Description:</strong> {{ event.description }}</p>
+                <p><strong>Average Rating:</strong> {{ event.avg_rating }}</p>
                 <div class="score-review">
                     <span class="score badge badge-success p-3 mr-3">94</span>
                     <button class="btn btn-primary">Score it</button>
                 </div>
+                <a href="{% url 'index' %}" class="btn btn-primary">Back to Home Page</a>
+                <a href="{% if category %}{% url 'events_by_category' category %}{% else %}{% url 'index' %}{% endif %}" class="btn btn-primary">Back to Category List</a>
             </div>
         </div>
         <div class="container reviews py-5">
@@ -61,20 +64,4 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-<!-- templates/backend/event_detail.html -->
-{% extends 'base.html' %}
 
-{% block content %}
-  <h1 >{{ event.title }}</h1>
-  <p><b>Category:</b> {{ event.category }}</p>
-  <p><b>Show Start Date:</b> {{ event.open_date }}</p>
-  <p><b>Show End Date:</b> {{ event.close_date }}</p>
-  <p><b>Location:</b> {{ event.location }}</p>
-  <p><b>Availability:</b> {{ event.availability }}</p>
-  <p><b>Description:</b> <br> {{ event.description }}</p>
-  <p><b>Average Rating:</b> <br> {{ event.avg_rating }}</p>
-  <!-- Add more event details here as needed -->
-
-  <a href="{% url 'index' %}" class="btn btn-primary">Back to Home Page</a>
-  <a href="{% if category %}{% url 'events_by_category' category %}{% else %}{% url 'index' %}{% endif %}" class="btn btn-primary">Back to Category List</a>
-{% endblock %}
