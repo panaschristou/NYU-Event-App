@@ -9,7 +9,9 @@
   <p><b>Location:</b> {{ event.location }}</p>
   <p><b>Availability:</b> {{ event.availability }}</p>
   <p><b>Description:</b> <br> {{ event.description }}</p>
+  <p><b>Average Rating:</b> <br> {{ event.avg_rating }}</p>
   <!-- Add more event details here as needed -->
 
-  <a href="{% url 'index' %}" class="btn btn-primary">Back to Events List</a>
+  <a href="{% url 'index' %}" class="btn btn-primary">Back to Home Page</a>
+  <a href="{% if category %}{% url 'events_by_category' category %}{% else %}{% url 'index' %}{% endif %}" class="btn btn-primary">Back to Category List</a>
 {% endblock %}

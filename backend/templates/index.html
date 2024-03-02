@@ -9,6 +9,13 @@
     <button type="submit">Search</button>
   </form>
 
+  <div>
+    {% for category in categories %}
+      <a href="{% url 'events_by_category' category %}" class="btn btn-outline-dark">{{ category }}</a>
+    {% endfor %}
+  </div>
+
+
   <ul>
     {% for event in events %}
       <li>

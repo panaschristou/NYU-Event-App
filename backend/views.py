@@ -13,12 +13,25 @@ def index(request):
 
 def event_detail(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
-    return render(request, 'event_detail.html', {'event': event})
+    category = request.GET.get('category')
+    return render(request, 'event_detail.html', {'event': event, 'category': category})
 
 def search_results(request):
     search_query = request.GET.get('search_events', '').strip() 
     events = Event.objects.filter(title__icontains=search_query) if search_query else Event.objects.none()
     return render(request, 'search_results.html', {'events': events})
+
+EVENT_CATEGORIES = ["Musical", "Original", "Play", "Drama", "Revival", "Comedy", "Puppets"]
+
+def index_with_categories_view(request):
+    categories = EVENT_CATEGORIES
+    events = Event.objects.all() 
+    return render(request, 'index.html', {'categories': categories, 'events': events})
+
+def events_by_category(request, category):
+    events = Event.objects.filter(category__icontains=category)
+    return render(request, 'events_by_category.html', {'events': events, 'current_category': category})
+
 
 # def login(request, user):
 # 	if request.method == "POST":
