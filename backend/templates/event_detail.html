@@ -37,10 +37,13 @@
                 <p><strong>Location:</strong> {{ event.location }}</p>
                 <p><strong>Availability:</strong> {{ event.availability }}</p>
                 <p class="mb-4"><strong>Description:</strong> {{ event.description }}</p>
+                <p><strong>Average Rating:</strong> {{ event.avg_rating }}</p>
                 <div class="score-review">
                     <span class="score badge badge-success p-3 mr-3">94</span>
                     <button class="btn btn-primary">Score it</button>
                 </div>
+                <a href="{% url 'index' %}" class="btn btn-primary">Back to Home Page</a>
+                <a href="{% if category %}{% url 'events_by_category' category %}{% else %}{% url 'index' %}{% endif %}" class="btn btn-primary">Back to Category List</a>
             </div>
         </div>
         <div class="container reviews py-5">
@@ -61,3 +64,4 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
