@@ -1,0 +1,74 @@
+body {
+    background-image: url('../img/6063nyu_eventguide_img10.jpeg');
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    margin: 0;
+    height: 100vh;
+    font-family: 'Open Sans', sans-serif; 
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #6a6767;
+    color: #672929;
+  }
+  
+  .header-brand {
+    font-size: 1.5rem;
+  }
+  
+  .header-search input {
+    padding: 0.5rem;
+  }
+  
+  .header-user a {
+    color: #762a2a;
+    text-decoration: none;
+  }
+  
+  .filter-sort {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    background-color: #f8f8f8;
+  }
+  
+  .filter-sort select {
+    padding: 0.5rem;
+    margin-right: 1rem;
+  }
+  
+  .events-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .event-card {
+    background-color: #a99393;
+    border: 1px solid #d7c4c4;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .event-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .event-info {
+    padding: 1rem;
+  }
+  
+  .event-title {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Search Results</h1>
+
+  {% if events %}
+    <ul>
+      {% for event in events %}
+        <li>
+          <a href="{% url 'event_detail' event.id %}" class="btn btn-outline-dark">{{ event.title }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No events found.</p>
+  {% endif %}
+
+  <a href="{% url 'index' %}" class="btn btn-primary">Back to Events List</a>
+{% endblock %}
