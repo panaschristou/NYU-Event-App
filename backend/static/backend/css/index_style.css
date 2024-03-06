@@ -1,11 +1,12 @@
 body {
-    background-image: url('../img/6063nyu_eventguide_img10.jpeg');
+    /*background-image: url('../img/6063nyu_eventguide_img10.jpeg');
     background-size: cover;
     background-position: center center;
-    background-attachment: fixed;
+    background-attachment: fixed;*/
+    background-color: #FFF7F1;
     margin: 0;
     height: 100vh;
-    font-family: 'Open Sans', sans-serif; 
+    font-family: "Trebuchet MS"; 
   }
   .header {
     display: flex;
@@ -28,12 +29,39 @@ body {
     color: #762a2a;
     text-decoration: none;
   }
+
+  .search-bar-container {
+    display: flex;
+    justify-content: center; 
+    padding: 1rem;
+    background-color: #FFF7F1;
+  }
+  
+  .search-form {
+    width: 50%; 
+    margin-top: 2rem; 
+  }
+  
+  .search-input {
+    width: calc(100% - 75px); 
+  }
+  
+  .input-group .btn {
+    width: 75px;
+  }
+  
+
+  .category-container {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+  }
   
   .filter-sort {
     display: flex;
     justify-content: center;
     padding: 1rem;
-    background-color: #f8f8f8;
+    background-color: FFFBF5;
   }
   
   .filter-sort select {
@@ -41,34 +69,51 @@ body {
     margin-right: 1rem;
   }
   
+  .container {
+    max-width: 800px; 
+    justify-content: center;
+    margin: auto; 
+  }
+
   .events-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(4, 1fr); /* Display 4 items per row */
     gap: 1rem;
-    padding: 1rem;
+    justify-content: center;
+    align-items: start;
   }
   
   .event-card {
-    background-color: #a99393;
-    border: 1px solid #d7c4c4;
-    border-radius: 5px;
     overflow: hidden;
+    width: 200px; 
+    height: 315px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .event-card a {
+    text-decoration: none; 
+  }
+
+  .event-card a:hover {
+    text-decoration: none; 
   }
   
-  .event-image {
-    width: 100%;
-    height: auto;
-    display: block;
+  .card-img-top {
+    width: 200px;
+    height: 200px; 
+    object-fit: cover;
+    padding: 0.5rem;
+    border-radius: 15px;
   }
   
-  .event-info {
-    padding: 1rem;
+  .card-title {
+    color: rgb(68, 66, 66);
+    text-align: center;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
   }
   
-  .event-title {
-    font-size: 1.2rem;
-    color: #333;
-    margin-bottom: 0.5rem;
+  .event-card a:hover .card-title {
+    color: darkgray; 
   }
-  
-  
