@@ -1,7 +1,9 @@
 branch-defaults:
-  switch-to-postgres:
+  develop:
+    environment: develop
+  master:
     environment: postgres-dev
-    group_suffix: null
+ 
 global:
   application_name: postgres
   branch: null
@@ -16,3 +18,4 @@ global:
   repository: null
   sc: git
   workspace_type: Application
+
