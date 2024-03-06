@@ -1,9 +1,5 @@
 body {
-    /*background-image: url('../img/6063nyu_eventguide_img10.jpeg');
-    background-size: cover;
-    background-position: center center;
-    background-attachment: fixed;*/
-    background-color: #FFF7F1;
+    background-color: #FFFBF5;
     margin: 0;
     height: 100vh;
     font-family: "Trebuchet MS"; 
@@ -13,16 +9,11 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background-color: #6a6767;
-    color: #672929;
+    background-color: #77499e;
   }
   
   .header-brand {
     font-size: 1.5rem;
-  }
-  
-  .header-search input {
-    padding: 0.5rem;
   }
   
   .header-user a {
@@ -34,7 +25,7 @@ body {
     display: flex;
     justify-content: center; 
     padding: 1rem;
-    background-color: #FFF7F1;
+    background-color: #FFFBF5;
   }
   
   .search-form {
@@ -72,7 +63,8 @@ body {
   .container {
     max-width: 800px; 
     justify-content: center;
-    margin: auto; 
+    margin: auto;
+    margin-bottom: 3rem;
   }
 
   .events-container {
@@ -86,7 +78,7 @@ body {
   .event-card {
     overflow: hidden;
     width: 200px; 
-    height: 315px;
+    height: 285px;
     display: flex;
     flex-direction: column;
   }
@@ -116,4 +108,16 @@ body {
   
   .event-card a:hover .card-title {
     color: darkgray; 
+  }
+
+  .btn-outline-dark {
+    color: #77499e; 
+    border-color: #77499e; 
+  }
+  
+  .btn-outline-dark:hover,
+  .btn-outline-dark:focus {
+    color: #fff; 
+    background-color: #77499e; 
+    border-color: #77499e;
   }
