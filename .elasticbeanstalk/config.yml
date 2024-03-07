@@ -1,6 +1,6 @@
 branch-defaults:
-  switch-to-postgres:
-    environment: postgres-dev
+  mainenv:
+    environment: main
     group_suffix: null
 global:
   application_name: postgres
