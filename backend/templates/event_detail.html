@@ -1,67 +1,82 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ event.title }}</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="{% static 'backend/css/event_detail_style.css' %}" rel="stylesheet">
-</head>
-<body>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">NYU Event Guide</a>
-    <div class="collapse navbar-collapse">
-        <form class="form-inline my-2 my-lg-0 ml-auto">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search events..." aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      href="{% static 'backend/css/event_detail_style.css' %}"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark header">
+      <a class="navbar-brand" href="#">{{ event.title }}</a>
+      <div class="collapse navbar-collapse">
         <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="#">User Home</a>
-            </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'index' %}">Homepage</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">User Home</a>
+          </li>
         </ul>
-    </div>
-</nav>
+      </div>
+    </nav>
 
-<div class="event-detail py-5">
-    <div class="container container-transparent">
+    <div class="event-detail py-5">
+      <div class="container container-transparent">
+        <div class="heart-button-container text-right">
+          <button class="heart-button" aria-label="Save event">
+            <!-- SVG for the heart button -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+            </svg>
+          </button>
+        </div>
         <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <img src="{{ event.image_url }}" alt="{{ event.title }}" class="img-fluid">
-                <h1>{{ event.title }}</h1>
-                <p><strong>Category:</strong> {{ event.category }}</p>
-                <p><strong>Show Start Date:</strong> {{ event.open_date }}</p>
-                <p><strong>Show End Date:</strong> {{ event.close_date }}</p>
-                <p><strong>Location:</strong> {{ event.location }}</p>
-                <p><strong>Availability:</strong> {{ event.availability }}</p>
-                <p class="mb-4"><strong>Description:</strong> {{ event.description }}</p>
-                <p><strong>Average Rating:</strong> {{ event.avg_rating }}</p>
-                <div class="score-review">
-                    <span class="score badge badge-success p-3 mr-3">94</span>
-                    <button class="btn btn-primary">Score it</button>
-                </div>
-                <a href="{% url 'index' %}" class="btn btn-primary">Back to Home Page</a>
-                <a href="{% if category %}{% url 'events_by_category' category %}{% else %}{% url 'index' %}{% endif %}" class="btn btn-primary">Back to Category List</a>
+          <div class="col-lg-8 mx-auto text-center">
+            <!-- Centered image and title -->
+            <img
+              src="{{ event.image_url }}"
+              alt="{{ event.title }}"
+              class="img-fluid"
+            />
+            <h1>{{ event.title }}</h1>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <!-- Left-aligned event details -->
+            <div class="event-info mt-2">
+              <p><strong>Category:</strong> {{ event.category }}</p>
+              <p><strong>Start Date:</strong> {{ event.open_date }}</p>
+              <p><strong>End Date:</strong> {{ event.close_date }}</p>
+              <p><strong>Location:</strong> {{ event.location }}</p>
+              <p><strong>Availability:</strong> {{ event.availability }}</p>
+              <p><strong>Description:</strong> {{ event.description }}</p>
+              <p><strong>Average Rating:</strong> {{ event.avg_rating }}</p>
             </div>
+          </div>
         </div>
         <div class="container reviews py-5">
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <h2>User Reviews</h2>
-                    <!-- Insert reviews here -->
-                </div>
+          <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+              <h2>Reviews</h2>
+              <!-- Insert reviews here -->
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
 </html>
-
