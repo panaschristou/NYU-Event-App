@@ -37,7 +37,6 @@ def search_results(request):
             events = Event.objects.filter(title__icontains=search_query)
             print(events)
         elif search_type == 'Users':
-            # Assuming you have a User model and 'username' is the field you want to search.
             users = User.objects.filter(username__icontains=search_query)
     
     context = {
