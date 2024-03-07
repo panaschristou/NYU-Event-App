@@ -26,13 +26,27 @@ def event_detail(request, event_id):
 
 
 def search_results(request):
-    search_query = request.GET.get("search_events", "").strip()
-    events = (
-        Event.objects.filter(title__icontains=search_query)
-        if search_query
-        else Event.objects.none()
-    )
-    return render(request, "search_results.html", {"events": events})
+    search_query = request.GET.get('search_events', '').strip()
+    search_type = request.GET.get('search_type', 'Shows')
+    User = get_user_model()
+    events = Event.objects.none()
+    users = User.objects.none()
+
+    if search_query:
+        if search_type == 'Shows':
+            events = Event.objects.filter(title__icontains=search_query)
+            print(events)
+        elif search_type == 'Users':
+            # Assuming you have a User model and 'username' is the field you want to search.
+            users = User.objects.filter(username__icontains=search_query)
+    
+    context = {
+        'events': events if search_type == 'Shows' else None,
+        'users': users if search_type == 'Users' else None,
+        'search_query': search_query,
+        'search_type': search_type
+    }
+    return render(request, 'search_results.html', context)
 
 
 EVENT_CATEGORIES = [

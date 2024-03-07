@@ -39,9 +39,14 @@
           aria-label="Search"
           value="{{ request.GET.search_events }}"
         />
+        <select class="custom-select" id="filter" name="search_type">
+          <option {% if search_type == 'Shows' %}selected{% endif %}>Shows</option>
+          <option {% if search_type == 'Users' %}selected{% endif %}>Users</option>
+      </select>
         <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">
           Search
         </button>
+        
       </div>
     </form>
   </div>
@@ -60,30 +65,53 @@
             </div>
         </div>
     </div> 
+    <div>Search Type: {{ search_type }}</div>
+    <div>User Queryset: {{ users }}</div>
+    <div>Event Queryset: {{ events }}</div>
 
-  {% if events %}
-  <div class="container">
-        <div class="events-container">
-            {% for event in events %}
-            <div class="event-card">
-                <a href="{% url 'event_detail' event.id %}">
-                    <img
-                    src="{{ event.image_url }}"
-                    class="card-img-top"
-                    alt="{{ event.title }}"
-                    style="cursor: pointer; object-fit: cover"
-                    />
-                    <h5 class="card-title">{{ event.title }}</h5>
-                </a>
+    {% if search_type == 'Shows' %}
+      {% if events %}
+      <div class="container">
+            <div class="events-container">
+                {% for event in events %}
+                <div class="event-card">
+                    <a href="{% url 'event_detail' event.id %}">
+                        <img
+                        src="{{ event.image_url }}"
+                        class="card-img-top"
+                        alt="{{ event.title }}"
+                        style="cursor: pointer; object-fit: cover"
+                        />
+                        <h5 class="card-title">{{ event.title }}</h5>
+                    </a>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+      </div>
+      {% else %}
+      <div class="container">
+        <p>No events found.</p>
+      </div>
+      {% endif %}
+      {% elif search_type == 'Users' %}
+        {% if users  %}
+        <div class="container">
+              <div class="events-container">
+                  {% for user in users %}
+                  <div class="user-card">
+                    <p>User ID: {{ user.id }}</p>
+                    <p>Username: {{ user.username }}</p>
+                  </div>
+                  {% endfor %}
+              </div>
         </div>
-  </div>
-  {% else %}
-  <div class="container">
-    <p>No events found.</p>
-  </div>
-  {% endif %} {% endblock %}
+        {% else %}
+        <div class="container">
+          <p>No users found.</p>
+        </div>
+        {% endif %}
+      {% endif %}
+  {% endblock %}
 
   <!-- Include Bootstrap JS and dependencies at the bottom of the body -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
