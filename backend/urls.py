@@ -9,7 +9,7 @@ urlpatterns = [
     path("activate/<uidb64>/<token>", views.activate, name="activate"),
     path("events/<int:event_id>/", views.event_detail, name="event_detail"),
     path("search/", views.search_results, name="search_results"),
-    path("", views.index_with_categories_view, name="index"),
+    path("index", views.index_with_categories_view, name="index"),
     path(
         "category/<str:category>/", views.events_by_category, name="events_by_category"
     ),
