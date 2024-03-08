@@ -1,4 +1,4 @@
 [flake8]
 max-line-length = 88
-exclude = migrations,env,venv,.venv
+exclude = migrations,env,venv,.venv, myvenv
 ignore = E501,W503,F401,E203
