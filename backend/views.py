@@ -10,6 +10,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.db.models import Q
+
 
 
 def index(request):
@@ -37,7 +39,10 @@ def search_results(request):
             events = Event.objects.filter(title__icontains=search_query)
             print(events)
         elif search_type == 'Users':
-            users = User.objects.filter(username__icontains=search_query)
+            users = User.objects.filter(
+                Q(username__icontains=search_query) | 
+                Q(email__icontains=search_query)
+            )
     
     context = {
         'events': events if search_type == 'Shows' else None,
