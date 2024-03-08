@@ -13,7 +13,6 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.db.models import Q
 
 
-
 def index(request):
     events = Event.objects.all().order_by(
         "-title"
@@ -26,36 +25,36 @@ def event_detail(request, event_id):
     category = request.GET.get("category")
     return render(request, "event_detail.html", {"event": event, "category": category})
 
+
 def user_detail(request, username):
     User = get_user_model()
     user = get_object_or_404(User, username=username)
-    return render(request, 'user_detail.html', {'user': user})
+    return render(request, "user_detail.html", {"user": user})
 
 
 def search_results(request):
-    search_query = request.GET.get('search_events', '').strip()
-    search_type = request.GET.get('search_type', 'Shows')
+    search_query = request.GET.get("search_events", "").strip()
+    search_type = request.GET.get("search_type", "Shows")
     User = get_user_model()
     events = Event.objects.none()
     users = User.objects.none()
 
     if search_query:
-        if search_type == 'Shows':
+        if search_type == "Shows":
             events = Event.objects.filter(title__icontains=search_query)
             print(events)
-        elif search_type == 'Users':
+        elif search_type == "Users":
             users = User.objects.filter(
-                Q(username__icontains=search_query) | 
-                Q(email__icontains=search_query)
+                Q(username__icontains=search_query) | Q(email__icontains=search_query)
             )
-    
+
     context = {
-        'events': events if search_type == 'Shows' else None,
-        'users': users if search_type == 'Users' else None,
-        'search_query': search_query,
-        'search_type': search_type
+        "events": events if search_type == "Shows" else None,
+        "users": users if search_type == "Users" else None,
+        "search_query": search_query,
+        "search_type": search_type,
     }
-    return render(request, 'search_results.html', context)
+    return render(request, "search_results.html", context)
 
 
 EVENT_CATEGORIES = [

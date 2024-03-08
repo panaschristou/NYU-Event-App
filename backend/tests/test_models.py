@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from backend.models import Event, Review, UserEvent, Chat
 import datetime
 
+
 class EventModelTest(TestCase):
 
     @classmethod
@@ -12,13 +13,13 @@ class EventModelTest(TestCase):
             title="Spamalot",
             category="Musical, Comedy, Revival, Broadway",
             description="Lovingly ripped from the film classic",
-            open_date=datetime.date(2023, 11, 16),  
+            open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
             availability="available",
             external_link="http://www.broadway.org/shows/details/spamalot,812",
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
-            avg_rating=0  # Assuming initial avg_rating
+            avg_rating=0,  # Assuming initial avg_rating
         )
 
     def test_event_attributes(self):
@@ -31,10 +32,17 @@ class EventModelTest(TestCase):
         self.assertEqual(event.description, "Lovingly ripped from the film classic")
         self.assertEqual(event.open_date, datetime.date(2023, 11, 16))
         self.assertEqual(event.close_date, datetime.date(2023, 10, 31))
-        self.assertEqual(event.location, "St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue")
+        self.assertEqual(
+            event.location,
+            "St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
+        )
         self.assertEqual(event.availability, "available")
-        self.assertEqual(event.external_link, "http://www.broadway.org/shows/details/spamalot,812")
-        self.assertEqual(event.image_url, "https://www.broadway.org/logos/shows/spamalot-2023.jpg")
+        self.assertEqual(
+            event.external_link, "http://www.broadway.org/shows/details/spamalot,812"
+        )
+        self.assertEqual(
+            event.image_url, "https://www.broadway.org/logos/shows/spamalot-2023.jpg"
+        )
         self.assertEqual(event.avg_rating, 0)
 
 
@@ -46,21 +54,18 @@ class ReviewModelTest(TestCase):
             title="Spamalot",
             category="Musical, Comedy, Revival, Broadway",
             description="Lovingly ripped from the film classic",
-            open_date=datetime.date(2023, 11, 16),  
+            open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
             availability="available",
             external_link="http://www.broadway.org/shows/details/spamalot,812",
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
-            avg_rating=0  # Assuming initial avg_rating
+            avg_rating=0,  # Assuming initial avg_rating
         )
-        cls.user = User.objects.create_user(username='testuser', password='12345')
+        cls.user = User.objects.create_user(username="testuser", password="12345")
         cls.event = Event.objects.get(title="Spamalot")
         cls.review = Review.objects.create(
-            event=cls.event,
-            user=cls.user,
-            rating=5,
-            comment="It was a fantastic show!"
+            event=cls.event, user=cls.user, rating=5, comment="It was a fantastic show!"
         )
 
     def test_review_attributes(self):
@@ -75,9 +80,11 @@ class ReviewModelTest(TestCase):
 class UserModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = User.objects.create_user(username='testuser', email='testuser@nyu.edu', password='testpassword')
+        cls.user = User.objects.create_user(
+            username="testuser", email="testuser@nyu.edu", password="testpassword"
+        )
 
     def test_user_attributes(self):
         # Fetch the user and check attributes
-        user = User.objects.get(username='testuser')
-        self.assertEqual(user.email, 'testuser@nyu.edu')
+        user = User.objects.get(username="testuser")
+        self.assertEqual(user.email, "testuser@nyu.edu")
