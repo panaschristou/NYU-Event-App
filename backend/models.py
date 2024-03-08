@@ -11,7 +11,6 @@ class Event(models.Model):
     open_date = models.DateField(default=datetime.date.today)
     close_date = models.DateField(null=True, blank=True)
     location = models.CharField(max_length=1000)
-    availability = models.CharField(max_length=10, default="available")
     external_link = models.URLField(blank=True)
     image_url = models.URLField(blank=True)
     avg_rating = models.FloatField(null=True, blank=True)
