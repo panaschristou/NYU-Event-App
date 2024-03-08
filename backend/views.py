@@ -160,7 +160,12 @@ def login_user(request):
 @require_POST
 @csrf_exempt
 def add_interest(request, event_id):
-    if request.user.is_authenticated:
+    if (
+        request.user.is_authenticated
+        and not UserEvent.objects.filter(
+            event_id=event_id, user_id=request.user.id
+        ).exists()
+    ):
         User = get_user_model()
         UserEvent.objects.create(
             event=Event.objects.get(pk=event_id),
@@ -169,7 +174,7 @@ def add_interest(request, event_id):
         )
         return JsonResponse({"message": "added to the interest list"})
     else:
-        raise Http404("Unauthorized Operation")
+        raise Http404("Operation Failed")
 
 
 @require_POST
@@ -189,6 +194,7 @@ def remove_interest(request, event_id):
 
 
 @require_GET
+@csrf_exempt
 def view_interest_list(request):
     if request.user.is_authenticated:
         User = get_user_model()
