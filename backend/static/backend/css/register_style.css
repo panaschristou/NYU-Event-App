@@ -6,17 +6,18 @@ body {
   }
 
 .register-container {
-  max-width: 500px;
-  margin: 200px auto;
+  max-width: 400px;
+  margin: 100px auto;
+  margin-top: 50px;
   padding: 20px;
-  background-color: #F7EFE5; 
+  background-color: #77499e;
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(214, 196, 196, 0.1);
-  text-align: center; 
+  color: #ffffff;
+  line-height: 1.5;
 }
 
 .register-container label {
-  color: #77499e; 
+  color: #ffffff; 
 }
 
 
@@ -32,21 +33,21 @@ body {
   /* Style the submit button to match the login page */
   .btn-secondary {
     border-radius: 20px;
-    background-color: #77499e; 
+    background-color: #ffffff;
     border: none;
     padding: 10px 20px;
-    color: #ffffff; /* Text color */
+    color: rgb(68, 66, 66);
     margin-top: 20px; /* Space above the button */
   }
 
   .btn-secondary:hover {
-    background-color: #a77ecd; 
+    background-color: #1d2122;
   }
-  
+
   /* Style the heading */
   h1 {
     font-family: "Trebuchet MS";
-    color: #77499e; /* Color of the heading */
+    color: #ffffff; /* Color of the heading */
     margin-bottom: 20px; /* Space below the heading */
   }
 
@@ -64,3 +65,14 @@ body {
     font-weight: bold; 
   }
 
+  .login-header {
+    text-align: center;
+    margin-top: 50px; 
+  }
+  
+  .login-header p{
+    font-family: "Trebuchet MS";
+    font-size: 2em; 
+    color: #77499e;
+    font-weight: bold; 
+  }

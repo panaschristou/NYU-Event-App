@@ -14,4 +14,7 @@ urlpatterns = [
     path(
         "category/<str:category>/", views.events_by_category, name="events_by_category"
     ),
+    # AJAX
+    path("events/<int:event_id>/add-interest/", views.add_interest),
+    path("events/<int:event_id>/remove-interest/", views.remove_interest),
 ]

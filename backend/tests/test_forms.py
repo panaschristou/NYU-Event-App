@@ -4,7 +4,6 @@ from backend.forms import UserRegistrationForm
 
 
 class UserRegistrationFormTest(TestCase):
-
     def test_form_valid(self):
         # Test that the form is valid with correct data
         form_data = {

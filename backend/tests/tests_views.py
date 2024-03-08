@@ -11,7 +11,6 @@ import datetime
 
 
 class EventViewsTestCase(TestCase):
-
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
@@ -24,7 +23,6 @@ class EventViewsTestCase(TestCase):
             open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
-            availability="available",
             external_link="http://www.broadway.org/shows/details/spamalot,812",
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
             avg_rating=0,  # Assuming initial avg_rating

@@ -13,7 +13,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import ssl
+from dotenv import load_dotenv
+from os.path import join, dirname
 
+load_dotenv(join(dirname(__file__), ".env"))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,7 +31,7 @@ SECRET_KEY = "django-insecure--1vz#!np5i3v)p_(cclo9t8a40^ufcl#!tdkfq$p@6-=)ck@gf
 DEBUG = True
 
 # ALLOWED_HOSTS = ['*','nyu-event-dev.us-east-1.elasticbeanstalk.com']
-ALLOWED_HOSTS = ["127.0.0.1", "postgres-dev.us-east-1.elasticbeanstalk.com"]
+ALLOWED_HOSTS = ["127.0.0.1", "main2.us-east-1.elasticbeanstalk.com"]
 
 
 # Application definition
