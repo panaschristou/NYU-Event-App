@@ -195,7 +195,7 @@ def login_user(request):
         return render(request, "authenticate/login.html", {})
 
 
-## AJAX
+# AJAX
 # Interest list
 @require_POST
 @csrf_exempt
