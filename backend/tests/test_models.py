@@ -30,10 +30,17 @@ class EventModelTest(TestCase):
         self.assertEqual(event.description, "Lovingly ripped from the film classic")
         self.assertEqual(event.open_date, datetime.date(2023, 11, 16))
         self.assertEqual(event.close_date, datetime.date(2023, 10, 31))
-        self.assertEqual(event.location, "St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue")
+        self.assertEqual(
+            event.location,
+            "St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
+        )
         self.assertEqual(event.availability, "available")
-        self.assertEqual(event.external_link, "http://www.broadway.org/shows/details/spamalot,812")
-        self.assertEqual(event.image_url, "https://www.broadway.org/logos/shows/spamalot-2023.jpg")
+        self.assertEqual(
+            event.external_link, "http://www.broadway.org/shows/details/spamalot,812"
+        )
+        self.assertEqual(
+            event.image_url, "https://www.broadway.org/logos/shows/spamalot-2023.jpg"
+        )
         self.assertEqual(event.avg_rating, 0)
 
 
