@@ -32,7 +32,7 @@
     <div class="event-detail py-5">
       <div class="container container-transparent">
         <div class="heart-button-container text-right">
-          {% if user.is_authenticated %}
+          {% if loggedIn %}
           <button
             class="heart-button {% if interested %} hidden {% endif %}"
             id="add-interest"
