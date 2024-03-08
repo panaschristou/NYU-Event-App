@@ -26,6 +26,11 @@ def event_detail(request, event_id):
     category = request.GET.get("category")
     return render(request, "event_detail.html", {"event": event, "category": category})
 
+def user_detail(request, username):
+    User = get_user_model()
+    user = get_object_or_404(User, username=username)
+    return render(request, 'user_detail.html', {'user': user})
+
 
 def search_results(request):
     search_query = request.GET.get('search_events', '').strip()

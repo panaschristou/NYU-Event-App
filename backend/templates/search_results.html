@@ -70,48 +70,45 @@
     <div>Event Queryset: {{ events }}</div>
 
     {% if search_type == 'Shows' %}
-      {% if events %}
-      <div class="container">
-            <div class="events-container">
-                {% for event in events %}
-                <div class="event-card">
-                    <a href="{% url 'event_detail' event.id %}">
-                        <img
-                        src="{{ event.image_url }}"
-                        class="card-img-top"
-                        alt="{{ event.title }}"
-                        style="cursor: pointer; object-fit: cover"
-                        />
-                        <h5 class="card-title">{{ event.title }}</h5>
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
+  {% if events %}
+    <div class="container">
+      <div class="events-container">
+        {% for event in events %}
+          <div class="event-card">
+            <a href="{% url 'event_detail' event.id %}">
+              <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}" style="cursor: pointer; object-fit: cover" />
+              <h5 class="card-title">{{ event.title }}</h5>
+            </a>
+          </div>
+        {% endfor %}
       </div>
-      {% else %}
-      <div class="container">
-        <p>No events found.</p>
+    </div>
+  {% else %}
+    <div class="container">
+      <p>No events found.</p>
+    </div>
+  {% endif %}
+{% elif search_type == 'Users' %}
+  {% if users %}
+    <div class="container">
+      <div class="events-container">
+        {% for user in users %}
+          <div class="event-card">
+            <a href="{% url 'user_detail' user.username %}">
+              <img src="{% static 'backend/img/generic_user_image.png' %}" alt="User Image" class="card-img-top" alt="{{ user.username }}" style="cursor: pointer; object-fit: cover" />
+              <h5 class="card-title">{{ user.username }}</h5>
+            </a>
+          </div>
+        {% endfor %}
       </div>
-      {% endif %}
-      {% elif search_type == 'Users' %}
-        {% if users  %}
-        <div class="container">
-              <div class="events-container">
-                  {% for user in users %}
-                  <div class="user-card">
-                    <p>Username: {{ user.username }}</p>
-                    <p>Date Joined: {{ user.date_joined }}</p>
-                  </div>
-                  {% endfor %}
-              </div>
-        </div>
-        {% else %}
-        <div class="container">
-          <p>No users found.</p>
-        </div>
-        {% endif %}
-      {% endif %}
-  {% endblock %}
+    </div>
+  {% else %}
+    <div class="container">
+      <p>No users found.</p>
+    </div>
+  {% endif %}
+{% endif %}
+{% endblock %}
 
   <!-- Include Bootstrap JS and dependencies at the bottom of the body -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
