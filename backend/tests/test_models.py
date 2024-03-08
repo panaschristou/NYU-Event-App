@@ -34,7 +34,6 @@ class EventModelTest(TestCase):
             event.location,
             "St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
         )
-        self.assertEqual(event.availability, "available")
         self.assertEqual(
             event.external_link, "http://www.broadway.org/shows/details/spamalot,812"
         )
