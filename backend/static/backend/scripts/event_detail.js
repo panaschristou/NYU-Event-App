@@ -16,7 +16,6 @@ interestBtn.addEventListener("click", function () {
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
-      // Handle response data
       notInterestBtn.classList.remove("hidden");
       interestBtn.classList.add("hidden");
     })
@@ -40,7 +39,6 @@ notInterestBtn.addEventListener("click", function () {
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
-      // Handle response data
       interestBtn.classList.remove("hidden");
       notInterestBtn.classList.add("hidden");
     })
