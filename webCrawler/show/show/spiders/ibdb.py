@@ -36,7 +36,9 @@ class IbdbSpider(scrapy.Spider):
     def parseBroadwayProduction(self, response):
         sinfo = response.meta["sinfo"]
 
-        sinfo["category"] = response.css(".tag-block-compact i::text").getall()
+        sinfo["category"] = response.css(
+            ".hide-on-med-and-up .tag-block-compact i::text"
+        ).getall()
         sinfo["external_links"] = []
         for el in response.css(".prod-links a"):
             sinfo["external_links"].append(
@@ -48,7 +50,9 @@ class IbdbSpider(scrapy.Spider):
 
         sinfo["open_date"] = itemPure(response.css(".l5 .xt-main-title::text").get())
         sinfo["close_date"] = itemPure(
-            response.css(".vertical-divider .xt-main-title::text").get()
+            response.css(
+                ".xt-info-block>.wrapper:nth-child(1) .col:nth-child(2) .xt-main-title::text"
+            ).get()
         )
         if (
             len(sinfo["external_links"]) > 0
@@ -68,7 +72,7 @@ class IbdbSpider(scrapy.Spider):
         location = location.css("a::text,::text").getall()[:3]
         location = list(map(str.strip, location))
         sinfo["location"] = ", ".join(location)
-        sinfo["description"] = itemPure(response.css(".black-text p::text").get())
+        sinfo["description"] = "".join(response.css(".black-text p::text").getall())
         yield sinfo
 
     def parseTourProduction(self, response):
