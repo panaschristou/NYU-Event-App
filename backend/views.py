@@ -54,6 +54,10 @@ def user_detail(request, username):
     return render(request, "user_detail.html", {"user": user})
 
 
+def interest_list(request):
+    return render(request, "interest_list.html")
+
+
 def search_results(request):
     search_query = request.GET.get("search_events", "").strip()
     search_type = request.GET.get("search_type", "Shows")
