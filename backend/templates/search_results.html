@@ -1,19 +1,92 @@
-{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Results</title>
+    <!-- Include Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link href="{% static 'backend/css/index_style.css' %}" rel="stylesheet" />
+  </head>
 
-{% block content %}
-  <h1>Search Results</h1>
+  {% block content %}
+  <nav class="navbar navbar-expand-lg navbar-dark header">
+    <a class="navbar-brand" href="#">Search Results</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'index' %}">Homepage</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">User Home</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="search-bar-container">
+    <form action="{% url 'search_results' %}" method="get" class="search-form">
+      <div class="input-group mb-1 mt-3">
+        <input
+          type="text"
+          class="form-control search-input mr-sm-2"
+          name="search_events"
+          placeholder="Search events..."
+          aria-label="Search"
+          value="{{ request.GET.search_events }}"
+        />
+        <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">
+          Search
+        </button>
+      </div>
+    </form>
+  </div>
+
+    <div class="container mt-3 mb-5">
+        <div class="row">
+            <div class="col">
+                <select class="custom-select" id="filter">
+                    <option selected>All Shows</option>
+                </select>
+            </div>
+            <div class="col">
+                <select class="custom-select" id="sort">
+                    <option selected>Most Popular</option>
+                </select>
+            </div>
+        </div>
+    </div> 
 
   {% if events %}
-    <ul>
-      {% for event in events %}
-        <li>
-          <a href="{% url 'event_detail' event.id %}" class="btn btn-outline-dark">{{ event.title }}</a>
-        </li>
-      {% endfor %}
-    </ul>
+  <div class="container">
+        <div class="events-container">
+            {% for event in events %}
+            <div class="event-card">
+                <a href="{% url 'event_detail' event.id %}">
+                    <img
+                    src="{{ event.image_url }}"
+                    class="card-img-top"
+                    alt="{{ event.title }}"
+                    style="cursor: pointer; object-fit: cover"
+                    />
+                    <h5 class="card-title">{{ event.title }}</h5>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+  </div>
   {% else %}
+  <div class="container">
     <p>No events found.</p>
-  {% endif %}
+  </div>
+  {% endif %} {% endblock %}
 
-  <a href="{% url 'index' %}" class="btn btn-primary">Back to Events List</a>
-{% endblock %}
+  <!-- Include Bootstrap JS and dependencies at the bottom of the body -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</html>
