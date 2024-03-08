@@ -33,7 +33,6 @@ class Review(models.Model):
 class UserEvent(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    liked = models.BooleanField(default=False)
     saved = models.BooleanField(default=False)
 
 
