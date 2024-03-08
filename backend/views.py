@@ -13,12 +13,12 @@ from django.core.mail import EmailMessage
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.http import require_POST, require_GET
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from django.db.models import Q
 
 
 def index(request):
-    events = Event.objects.all().order_by(
-        "-title"
-    )  # Assuming you want the newest events first
+    events = Event.objects.all().order_by("title")
     return render(request, "index.html", {"events": events})
 
 
@@ -40,11 +40,26 @@ def event_detail(request, event_id):
 
 def search_results(request):
     search_query = request.GET.get("search_events", "").strip()
+    availability_filter = request.GET.get('availability', 'All')
+    now = timezone.now()
+
     events = (
         Event.objects.filter(title__icontains=search_query)
         if search_query
         else Event.objects.none()
     )
+
+    if availability_filter != 'All':
+        if availability_filter == 'Past':
+            events = events.filter(close_date__isnull=False, close_date__lt=now)
+        elif availability_filter == 'Current':
+            events = events.filter(
+            Q(open_date__lte=now, close_date__gte=now) |
+            Q(open_date__lte=now, close_date__isnull=True)
+            )
+        elif availability_filter == 'Upcoming':
+            events = events.filter(open_date__gt=now)
+
     return render(request, "search_results.html", {"events": events})
 
 
@@ -66,7 +81,22 @@ def index_with_categories_view(request):
 
 
 def events_by_category(request, category):
+    availability_filter = request.GET.get('availability', 'All')
+    now = timezone.now()
+    
     events = Event.objects.filter(category__icontains=category)
+
+    if availability_filter != 'All':
+        if availability_filter == 'Past':
+            events = events.filter(close_date__isnull=False, close_date__lt=now)
+        elif availability_filter == 'Current':
+            events = events.filter(
+            Q(open_date__lte=now, close_date__gte=now) |
+            Q(open_date__lte=now, close_date__isnull=True)
+            )
+        elif availability_filter == 'Upcoming':
+            events = events.filter(open_date__gt=now)
+
     return render(
         request,
         "events_by_category.html",
@@ -162,6 +192,7 @@ def login_user(request):
             messages.success(request, ("There Was An Error Logging In, Try Again..."))
             return redirect("login")
     else:
+<<<<<<< HEAD
         return render(request, "authenticate/login.html", {})
 
 
@@ -211,3 +242,6 @@ def view_interest_list(request):
         UserEvent.objects.all(user=User.objects.get(pk=request.user.id))
     else:
         raise Http404("Unauthorized Operation")
+=======
+        return render(request, "authenticate/login.html", {})
+>>>>>>> adfc2838 (removed "availability" field from the event model && implemented filter by availability functionality)
