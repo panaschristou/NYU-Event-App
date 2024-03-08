@@ -34,7 +34,7 @@
         <div class="heart-button-container text-right">
           {% if user.is_authenticated %}
           <button
-            class="heart-button"
+            class="heart-button {% if interested %} hidden {% endif %}"
             id="add-interest"
             aria-label="Save event"
           >
@@ -52,7 +52,7 @@
             </svg>
           </button>
           <button
-            class="heart-button hidden"
+            class="heart-button {% if not interested %} hidden {% endif %}"
             id="remove-interest"
             aria-label="Save event"
           >

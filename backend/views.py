@@ -23,9 +23,19 @@ def index(request):
 
 
 def event_detail(request, event_id):
+    User = get_user_model()
+    interested = UserEvent.objects.filter(
+        event=Event.objects.get(pk=event_id),
+        user=User.objects.get(pk=request.user.id),
+    ).exists()
+
     event = get_object_or_404(Event, pk=event_id)
     category = request.GET.get("category")
-    return render(request, "event_detail.html", {"event": event, "category": category})
+    return render(
+        request,
+        "event_detail.html",
+        {"event": event, "category": category, "interested": interested},
+    )
 
 
 def search_results(request):
