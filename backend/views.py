@@ -27,7 +27,7 @@ def event_detail(request, event_id):
 
 def search_results(request):
     search_query = request.GET.get("search_events", "").strip()
-    availability_filter = request.GET.get('availability', 'All')
+    availability_filter = request.GET.get("availability", "All")
     now = timezone.now()
 
     events = (
@@ -36,15 +36,15 @@ def search_results(request):
         else Event.objects.none()
     )
 
-    if availability_filter != 'All':
-        if availability_filter == 'Past':
+    if availability_filter != "All":
+        if availability_filter == "Past":
             events = events.filter(close_date__isnull=False, close_date__lt=now)
-        elif availability_filter == 'Current':
+        elif availability_filter == "Current":
             events = events.filter(
-            Q(open_date__lte=now, close_date__gte=now) |
-            Q(open_date__lte=now, close_date__isnull=True)
+                Q(open_date__lte=now, close_date__gte=now)
+                | Q(open_date__lte=now, close_date__isnull=True)
             )
-        elif availability_filter == 'Upcoming':
+        elif availability_filter == "Upcoming":
             events = events.filter(open_date__gt=now)
 
     return render(request, "search_results.html", {"events": events})
@@ -68,20 +68,20 @@ def index_with_categories_view(request):
 
 
 def events_by_category(request, category):
-    availability_filter = request.GET.get('availability', 'All')
+    availability_filter = request.GET.get("availability", "All")
     now = timezone.now()
-    
+
     events = Event.objects.filter(category__icontains=category)
 
-    if availability_filter != 'All':
-        if availability_filter == 'Past':
+    if availability_filter != "All":
+        if availability_filter == "Past":
             events = events.filter(close_date__isnull=False, close_date__lt=now)
-        elif availability_filter == 'Current':
+        elif availability_filter == "Current":
             events = events.filter(
-            Q(open_date__lte=now, close_date__gte=now) |
-            Q(open_date__lte=now, close_date__isnull=True)
+                Q(open_date__lte=now, close_date__gte=now)
+                | Q(open_date__lte=now, close_date__isnull=True)
             )
-        elif availability_filter == 'Upcoming':
+        elif availability_filter == "Upcoming":
             events = events.filter(open_date__gt=now)
 
     return render(
