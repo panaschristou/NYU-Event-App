@@ -6,6 +6,7 @@ from django.contrib.messages import get_messages
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.contrib.auth import get_user_model
 import datetime
 
 
@@ -42,6 +43,13 @@ class EventViewsTestCase(TestCase):
 
         response = self.client.get(reverse("event_detail", args=(9999,)))
         self.assertEqual(response.status_code, 404)
+
+    def test_user_detail_view(self):
+        url = reverse("user_detail", kwargs={"username": self.user.username})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "user_detail.html")
+        self.assertEqual(response.context["user"].username, "testuser@nyu.edu")
 
     def test_search_results_view(self):
         response = self.client.get(

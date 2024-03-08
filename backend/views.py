@@ -48,8 +48,17 @@ def event_detail(request, event_id):
     )
 
 
+def user_detail(request, username):
+    User = get_user_model()
+    user = get_object_or_404(User, username=username)
+    return render(request, "user_detail.html", {"user": user})
+
+
 def search_results(request):
     search_query = request.GET.get("search_events", "").strip()
+    search_type = request.GET.get("search_type", "Shows")
+    User = get_user_model()
+
     availability_filter = request.GET.get("availability", "All")
     now = timezone.now()
 
@@ -58,19 +67,32 @@ def search_results(request):
         if search_query
         else Event.objects.none()
     )
+    users = User.objects.none()
 
-    if availability_filter != "All":
-        if availability_filter == "Past":
-            events = events.filter(close_date__isnull=False, close_date__lt=now)
-        elif availability_filter == "Current":
-            events = events.filter(
-                Q(open_date__lte=now, close_date__gte=now)
-                | Q(open_date__lte=now, close_date__isnull=True)
+    if search_query:
+        if search_type == "Shows":
+            if availability_filter != "All":
+                if availability_filter == "Past":
+                    events = events.filter(close_date__isnull=False, close_date__lt=now)
+                elif availability_filter == "Current":
+                    events = events.filter(
+                        Q(open_date__lte=now, close_date__gte=now)
+                        | Q(open_date__lte=now, close_date__isnull=True)
+                    )
+            elif availability_filter == "Upcoming":
+                events = events.filter(open_date__gt=now)
+        elif search_type == "Users":
+            users = User.objects.filter(
+                Q(username__icontains=search_query) | Q(email__icontains=search_query)
             )
-        elif availability_filter == "Upcoming":
-            events = events.filter(open_date__gt=now)
 
-    return render(request, "search_results.html", {"events": events})
+    context = {
+        "events": events if search_type == "Shows" else None,
+        "users": users if search_type == "Users" else None,
+        "search_query": search_query,
+        "search_type": search_type,
+    }
+    return render(request, "search_results.html", context)
 
 
 EVENT_CATEGORIES = [

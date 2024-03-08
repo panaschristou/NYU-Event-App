@@ -44,6 +44,10 @@
           aria-label="Search"
           value="{{ request.GET.search_events }}"
         />
+        <select class="custom-select" id="filter" name="search_type">
+          <option selected>Shows</option>
+          <option>Users</option>
+      </select>
         <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">
           Search
         </button>

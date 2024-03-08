@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.contrib.auth import get_user_model
 from backend.models import Event
 import datetime
 
@@ -47,6 +48,11 @@ class TestUrls(TestCase):
     def test_event_detail_url_is_resolved(self):
         url = reverse("event_detail", kwargs={"event_id": self.event.pk})
         self.assertEqual(resolve(url).func, views.event_detail)
+
+    def test_user_detail_url_is_resolved(self):
+        user = get_user_model().objects.create(username="john_doe", password="12345")
+        url = reverse("user_detail", kwargs={"username": user.username})
+        self.assertEqual(resolve(url).func, views.user_detail)
 
     def test_search_results_url_is_resolved(self):
         url = reverse("search_results")
