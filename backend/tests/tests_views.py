@@ -22,7 +22,7 @@ class EventViewsTestCase(TestCase):
             category="Musical, Comedy, Revival, Broadway",
             description="Lovingly ripped from the film classic",
             open_date=datetime.date(2023, 11, 16),
-            close_date=datetime.date(2023, 10, 31),
+            close_date=datetime.date(2024, 4, 7),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
             external_link="http://www.broadway.org/shows/details/spamalot,812",
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
