@@ -31,4 +31,3 @@ class UserRegistrationForm(UserCreationForm):
             user.save()
 
         return user
-    
