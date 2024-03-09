@@ -65,3 +65,7 @@ class TestUrls(TestCase):
     def test_events_by_category_url_is_resolved(self):
         url = reverse("events_by_category", kwargs={"category": "music"})
         self.assertEqual(resolve(url).func, views.events_by_category)
+
+    def test_interst_list_url_is_resolved(self):
+        url = reverse("interest_list")
+        self.assertEqual(resolve(url).func, views.interest_list)

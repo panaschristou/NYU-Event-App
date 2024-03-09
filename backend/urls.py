@@ -6,6 +6,7 @@ from . import views
 urlpatterns = [
     path("login", views.login_user, name="login"),
     path("register", views.register_user, name="register"),
+    path("interest-list", views.interest_list, name="interest_list"),
     path("activate/<uidb64>/<token>", views.activate, name="activate"),
     path("events/<int:event_id>/", views.event_detail, name="event_detail"),
     path("users/<str:username>/", views.user_detail, name="user_detail"),

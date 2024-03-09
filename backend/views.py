@@ -54,6 +54,18 @@ def user_detail(request, username):
     return render(request, "user_detail.html", {"user": user})
 
 
+def interest_list(request):
+    User = get_user_model()
+    interestList = []
+    if request.user.id:
+        interestList = UserEvent.objects.filter(
+            user=User.objects.get(pk=request.user.id),
+        )
+    interestEventIds = [userEvent.event_id for userEvent in interestList]
+    interestEvents = Event.objects.filter(id__in=interestEventIds)
+    return render(request, "interest_list.html", {"interestEvents": interestEvents})
+
+
 def search_results(request):
     search_query = request.GET.get("search_events", "").strip()
     search_type = request.GET.get("search_type", "Shows")
@@ -270,6 +282,6 @@ def remove_interest(request, event_id):
 def view_interest_list(request):
     if request.user.is_authenticated:
         User = get_user_model()
-        UserEvent.objects.all(user=User.objects.get(pk=request.user.id))
+        UserEvent.objects.filter(user=User.objects.get(pk=request.user.id))
     else:
         raise Http404("Unauthorized Operation")
