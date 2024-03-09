@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.contrib.auth import get_user_model
 from backend.models import Event
 import datetime
 from django.http import HttpResponseRedirect
@@ -51,6 +52,11 @@ class TestUrls(TestCase):
         url = reverse("event_detail", kwargs={"event_id": self.event.pk})
         self.assertEqual(resolve(url).func, views.event_detail)
 
+    def test_user_detail_url_is_resolved(self):
+        user = get_user_model().objects.create(username="john_doe", password="12345")
+        url = reverse("user_detail", kwargs={"username": user.username})
+        self.assertEqual(resolve(url).func, views.user_detail)
+
     def test_search_results_url_is_resolved(self):
         url = reverse("search_results")
         self.assertEqual(resolve(url).func, views.search_results)
@@ -77,3 +83,7 @@ class TestUrls(TestCase):
         reset_password_complete_url = reverse("password_reset_complete")
         response = self.client.get(reset_password_complete_url)
         self.assertEqual(response.status_code, 200)
+        
+    def test_interst_list_url_is_resolved(self):
+        url = reverse("interest_list")
+        self.assertEqual(resolve(url).func, views.interest_list)

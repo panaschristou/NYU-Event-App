@@ -1,43 +1,79 @@
 body {
-    background-image: url('../img/6063nyu_eventguide_img14.jpeg');
-    background-size: cover;
-    background-position: center center;
-    background-attachment: fixed;
+    background-color: #FFFBF5;
     margin: 0;
     height: 100vh;
-    font-family: 'Open Sans', sans-serif; 
+    font-family: "Trebuchet MS"; 
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #77499e;
+  }
+  
+  .header-brand {
+    font-size: 1.5rem;
+  }
+  
+  .header-user a {
+    color: #762a2a;
+    text-decoration: none;
   }
 
   .event-detail {
-
-    color: white;
-    text-shadow: 2px 2px 4px #000000;
+    color: rgb(68, 66, 66);
     padding-top: 50px
 }
 
 .reviews {
-    color: #333;
+    color: rgb(68, 66, 66);
 }
 .container-transparent {
-    background-color: rgba(145, 136, 136, 0.8); 
-    background-size: cover;
+    background-color: #F7EFE5; 
     border-radius: 30px; 
     padding: 2rem; 
     margin-top: 2rem; 
+    max-width: 800px;
 }
+
 .event-detail .container {
     padding-top: 10px;
     padding-bottom: 50px;
 }
 
 .event-detail img {
-    max-width: 100%;
+    max-width: 30%;
     height: auto;
-    border-radius: 5px;
+    border-radius: 15px;
     margin-bottom: 1rem; 
 }
 
-.score {
-    font-size: 2rem; 
-    color: #fff;
-}
+.event-info p {
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+  
+  .heart-button-container {
+    top: 0;
+    right: 0;
+    padding: 30px;
+  }
+  
+  .heart-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .heart-button svg {
+    fill: #b391d1; 
+    transition: fill 0.3s ease; /* Smooth transition for color change */
+  }
+  
+  .heart-button:hover svg {
+    fill: #563473; 
+  }
+  

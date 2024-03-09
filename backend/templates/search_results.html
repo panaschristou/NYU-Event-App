@@ -24,6 +24,9 @@
         <li class="nav-item">
           <a class="nav-link" href="#">User Home</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'interest_list' %}">Interest List</a>
+        </li>
       </ul>
     </div>
   </nav>
@@ -39,9 +42,14 @@
           aria-label="Search"
           value="{{ request.GET.search_events }}"
         />
+        <select class="custom-select" id="filter" name="search_type">
+          <option {% if search_type == 'Shows' %}selected{% endif %}>Shows</option>
+          <option {% if search_type == 'Users' %}selected{% endif %}>Users</option>
+      </select>
         <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">
           Search
         </button>
+        
       </div>
     </form>
   </div>
@@ -70,6 +78,7 @@
   </div>
   
 
+    {% if search_type == 'Shows' %}
   {% if events %}
   <div class="container">
     <div class="events-container">
@@ -89,10 +98,31 @@
     </div>
   </div>
   {% else %}
-  <div class="container">
-    <p>No events found.</p>
-  </div>
-  {% endif %} {% endblock %}
+    <div class="container">
+      <p>No events found.</p>
+    </div>
+  {% endif %}
+{% elif search_type == 'Users' %}
+  {% if users %}
+    <div class="container">
+      <div class="events-container">
+        {% for user in users %}
+          <div class="event-card">
+            <a href="{% url 'user_detail' user.username %}">
+              <img src="{% static 'backend/img/generic_user_image.png' %}" alt="User Image" class="card-img-top" alt="{{ user.username }}" style="cursor: pointer; object-fit: cover" />
+              <h5 class="card-title">{{ user.username }}</h5>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="container">
+      <p>No users found.</p>
+    </div>
+  {% endif %}
+{% endif %}
+{% endblock %}
 
   <!-- Include Bootstrap JS and dependencies at the bottom of the body -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
