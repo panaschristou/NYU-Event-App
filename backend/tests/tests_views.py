@@ -17,20 +17,45 @@ class EventViewsTestCase(TestCase):
         self.user = User.objects.create_user(
             username="testuser@nyu.edu", password="12345Password!"
         )
-        self.event = Event.objects.create(
-            title="Spamalot",
-            category="Musical, Comedy, Revival, Broadway",
-            description="Lovingly ripped from the film classic",
-            open_date=datetime.date(2023, 11, 16),
-            close_date=datetime.date(2024, 4, 7),
-            location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
-            external_link="http://www.broadway.org/shows/details/spamalot,812",
-            image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
-            avg_rating=0,  # Assuming initial avg_rating
+
+        # Create an event that is in the past
+        Event.objects.create(
+            title="Past Event",
+            category="Musical",
+            open_date=datetime.date(2022, 1, 1),
+            close_date=datetime.date(2022, 1, 31),
+            location="Past Location",
+            external_link="http://www.example.com/past",
+            image_url="https://www.example.com/image_past.jpg",
+            avg_rating=0,
         )
 
-        self.event_id = self.event.pk
-        self.category = self.event.category
+        # Create an event that is current
+        today = datetime.date.today()
+        Event.objects.create(
+            title="Current Event",
+            category="Comedy",
+            open_date=today - datetime.timedelta(days=10),
+            close_date=today + datetime.timedelta(days=10),
+            location="Current Location",
+            external_link="http://www.example.com/current",
+            image_url="https://www.example.com/image_current.jpg",
+            avg_rating=0,
+        )
+
+        # Create an event that is in the future
+        Event.objects.create(
+            title="Upcoming Event",
+            category="Revival",
+            open_date=datetime.date.today() + datetime.timedelta(days=30),
+            close_date=datetime.date.today() + datetime.timedelta(days=60),
+            location="Upcoming Location",
+            external_link="http://www.example.com/upcoming",
+            image_url="https://www.example.com/image_upcoming.jpg",
+            avg_rating=0,
+        )
+
+        self.category = "Musical, Comedy, Revival"
 
     def test_index_view(self):
         response = self.client.get(reverse("index"))
