@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from backend.models import Event, User
+from backend.models import Event, User, UserEvent
 from django.core import mail
 from django.contrib.messages import get_messages
 from django.contrib.auth.tokens import default_token_generator
@@ -55,6 +55,10 @@ class EventViewsTestCase(TestCase):
             avg_rating=0,
         )
 
+        # add current_event and upcoming_event to user interest list
+        UserEvent.objects.create(event=self.current_event, user=self.user, saved=True)
+        UserEvent.objects.create(event=self.upcoming_event, user=self.user, saved=True)
+
         self.category = "Musical, Comedy, Revival"
 
     def test_index_view(self):
@@ -76,6 +80,17 @@ class EventViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "user_detail.html")
         self.assertEqual(response.context["user"].username, "testuser@nyu.edu")
+
+    def test_interest_list_view(self):
+        response = self.client.get(reverse("interest_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "interest_list.html")
+
+        # Test that interestEvents contains the correct interested events of the user
+        interestEvents = response.context["interestEvents"]
+        testIds = [self.current_event.id, self.upcoming_event.id]
+        for i in range(len(interestEvents)):
+            self.assertEqual(interestEvents[i].id, testIds[i])
 
     def test_search_results_view(self):
         current_date = timezone.now().date()
