@@ -63,7 +63,7 @@ class EventViewsTestCase(TestCase):
         self.assertTemplateUsed(response, "index.html")
 
     def test_event_detail_view(self):
-        response = self.client.get(reverse("event_detail", args=(self.event_id,)))
+        response = self.client.get(reverse("event_detail", args=(self.past_event.id,)))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "event_detail.html")
 
