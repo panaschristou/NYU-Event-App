@@ -5,6 +5,7 @@ from . import views
 # app_name = 'backend'
 urlpatterns = [
     path("login", views.login_user, name="login"),
+    path("logout", views.logout_user, name="logout"),
     path("register", views.register_user, name="register"),
     path("activate/<uidb64>/<token>", views.activate, name="activate"),
     path("events/<int:event_id>/", views.event_detail, name="event_detail"),

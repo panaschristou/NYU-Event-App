@@ -1,12 +1,15 @@
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.urls import reverse, resolve
 from backend import views
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from backend.models import Event
 import datetime
+from django.http import HttpResponseRedirect
 
 
 class TestUrls(TestCase):
@@ -59,3 +62,18 @@ class TestUrls(TestCase):
     def test_events_by_category_url_is_resolved(self):
         url = reverse("events_by_category", kwargs={"category": "music"})
         self.assertEqual(resolve(url).func, views.events_by_category)
+
+    def test_logout_url_is_resolved(self):
+        url = reverse("logout")
+        self.assertEqual(resolve(url).func, views.logout_user)
+
+    def test_reset_password_url(self):
+        reset_password_url = reverse("reset_password")
+        response = self.client.get(reset_password_url)
+        self.assertEqual(response.status_code, 200)
+        reset_password_sent_url = reverse("password_reset_done")
+        response = self.client.get(reset_password_sent_url)
+        self.assertEqual(response.status_code, 200)
+        reset_password_complete_url = reverse("password_reset_complete")
+        response = self.client.get(reset_password_complete_url)
+        self.assertEqual(response.status_code, 200)
