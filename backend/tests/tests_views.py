@@ -53,11 +53,16 @@ class EventViewsTestCase(TestCase):
         self.assertEqual(response.context["user"].username, "testuser@nyu.edu")
 
     def test_search_results_view(self):
-        response = self.client.get(reverse("search_results") + "?search_events=Spamalot")
+        current_date = timezone.now().date()
+        response = self.client.get(
+            reverse("search_results") + "?search_events=Spamalot"
+        )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "search_results.html")
 
-        response = self.client.get(reverse("search_results") + "?search_events=Nonexistent")
+        response = self.client.get(
+            reverse("search_results") + "?search_events=Nonexistent"
+        )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "search_results.html")
 
@@ -67,8 +72,12 @@ class EventViewsTestCase(TestCase):
         )
         self.assertEqual(past_response.status_code, 200)
         self.assertTemplateUsed(past_response, "search_results.html")
-        # Assert that past events are returned
-        self.assertTrue(all(event.close_date < timezone.now() for event in past_response.context['events']))
+        self.assertTrue(
+            all(
+                event.close_date < current_date
+                for event in past_response.context["events"]
+            )
+        )
 
         # Test the availability filter for current events
         current_response = self.client.get(
@@ -76,12 +85,15 @@ class EventViewsTestCase(TestCase):
         )
         self.assertEqual(current_response.status_code, 200)
         self.assertTemplateUsed(current_response, "search_results.html")
-        # Assert that current events are returned
-        now = timezone.now()
-        self.assertTrue(all(
-            (event.open_date <= now and (event.close_date is None or event.close_date >= now))
-            for event in current_response.context['events']
-        ))
+        self.assertTrue(
+            all(
+                (
+                    event.open_date <= current_date
+                    and (event.close_date is None or event.close_date >= current_date)
+                )
+                for event in current_response.context["events"]
+            )
+        )
 
         # Test the availability filter for upcoming events
         upcoming_response = self.client.get(
@@ -89,8 +101,12 @@ class EventViewsTestCase(TestCase):
         )
         self.assertEqual(upcoming_response.status_code, 200)
         self.assertTemplateUsed(upcoming_response, "search_results.html")
-        # Assert that upcoming events are returned
-        self.assertTrue(all(event.open_date > timezone.now() for event in upcoming_response.context['events']))
+        self.assertTrue(
+            all(
+                event.open_date > current_date
+                for event in upcoming_response.context["events"]
+            )
+        )
 
     def test_index_with_categories_view(self):
         response = self.client.get(reverse("index"))
@@ -98,6 +114,7 @@ class EventViewsTestCase(TestCase):
         self.assertTemplateUsed(response, "index.html")
 
     def test_events_by_category_view(self):
+        today = timezone.now().date()
         response = self.client.get(reverse("events_by_category", args=(self.category,)))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "events_by_category.html")
@@ -112,27 +129,39 @@ class EventViewsTestCase(TestCase):
         )
         self.assertEqual(past_response.status_code, 200)
         self.assertTemplateUsed(past_response, "events_by_category.html")
-        self.assertTrue(all(event.close_date < timezone.now() for event in past_response.context['events']))
+        self.assertTrue(
+            all(event.close_date < today for event in past_response.context["events"])
+        )
 
         # Test the availability filter for current events
         current_response = self.client.get(
-            reverse("events_by_category", args=(self.category,)) + "?availability=Current"
+            reverse("events_by_category", args=(self.category,))
+            + "?availability=Current"
         )
         self.assertEqual(current_response.status_code, 200)
         self.assertTemplateUsed(current_response, "events_by_category.html")
-        now = timezone.now()
-        self.assertTrue(all(
-            (event.open_date <= now and (event.close_date is None or event.close_date >= now))
-            for event in current_response.context['events']
-        ))
+        self.assertTrue(
+            all(
+                (
+                    event.open_date <= today
+                    and (event.close_date is None or event.close_date >= today)
+                )
+                for event in current_response.context["events"]
+            )
+        )
 
         # Test the availability filter for upcoming events
         upcoming_response = self.client.get(
-            reverse("events_by_category", args=(self.category,)) + "?availability=Upcoming"
+            reverse("events_by_category", args=(self.category,))
+            + "?availability=Upcoming"
         )
         self.assertEqual(upcoming_response.status_code, 200)
         self.assertTemplateUsed(upcoming_response, "events_by_category.html")
-        self.assertTrue(all(event.open_date > timezone.now() for event in upcoming_response.context['events']))
+        self.assertTrue(
+            all(
+                event.open_date > today for event in upcoming_response.context["events"]
+            )
+        )
 
     def test_register_user_view(self):
         form_data = {

@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("backend", "0003_remove_event_availability"),
         ("backend", "0003_remove_userevent_liked"),
