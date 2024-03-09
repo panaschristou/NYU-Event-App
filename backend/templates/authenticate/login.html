@@ -42,11 +42,11 @@
           <label for="exampleInputPassword1" class="form-label">Password</label>
           <input type="password" class="form-control" name="password" />
         </div>
-        <!-- <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+        <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1" name="remember_me">
         <label class="form-check-label" for="exampleCheck1">Remember me</label>
-        <a href="#" class="float-right">Forgot Password?</a>
-      </div> -->
+        <a href="{% url 'reset_password' %}" class="float-right">Forgot Password?</a>
+        </div>
         <button type="submit" class="btn btn-secondary">Login</button>
         <a href="http://127.0.0.1:8000/user/register" class="btn btn-link"
           >Sign Up</a
