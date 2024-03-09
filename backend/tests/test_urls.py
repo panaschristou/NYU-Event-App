@@ -83,7 +83,7 @@ class TestUrls(TestCase):
         reset_password_complete_url = reverse("password_reset_complete")
         response = self.client.get(reset_password_complete_url)
         self.assertEqual(response.status_code, 200)
-        
+
     def test_interst_list_url_is_resolved(self):
         url = reverse("interest_list")
         self.assertEqual(resolve(url).func, views.interest_list)
