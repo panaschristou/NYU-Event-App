@@ -19,7 +19,7 @@ class EventViewsTestCase(TestCase):
         )
 
         # Create an event that is in the past
-        Event.objects.create(
+        self.past_event = Event.objects.create(
             title="Past Event",
             category="Musical",
             open_date=datetime.date(2022, 1, 1),
@@ -32,7 +32,7 @@ class EventViewsTestCase(TestCase):
 
         # Create an event that is current
         today = datetime.date.today()
-        Event.objects.create(
+        self.current_event = Event.objects.create(
             title="Current Event",
             category="Comedy",
             open_date=today - datetime.timedelta(days=10),
@@ -44,7 +44,7 @@ class EventViewsTestCase(TestCase):
         )
 
         # Create an event that is in the future
-        Event.objects.create(
+        self.upcoming_event = Event.objects.create(
             title="Upcoming Event",
             category="Revival",
             open_date=datetime.date.today() + datetime.timedelta(days=30),
