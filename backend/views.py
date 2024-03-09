@@ -249,6 +249,7 @@ def logout_user(request):
     messages.success(request, ("You are successfully logged out!"))
     return redirect("index")
 
+
 # AJAX
 # Interest list
 @require_POST
