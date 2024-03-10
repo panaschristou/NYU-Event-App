@@ -73,12 +73,12 @@ body {
 }
 
 .heart-button svg {
-  fill: #b391d1;
+  fill: #77499e;;
   transition: fill 0.3s ease; /* Smooth transition for color change */
 }
 
 .heart-button:hover svg {
-  fill: #563473;
+  fill: #77499e;;
 }
 
 .hidden {
