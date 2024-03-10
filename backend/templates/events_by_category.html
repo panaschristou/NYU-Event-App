@@ -17,21 +17,32 @@
   <nav class="navbar navbar-expand-lg navbar-dark header">
     <a class="navbar-brand" href="#">Events in "{{ current_category }}"</a>
     <div class="collapse navbar-collapse">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'index' %}">Homepage</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">User Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'interest_list' %}">Interest List</a>
-        </li>
-      </ul>
-    </div>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}">Homepage</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="#">User Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'interest_list' %}">Interest List</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+            {% endif %}
+        </ul>
+      </div>
   </nav>
 
-  <div class="container mt-3 mb-5">
+  <div class="container mt-5 mb-5">
     <form method="get">
       <input type="hidden" name="search_events" value="{{ request.GET.search_events }}"/>
       <div class="row">

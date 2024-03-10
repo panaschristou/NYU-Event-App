@@ -16,7 +16,11 @@ body {
     line-height: 2;
   }
   .form-control {
-    border-radius: 20px;
+    width: 100%;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 15px;
   }
   .btn-secondary {
     border-radius: 20px;
@@ -43,6 +47,7 @@ body {
   .btn-link:hover {
     color: #ffffff; 
     text-decoration: none; 
+    line-height: 1.5;
   }
 
   .login-header {

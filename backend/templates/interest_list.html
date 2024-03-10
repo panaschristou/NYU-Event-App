@@ -24,19 +24,26 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'index' %}">Homepage</a>
           </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          {% if user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="#">User Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'interest_list' %}"
-              >Interest List</a
-            >
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
           </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+          </li>
+          {% endif %}
         </ul>
       </div>
     </nav>
+
     {% if interestEvents %}
-    <div class="container">
+    <div class="container mt-5">
       <div class="events-container">
         {% for event in interestEvents %}
         <div class="event-card">
@@ -78,8 +85,8 @@
       </div>
     </div>
     {% else %}
-    <div class="container">
-      <p>No events found in this category.</p>
+    <div class="container mt-5">
+      <p>You haven't saved any event yet!</p>
     </div>
     {% endif %}
   </body>
