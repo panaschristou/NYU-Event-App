@@ -15,20 +15,31 @@
 
   {% block content %}
   <nav class="navbar navbar-expand-lg navbar-dark header">
-    <a class="navbar-brand" href="#">Search Results</a>
+    <a class="navbar-brand" >Search Results</a>
     <div class="collapse navbar-collapse">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'index' %}">Homepage</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">User Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'interest_list' %}">Interest List</a>
-        </li>
-      </ul>
-    </div>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}">Homepage</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="#">User Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'interest_list' %}">Interest List</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+            {% endif %}
+        </ul>
+      </div>
   </nav>
 
   <div class="search-bar-container">
@@ -54,6 +65,10 @@
     </form>
   </div>
 
+
+    {% if search_type == 'Shows' %}
+  {% if events %}
+
   <div class="container mt-3 mb-5">
     <form method="get">
       <input type="hidden" name="search_events" value="{{ request.GET.search_events }}"/>
@@ -76,10 +91,7 @@
       </div>
     </form>  
   </div>
-  
 
-    {% if search_type == 'Shows' %}
-  {% if events %}
   <div class="container">
     <div class="events-container">
       {% for event in events %}
@@ -102,14 +114,16 @@
       <p>No events found.</p>
     </div>
   {% endif %}
+
+
 {% elif search_type == 'Users' %}
   {% if users %}
-    <div class="container">
-      <div class="events-container">
+    <div class="container mt-5">
+      <div class="users-container">
         {% for user in users %}
-          <div class="event-card">
+          <div class="user-card">
             <a href="{% url 'user_detail' user.username %}">
-              <img src="{% static 'backend/img/generic_user_image.png' %}" alt="User Image" class="card-img-top" alt="{{ user.username }}" style="cursor: pointer; object-fit: cover" />
+              <img src="{% static 'backend/img/generic_user_image.png' %}" alt="User Image" class="user-card-img" alt="{{ user.username }}" style="cursor: pointer; object-fit: cover" />
               <h5 class="card-title">{{ user.username }}</h5>
             </a>
           </div>

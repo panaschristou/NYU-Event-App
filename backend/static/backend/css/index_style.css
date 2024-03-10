@@ -110,6 +110,13 @@ body {
     color: darkgray; 
   }
 
+  .event-card:hover .card-img-top {
+    filter: brightness(0.5);
+    -webkit-transition: 400ms ease 100ms;
+    -moz-transition: 400ms ease 100ms;
+    transition: 400ms ease 100ms;
+  }
+
   .btn-outline-dark {
     color: #77499e; 
     border-color: #77499e; 
@@ -121,3 +128,26 @@ body {
     background-color: #77499e; 
     border-color: #77499e;
   }
+
+  .users-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+    gap: 1rem; 
+    justify-content: center;
+    align-items: start;
+  }
+  
+  .user-card {
+    overflow: hidden;
+    width: 125px; 
+    height: 188px; 
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .user-card-img {
+    width: 100%; 
+    height: auto;
+  }
+  
+

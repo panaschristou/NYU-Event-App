@@ -43,6 +43,7 @@ body {
   .btn-link:hover {
     color: #ffffff; 
     text-decoration: none; 
+    line-height: 1.5;
   }
 
   .login-header {
