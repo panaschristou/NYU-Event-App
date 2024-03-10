@@ -23,21 +23,20 @@ body {
 
 /* Style the form inputs to match the login page */
 .form-control {
-    border-radius: 20px;
+    border-radius: 15px;
     border: 1px solid #ccc; 
     padding: 10px;
-    margin-bottom: 15px; /* Space between form fields */
+    margin-bottom: 15px; 
     width: 100%; 
   }
   
-  /* Style the submit button to match the login page */
   .btn-secondary {
     border-radius: 20px;
     background-color: #ffffff;
     border: none;
     padding: 10px 20px;
     color: rgb(68, 66, 66);
-    margin-top: 20px; /* Space above the button */
+    margin-top: 20px; 
   }
 
   .btn-secondary:hover {
