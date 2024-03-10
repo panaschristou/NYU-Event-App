@@ -72,7 +72,7 @@ class IbdbSpider(scrapy.Spider):
         location = location.css("a::text,::text").getall()[:3]
         location = list(map(str.strip, location))
         sinfo["location"] = ", ".join(location)
-        sinfo["description"] = "".join(response.css(".black-text p::text").getall())
+        sinfo["description"] = "".join(response.css(".black-text p *::text").getall())
         yield sinfo
 
     def parseTourProduction(self, response):
