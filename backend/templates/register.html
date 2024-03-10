@@ -17,12 +17,26 @@
           </div>
      {% endif %}	
 
+	 <div class="login-header mt-5">
+		<p>Welcome to the NYU Broadway Guide</p>
+	  </div>
+
     <div class="register-container">      
             <h1>Register</h1>
 			
             <form action="{% url 'register' %}" method=POST>
 				{% csrf_token %}
 				
+				<div class="form-group">
+					<label for="id_first_name">First Name:</label>
+					<input type="text" name="first_name" id="id_first_name" class="form-control" required>
+					{{ form.first_name.errors }}
+				</div>
+				<div class="form-group">
+					<label for="id_last_name">Last Name:</label>
+					<input type="text" name="last_name" id="id_last_name" class="form-control" required>
+					{{ form.last_name.errors }}
+				</div>
 				<div class="form-group">
 					<label for="id_username">Username:</label>
 					<input type="text" name="username" id="id_username" class="form-control" required>
@@ -42,7 +56,7 @@
 					<label for="id_password2">Password confirmation:</label>
 					<input type="password" name="password2" id="id_password2" class="form-control" required>
 					{{ form.password2.errors }}
-				</div>
+				</div>				
 				<input type="submit" value="Submit" class="btn btn-secondary">
             </form>
        

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Reset</title>
+  <style>
+    /* Style for form labels */
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+body {
+  margin: 0;
+  height: 100vh;
+  font-family: "Trebuchet MS"; 
+  background-color: #FFFBF5;
+}
+/* Style for form input fields */
+input[type="text"],
+input[type="password"],
+textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  box-sizing: border-box;
+  font-family: "Trebuchet MS"; 
+}
+
+/* Style for submit button */
+{% comment %} button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #45a049;
+}    {% endcomment %}
+.btn-secondary {
+  border-radius: 20px;
+  background-color: #ffffff;
+  border: none;
+  color: rgb(68, 66, 66);
+}
+.btn-secondary:hover {
+  background-color: #1d2122;
+  color: white;
+}
+
+.btn-link {
+  color: #000000;
+  background-color: transparent;
+  text-decoration: underline;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: .25rem;
+  transition: color .15s ease-in-out, background-color .15s ease-in-out,
+              border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+.btn {
+  width: 80px;
+  height: 30px;
+}
+
+.btn-link:hover {
+  color: #ffffff; 
+  text-decoration: none; 
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.card {
+  max-width: 600px;
+  margin: 100px auto;
+  margin-top: 50px;
+  padding: 20px;
+  background-color: #77499e;
+  border-radius: 10px;
+  color: #ffffff;
+  line-height: 2;
+}
+.title {
+  text-align: center;
+  color: #77499e;
+}
+  </style>
+</head>
+<body>
+  <h1 class="title">Enter new password</h1>
+  <div class="container">    
+    <div class="card">
+      {% comment %} <h2>Forgotten your password?</h2> {% endcomment %}
+      <p>Please enter your new password twice so we can verify you typed it in correctly.</p>
+      <div class="form-container">
+        <form class="form" method="POST">
+          {% csrf_token %}
+          {{form.as_p}}
+          {% comment %} <input class="btn btn-secondary" type="submit"> {% endcomment %}
+          <button type="submit" class="btn btn-secondary">Reset</button>
+        </form> 
+      </div>
+    </div>
+  </div>
+</body>
+</html>

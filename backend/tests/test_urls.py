@@ -1,12 +1,16 @@
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.urls import reverse, resolve
 from backend import views
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.contrib.auth import get_user_model
 from backend.models import Event
 import datetime
+from django.http import HttpResponseRedirect
 
 
 class TestUrls(TestCase):
@@ -23,7 +27,6 @@ class TestUrls(TestCase):
             open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
-            availability="available",
             external_link="http://www.broadway.org/shows/details/spamalot,812",
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
             avg_rating=0,  # Assuming initial avg_rating
@@ -49,6 +52,11 @@ class TestUrls(TestCase):
         url = reverse("event_detail", kwargs={"event_id": self.event.pk})
         self.assertEqual(resolve(url).func, views.event_detail)
 
+    def test_user_detail_url_is_resolved(self):
+        user = get_user_model().objects.create(username="john_doe", password="12345")
+        url = reverse("user_detail", kwargs={"username": user.username})
+        self.assertEqual(resolve(url).func, views.user_detail)
+
     def test_search_results_url_is_resolved(self):
         url = reverse("search_results")
         self.assertEqual(resolve(url).func, views.search_results)
@@ -60,3 +68,22 @@ class TestUrls(TestCase):
     def test_events_by_category_url_is_resolved(self):
         url = reverse("events_by_category", kwargs={"category": "music"})
         self.assertEqual(resolve(url).func, views.events_by_category)
+
+    def test_logout_url_is_resolved(self):
+        url = reverse("logout")
+        self.assertEqual(resolve(url).func, views.logout_user)
+
+    def test_reset_password_url(self):
+        reset_password_url = reverse("reset_password")
+        response = self.client.get(reset_password_url)
+        self.assertEqual(response.status_code, 200)
+        reset_password_sent_url = reverse("password_reset_done")
+        response = self.client.get(reset_password_sent_url)
+        self.assertEqual(response.status_code, 200)
+        reset_password_complete_url = reverse("password_reset_complete")
+        response = self.client.get(reset_password_complete_url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_interst_list_url_is_resolved(self):
+        url = reverse("interest_list")
+        self.assertEqual(resolve(url).func, views.interest_list)

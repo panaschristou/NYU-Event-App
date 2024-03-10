@@ -33,12 +33,6 @@ class Command(BaseCommand):
                     ):
                         avg_rating = event_data["avg_rating"]
 
-                    availability = (
-                        event_data["availability"]
-                        if "availability" in event_data
-                        else "current"
-                    )
-
                     location = (
                         event_data["location"] if "location" in event_data else ""
                     )
@@ -48,8 +42,8 @@ class Command(BaseCommand):
                     )
 
                     external_link = (
-                        event_data["external_links"][0]["href"]
-                        if event_data["external_links"]
+                        event_data.get("external_links")[0].get("href")
+                        if event_data.get("external_links")
                         else ""
                     )
 
@@ -60,7 +54,6 @@ class Command(BaseCommand):
                         open_date=parser.parse(event_data["open_date"]).date(),
                         close_date=close_date,
                         location=location,
-                        availability=availability,
                         external_link=external_link,
                         image_url=event_data["image_url"],
                         avg_rating=avg_rating,
