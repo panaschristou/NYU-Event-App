@@ -1,28 +1,32 @@
 body {
-    background-image: url('../img/6063nyu_eventguide_img11.jpeg');
-    background-size: cover;
-    background-position: center center;
-    background-attachment: fixed;
     margin: 0;
     height: 100vh;
-    font-family: 'Open Sans', sans-serif; 
+    font-family: "Trebuchet MS"; 
+    background-color: #FFFBF5;
   }
   
   .login-container {
     max-width: 400px;
     margin: 100px auto;
+    margin-top: 50px;
     padding: 20px;
-    background-color: rgba(120, 108, 108, 0.9);
+    background-color: #77499e;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(164, 128, 128, 0.1);
+    color: #ffffff;
+    line-height: 2;
   }
   .form-control {
-    border-radius: 20px;
+    width: 100%;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 15px;
   }
   .btn-secondary {
     border-radius: 20px;
-    background-color: #333738;
+    background-color: #ffffff;
     border: none;
+    color: rgb(68, 66, 66);
   }
   .btn-secondary:hover {
     background-color: #1d2122;
@@ -41,20 +45,20 @@ body {
   }
   
   .btn-link:hover {
-    color: #0056b3; 
+    color: #ffffff; 
     text-decoration: none; 
+    line-height: 1.5;
   }
 
-  .login-footer {
+  .login-header {
     text-align: center;
-    margin-top: 20px; 
+    margin-top: 50px; 
   }
   
-  .login-footer p{
-    font-family: "Cedarville Cursive", cursive;
-    font-size: 3.9em; 
-    color: #ffffff;
+  .login-header p{
+    font-family: "Trebuchet MS";
+    font-size: 2em; 
+    color: #77499e;
     font-weight: bold; 
-
   }
   

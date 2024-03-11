@@ -66,8 +66,7 @@
   </div>
 
 
-    {% if search_type == 'Shows' %}
-  {% if events %}
+  {% if search_type == 'Shows' %}
 
   <div class="container mt-3 mb-5">
     <form method="get">
@@ -91,7 +90,8 @@
       </div>
     </form>  
   </div>
-
+  
+  {% if events %}
   <div class="container">
     <div class="events-container">
       {% for event in events %}
