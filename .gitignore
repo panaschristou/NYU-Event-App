@@ -3,6 +3,7 @@
 
 .DS_Store
 backend/data/
+/static/
 
 ### Django ###
 *.log
