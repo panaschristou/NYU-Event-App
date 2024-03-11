@@ -77,7 +77,7 @@ body {
   .event-card {
     overflow: hidden;
     width: 200px; 
-    height: 285px;
+    height: 300px;
     display: flex;
     flex-direction: column;
   }
@@ -103,10 +103,18 @@ body {
     text-align: center;
     padding: 0.5rem;
     margin-top: 0.5rem;
+    font-size: 18px;
   }
   
   .event-card a:hover .card-title {
     color: darkgray; 
+  }
+
+  .event-card:hover .card-img-top {
+    filter: brightness(0.5);
+    -webkit-transition: 400ms ease 100ms;
+    -moz-transition: 400ms ease 100ms;
+    transition: 400ms ease 100ms;
   }
 
   .btn-outline-dark {
@@ -120,3 +128,26 @@ body {
     background-color: #77499e; 
     border-color: #77499e;
   }
+
+  .users-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+    gap: 1rem; 
+    justify-content: center;
+    align-items: start;
+  }
+  
+  .user-card {
+    overflow: hidden;
+    width: 125px; 
+    height: 188px; 
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .user-card-img {
+    width: 100%; 
+    height: auto;
+  }
+  
+
