@@ -33,23 +33,22 @@ after_success:
 
 
 deploy:
-  provider: elasticbeanstalk
-  access_key_id: $AWS_ACCESS_KEY_ID
-  secret_access_key: $AWS_SECRET_ACCESS_KEY
-  region: "us-east-1"
-  app: "postgres"
-  env: "postgres-dev"
-  bucket_name: "elasticbeanstalk-us-east-1-891377257918"
-  on:
-    branch: develop  
+  - provider: elasticbeanstalk
+    access_key_id: $AWS_ACCESS_KEY_ID
+    secret_access_key: $AWS_SECRET_ACCESS_KEY
+    region: "us-east-1"
+    app: "postgres"
+    env: "postgres-dev"
+    bucket_name: "elasticbeanstalk-us-east-1-891377257918"
+    on:
+      branch: develop  
 
-
-  provider: elasticbeanstalk
-  access_key_id: $AWS_ACCESS_KEY_ID
-  secret_access_key: $AWS_SECRET_ACCESS_KEY
-  region: "us-east-1"
-  app: "postgres"
-  env: "main"
-  bucket_name: "elasticbeanstalk-us-east-1-891377257918"
-  on:
-    branch: master     
+  - provider: elasticbeanstalk
+    access_key_id: $AWS_ACCESS_KEY_ID
+    secret_access_key: $AWS_SECRET_ACCESS_KEY
+    region: "us-east-1"
+    app: "postgres"
+    env: "main"
+    bucket_name: "elasticbeanstalk-us-east-1-891377257918"
+    on:
+      branch: master  
