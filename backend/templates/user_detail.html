@@ -4,7 +4,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ user.username }}'s Profile</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -16,26 +15,35 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark header">
-      <a class="navbar-brand" href="#">{{ user.username }}'s Profile</a>
+      <a class="navbar-brand" href="#">{{ detail_user.username }}'s Profile</a>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link" href="{% url 'index' %}">Homepage</a>
           </li>
+          {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="#">User Home</a>
+            <a
+              class="nav-link"
+              href="{% url 'user_detail' detail_user.username %}"
+              >User Home</a
+            >
           </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+          </li>
+          {% endif %}
         </ul>
       </div>
     </nav>
-
     <div class="user-detail py-5">
       <div class="container container-transparent">
         <div class="row">
           <div class="col-lg-8 mx-auto text-center">
             <!-- Centered user details -->
-            <h1>{{ user.username }}</h1>
-            <p>Email: {{ user.email }}</p>
+            <h1>{{ detail_user.username }}</h1>
+            <p>Email: {{ detail_user.email }}</p>
             <!-- Add more user details as needed -->
           </div>
         </div>

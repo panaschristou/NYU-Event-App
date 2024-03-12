@@ -51,7 +51,7 @@ def event_detail(request, event_id):
 def user_detail(request, username):
     User = get_user_model()
     user = get_object_or_404(User, username=username)
-    return render(request, "user_detail.html", {"user": user})
+    return render(request, "user_detail.html", {"detail_user": user})
 
 
 def interest_list(request):
