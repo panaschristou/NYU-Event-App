@@ -79,7 +79,7 @@ class EventViewsTestCase(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "user_detail.html")
-        self.assertEqual(response.context["user"].username, "testuser@nyu.edu")
+        self.assertEqual(response.context["detail_user"].username, "testuser@nyu.edu")
 
     def test_interest_list_view(self):
         response = self.client.get(reverse("interest_list"))
