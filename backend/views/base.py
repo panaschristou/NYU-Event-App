@@ -4,9 +4,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
 from django.template.loader import render_to_string
-from .models import Event, UserEvent
-from .forms import UserRegistrationForm
-from .tokens import account_activation_token
+from ..models import Event, UserEvent
+from ..forms import UserRegistrationForm
+from ..tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
@@ -51,7 +51,11 @@ def event_detail(request, event_id):
 def user_detail(request, username):
     User = get_user_model()
     user = get_object_or_404(User, username=username)
-    return render(request, "user_detail.html", {"user": user})
+    return render(request, "user_detail.html", {"detail_user": user})
+
+
+def profile_edit(request):
+    return render(request, "profile_edit.html")
 
 
 def interest_list(request):
@@ -248,51 +252,3 @@ def logout_user(request):
     logout(request)
     messages.success(request, ("You are successfully logged out!"))
     return redirect("index")
-
-
-# AJAX
-# Interest list
-@require_POST
-@csrf_exempt
-def add_interest(request, event_id):
-    if (
-        request.user.is_authenticated
-        and not UserEvent.objects.filter(
-            event_id=event_id, user_id=request.user.id
-        ).exists()
-    ):
-        User = get_user_model()
-        UserEvent.objects.create(
-            event=Event.objects.get(pk=event_id),
-            user=User.objects.get(pk=request.user.id),
-            saved=True,
-        )
-        return JsonResponse({"message": "added to the interest list"})
-    else:
-        raise Http404("Operation Failed")
-
-
-@require_POST
-@csrf_exempt
-def remove_interest(request, event_id):
-    if request.user.is_authenticated:
-        User = get_user_model()
-        (
-            UserEvent.objects.get(
-                event=Event.objects.get(pk=event_id),
-                user=User.objects.get(pk=request.user.id),
-            )
-        ).delete()
-        return JsonResponse({"message": "removed from the interest list"})
-    else:
-        raise Http404("Unauthorized Operation")
-
-
-@require_GET
-@csrf_exempt
-def view_interest_list(request):
-    if request.user.is_authenticated:
-        User = get_user_model()
-        UserEvent.objects.filter(user=User.objects.get(pk=request.user.id))
-    else:
-        raise Http404("Unauthorized Operation")

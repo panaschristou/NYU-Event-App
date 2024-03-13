@@ -14,24 +14,25 @@
     />
   </head>
   <body>
-    {% include "components/navbar.html" %} 
-    {% if user.username == detail_user.username %}
-    <a href="{% url 'profile_edit' %}">Edit</a>
-    {% endif %}
+    {% include "components/navbar.html" %}
     <div class="user-detail py-5">
       <div class="container container-transparent">
         <div class="row">
           <div class="col-lg-8 mx-auto text-center">
             <!-- Centered user details -->
-            <h1>{{ detail_user.username }}</h1>
-            <p>Email: {{ detail_user.email }}</p>
-            <p>First Name: {{ detail_user.first_name }}</p>
-            <p>Last Name: {{ detail_user.last_name }}</p>
+            <h1>{{ user.username }}</h1>
+            <p>Email: {{ user.email }}</p>
+            <p>First Name: {{ user.first_name }}</p>
+            <p>Last Name: {{ user.last_name }}</p>
+            <a href="{% url 'reset_password' %}" class="btn btn-link"
+              >Change My Password</a
+            >
             <!-- Add more user details as needed -->
           </div>
         </div>
       </div>
     </div>
+    <button>Save</button>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.2/dist/umd/popper.min.js"></script>
