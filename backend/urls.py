@@ -12,6 +12,9 @@ urlpatterns = [
     path("events/<int:event_id>/", views.event_detail, name="event_detail"),
     path("users/<str:username>/", views.user_detail, name="user_detail"),
     path("search/", views.search_results, name="search_results"),
+    path('search_history/', views.search_history, name='search_history'),
+    path('delete_search/<int:search_id>/', views.delete_search_view, name='delete_search'),
+    path('clear_history/', views.clear_history_view, name='clear_history'),
     path("index", views.index_with_categories_view, name="index"),
     path(
         "category/<str:category>/", views.events_by_category, name="events_by_category"
