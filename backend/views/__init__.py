@@ -13,4 +13,4 @@ from .base import (
     login_user,
     logout_user,
 )
-from .interest_list import add_interest, remove_interest
+from .interest_list_handlers import add_interest, remove_interest
