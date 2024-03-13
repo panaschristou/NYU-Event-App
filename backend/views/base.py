@@ -4,9 +4,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
 from django.template.loader import render_to_string
-from .models import Event, UserEvent
-from .forms import UserRegistrationForm
-from .tokens import account_activation_token
+from ..models import Event, UserEvent
+from ..forms import UserRegistrationForm
+from ..tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
@@ -52,6 +52,10 @@ def user_detail(request, username):
     User = get_user_model()
     user = get_object_or_404(User, username=username)
     return render(request, "user_detail.html", {"detail_user": user})
+
+
+def profile_edit(request):
+    return render(request, "profile_edit.html")
 
 
 def interest_list(request):
