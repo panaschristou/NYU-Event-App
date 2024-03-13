@@ -20,6 +20,6 @@ urlpatterns = [
         name="events_by_category",
     ),
     # AJAX
-    path("events/<int:event_id>/add-interest/", views.base.add_interest),
-    path("events/<int:event_id>/remove-interest/", views.base.remove_interest),
+    path("events/<int:event_id>/add-interest/", views.interest_list.add_interest),
+    path("events/<int:event_id>/remove-interest/", views.interest_list.remove_interest),
 ]
