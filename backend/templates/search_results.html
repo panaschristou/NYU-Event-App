@@ -18,24 +18,26 @@
 
   <div class="search-bar-container">
     <form action="{% url 'search_results' %}" method="get" class="search-form">
-      <div class="input-group mb-1 mt-3">
-        <input
-          type="text"
-          class="form-control search-input mr-sm-2"
-          name="search_events"
-          placeholder="Search events or users..."
-          aria-label="Search"
-          value="{{ request.GET.search_events }}"
-        />
-        <select class="custom-select" id="filter" name="search_type">
-          <option {% if search_type == 'Shows' %}selected{% endif %}>Shows</option>
-          <option {% if search_type == 'Users' %}selected{% endif %}>Users</option>
-      </select>
-        <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">
-          Search
-        </button>
-        
-      </div>
+        <div class="input-group mb-1 mt-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <!-- search icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                    </svg>
+                </span>
+            </div>
+            <input type="text" class="form-control search-input col-8" name="search_events" placeholder="Search events or users..." aria-label="Search" value="{{ request.GET.search_events }}" />
+            <select class="custom-select col-3" id="filter" name="search_type">
+                <option selected>Shows</option>
+                <option>Users</option>
+            </select>
+            <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
+            
+        </div>
+        <a href="{% url 'search_history' %}">
+          <button class="btn btn-outline-dark" type="button">Search History</button>
+      </a>
     </form>
   </div>
 

@@ -110,20 +110,23 @@ def search_results(request):
     }
     return render(request, "search_results.html", context)
 
+
 def search_history(request):
     user = request.user
-    search_history = SearchHistory.objects.filter(user=user).order_by('-timestamp')
-    return render(request, 'search_history.html', {'search_history': search_history})
+    search_history = SearchHistory.objects.filter(user=user).order_by("-timestamp")
+    return render(request, "search_history.html", {"search_history": search_history})
+
 
 def delete_search_view(request, search_id):
     search = SearchHistory.objects.get(id=search_id)
     if search.user == request.user:
         search.delete()
-    return redirect('search_history')
+    return redirect("search_history")
+
 
 def clear_history_view(request):
     SearchHistory.objects.filter(user=request.user).delete()
-    return redirect('search_history')
+    return redirect("search_history")
 
 
 EVENT_CATEGORIES = [

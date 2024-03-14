@@ -151,3 +151,6 @@ body {
   }
   
 
+  .search-history-button {
+    text-align: left; /* Align the button to the left */
+  }
