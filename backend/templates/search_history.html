@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ event.title }}</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      href="{% static 'backend/css/event_detail_style.css' %}"
+      rel="stylesheet"
+    />
+  </head>
+  {% block content %}
+  {% include "components/navbar.html" %}
+  <div class="d-flex justify-content-between align-items-center">
+    <h2 class="text-purple">Search History</h2>
+    <a class="btn btn-outline-dark" href="{% url 'clear_history' %}">Clear History</a>
+</div>
+
+
+    {% for search in search_history %}
+  <div class="search-history-detail py-0">
+    <div class="container container-transparent">
+      <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+                        <div>
+                            <strong>Search Input:</strong> {{ search.search }}
+                        </div>
+                        <div>
+                            <strong>Search Type:</strong> {{ search.search_type }}
+                        </div>
+                        <div>
+                            <strong>Date & Time:</strong> {{ search.timestamp|date:"Y-m-d H:i:s" }}
+                        </div>
+                        <div>
+                            <a class="btn btn-outline-dark" href="{% url 'search_results' %}?search_events={{ search.search }}&search_type={{ search.search_type }}">Search Again</a>
+                            <a class="btn btn-outline-dark" href="{% url 'delete_search' search.id %}">Delete</a>
+                        </div>
+
+          </div>
+      </div>
+    </div>
+  </div>
+                  {% empty %}
+                    <li>No search history found.</li>
+                {% endfor %}
+  <a class="btn btn-outline-dark" href="{% url 'clear_history' %}">Clear History</a>
+  
+
+  {% endblock%}
+
+    <!-- Include Bootstrap JS and dependencies at the bottom of the body -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</html>

@@ -45,3 +45,11 @@ class Chat(models.Model):
     )
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+
+
+# Search History Model
+class SearchHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    search = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    search_type = models.CharField(max_length=10)

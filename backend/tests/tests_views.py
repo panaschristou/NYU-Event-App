@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from backend.models import Event, User, UserEvent
+from backend.models import Event, User, UserEvent, SearchHistory
 from django.core import mail
 from django.contrib.messages import get_messages
 from django.contrib.auth.tokens import default_token_generator
@@ -260,3 +260,37 @@ class EventViewsTestCase(TestCase):
         self.assertEqual(
             str(messages[0]), "There Was An Error Logging In, Try Again..."
         )
+
+
+class SearchHistoryViewTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", email="testuser@nyu.edu", password="testpassword"
+        )
+        self.client = Client()
+        self.client.login(username="testuser", password="testpassword")
+        self.search_history1 = SearchHistory.objects.create(
+            user=self.user, search="Test Search 1", search_type="Shows"
+        )
+        self.search_history2 = SearchHistory.objects.create(
+            user=self.user, search="Test Search 2", search_type="Shows"
+        )
+
+    def test_access_search_history(self):
+        response = self.client.get(reverse("search_history"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "search_history.html")
+        self.assertContains(response, "Test Search 1")
+        self.assertContains(response, "Test Search 2")
+
+    def test_delete_search(self):
+        response = self.client.post(
+            reverse("delete_search", args=[self.search_history1.id])
+        )
+        self.assertEqual(response.status_code, 302)  # Check for redirect
+        self.assertNotIn(self.search_history1, SearchHistory.objects.all())
+
+    def test_clear_history(self):
+        response = self.client.post(reverse("clear_history"))
+        self.assertEqual(response.status_code, 302)  # Check for redirect
+        self.assertFalse(SearchHistory.objects.filter(user=self.user).exists())

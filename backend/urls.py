@@ -13,6 +13,13 @@ urlpatterns = [
     path("users/<str:username>/", views.base.user_detail, name="user_detail"),
     path("profile-edit/", views.base.profile_edit, name="profile_edit"),
     path("search/", views.base.search_results, name="search_results"),
+    path("search_history/", views.base.search_history, name="search_history"),
+    path(
+        "delete_search/<int:search_id>/",
+        views.base.delete_search_view,
+        name="delete_search",
+    ),
+    path("clear_history/", views.base.clear_history_view, name="clear_history"),
     path("index", views.base.index_with_categories_view, name="index"),
     path(
         "category/<str:category>/",
