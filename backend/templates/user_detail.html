@@ -9,19 +9,24 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
     <link
-      href="{% static 'backend/css/event_detail_style.css' %}"
+      href="{% static 'backend/css/base_style.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      href="{% static 'backend/css/user_detail_style.css' %}"
       rel="stylesheet"
     />
   </head>
   <body>
     {% include "components/navbar.html" %} 
-    {% if user.username == detail_user.username %}
-    <a href="{% url 'profile_edit' %}">Edit</a>
-    {% endif %}
     <div class="user-detail py-5">
       <div class="container container-transparent">
         <div class="row">
           <div class="col-lg-8 mx-auto text-center">
+            <img class="user-avatar" src="{% static 'backend/img/generic_user_image.png' %}"/>
+            {% if user.username == detail_user.username %}
+            <a class="edit-btn" href="{% url 'profile_edit' %}">Edit</a>
+            {% endif %}
             <!-- Centered user details -->
             <h1>{{ detail_user.username }}</h1>
             <p>Email: {{ detail_user.email }}</p>

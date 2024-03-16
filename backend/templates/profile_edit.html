@@ -8,8 +8,14 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
+
     <link
-      href="{% static 'backend/css/event_detail_style.css' %}"
+      href="{% static 'backend/css/base_style.css' %}"
+      rel="stylesheet"
+    />
+
+    <link
+      href="{% static 'backend/css/profile_edit_style.css' %}"
       rel="stylesheet"
     />
   </head>
@@ -17,23 +23,27 @@
     {% include "components/navbar.html" %}
     <div class="user-detail py-5">
       <div class="container container-transparent">
-        <div class="row">
-          <div class="col-lg-8 mx-auto text-center">
-            <!-- Centered user details -->
-            <h1>{{ user.username }}</h1>
-            <p>Email: {{ user.email }}</p>
-            <p>First Name: {{ user.first_name }}</p>
-            <p>Last Name: {{ user.last_name }}</p>
-            <a href="{% url 'reset_password' %}" class="btn btn-link"
-              >Change My Password</a
-            >
-            <!-- Add more user details as needed -->
+        <form class="col-lg-8 mx-auto text-center profile-form" action="/profile-edit/" method="post">
+          <img class="user-avatar" src="{% static 'backend/img/generic_user_image.png' %}"/>
+          <h1>{{ user.username }}</h1>
+          <p>Email: {{ user.email }}</p>
+          <div>
+            <label for="first_name">First Name: </label>
+            <input id="first_name" type="text" name="first_name" value="{{ user.first_name }}">
           </div>
-        </div>
+          <div>
+            <label for="last_name">Last Name: </label>
+            <input id="last_name" type="text" name="last_name" value="{{ user.last_name }}">
+          </div>
+          <div>
+            <label for="description">Personal Description: </label>
+            <input id="description" type="text" name="description" value="{{ user.description }}">
+          </div>
+            <input type="submit" value="Save My Changes">
+            <a href="{% url 'reset_password' %}" class="text-danger btn btn-link">Change My Password</a>
+          </form>
       </div>
     </div>
-    <button>Save</button>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

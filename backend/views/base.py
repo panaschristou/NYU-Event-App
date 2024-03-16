@@ -2,6 +2,7 @@ from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.loader import render_to_string
 from ..models import Event, UserEvent, SearchHistory
@@ -11,8 +12,6 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.views.decorators.http import require_POST, require_GET
-from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.db.models import Q
 
@@ -54,10 +53,12 @@ def user_detail(request, username):
     return render(request, "user_detail.html", {"detail_user": user})
 
 
+@login_required
 def profile_edit(request):
     return render(request, "profile_edit.html")
 
 
+@login_required
 def interest_list(request):
     User = get_user_model()
     interestList = []
