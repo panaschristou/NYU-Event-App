@@ -1,8 +1,7 @@
 from django.http import Http404, JsonResponse
-from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from ..models import Event, UserEvent
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 
 
