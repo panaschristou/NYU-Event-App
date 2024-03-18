@@ -14,9 +14,9 @@ def profile_avatar_name(instance, filename):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(
-        storage=OverwriteStorage(), upload_to=profile_avatar_name
+        storage=OverwriteStorage(), upload_to=profile_avatar_name, null=True, blank=True
     )
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.user.username
