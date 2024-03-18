@@ -86,7 +86,7 @@ class TestUrls(TestCase):
 
     def test_interst_list_url_is_resolved(self):
         url = reverse("interest_list")
-        self.assertEqual(resolve(url).func, views.base.interest_list)
+        self.assertEqual(resolve(url).func, views.interest_list_handlers.interest_list)
 
     def test_search_history_url(self):
         view = resolve("/user/search_history/")
