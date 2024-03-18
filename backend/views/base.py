@@ -54,11 +54,6 @@ def user_detail(request, username):
 
 
 @login_required
-def profile_edit(request):
-    return render(request, "profile_edit.html")
-
-
-@login_required
 def interest_list(request):
     User = get_user_model()
     interestList = []

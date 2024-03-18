@@ -1,8 +1,23 @@
 from django.http import Http404, JsonResponse
+from django.shortcuts import render
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from ..models import Event, UserEvent
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+
+
+@login_required
+def interest_list(request):
+    User = get_user_model()
+    interestList = []
+    if request.user.id:
+        interestList = UserEvent.objects.filter(
+            user=User.objects.get(pk=request.user.id),
+        )
+    interestEventIds = [userEvent.event_id for userEvent in interestList]
+    interestEvents = Event.objects.filter(id__in=interestEventIds)
+    return render(request, "interest_list.html", {"interestEvents": interestEvents})
 
 
 @require_POST
