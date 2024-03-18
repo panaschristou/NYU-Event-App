@@ -36,28 +36,16 @@ class UserRegistrationForm(UserCreationForm):
 
 
 class UpdateUserForm(forms.ModelForm):
-    firstname = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={"class": "form-control"}),
-    )
-    lastname = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={"class": "form-control"}),
-    )
-
     class Meta:
         model = User
         fields = ["first_name", "last_name"]
 
 
 class UpdateProfileForm(forms.ModelForm):
-    avatar = forms.ImageField(
-        widget=forms.FileInput(attrs={"class": "form-control-file"})
-    )
-    description = forms.CharField(
-        widget=forms.Textarea(attrs={"class": "form-control", "rows": 5})
-    )
-
     class Meta:
         model = Profile
         fields = ["avatar", "description"]
+
+    def __init__(self, *args, **kwargs):
+        super(UpdateProfileForm, self).__init__(*args, **kwargs)
+        self.fields["avatar"].required = False

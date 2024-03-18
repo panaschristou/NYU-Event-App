@@ -27,17 +27,19 @@
         <img class="user-avatar" src="{% static 'backend/img/generic_user_image.png' %}"/>
         <h1>{{ user.username }}</h1>
         <p>Email: {{ user.email }}</p>
-        <form class="col-lg-8" action="{% url 'profile_edit' %}" method="post">
+        <form class="col-lg-8 profile-form-edit" action="{% url 'profile_edit' %}" method="post">
           {% csrf_token %}
-          <label for="avatar">New Profile Picture: </label>
-            {{ profile_form.avatar }}
+          <label for="avatar">New Avatar: </label>
+          {{ profile_form.avatar|addclass:'form-control-file' }}
           <label for="first_name">First Name: </label>
           {{ user_form.first_name|addclass:'form-control'}}
           <label for="last_name">Last Name: </label>
           {{ user_form.last_name|addclass:'form-control'}}
           <label for="description">Personal Description: </label>
           {{ profile_form.description|addclass:'form-control'}}
-          <button type="submit" class="btn btn-primary">Save My Changes</button>
+          {{user_form.errors}}
+          {{profile_form.errors}}
+          <button type="submit" class="btn btn-primary profile-form-submit">Save My Changes</button>
         </form>
           <a href="{% url 'reset_password' %}" class="text-danger btn btn-link">Change My Password</a>
       </div>
