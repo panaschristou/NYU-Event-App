@@ -24,12 +24,17 @@
     {% include "components/navbar.html" %}
     <div class="user-detail py-5">
       <div class="container container-transparent profile-form">
+        {% if user.profile.avatar %}
+        <img class="user-avatar" src="/media/{{ user.profile.avatar }}"/>
+        {% else %}
         <img class="user-avatar" src="{% static 'backend/img/generic_user_image.png' %}"/>
+        {% endif %}
         <h1>{{ user.username }}</h1>
         <p>Email: {{ user.email }}</p>
-        <form class="col-lg-8 profile-form-edit" action="{% url 'profile_edit' %}" method="post">
+        <form class="col-lg-8 profile-form-edit" action="{% url 'profile_edit' %}" method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          <label for="avatar">New Avatar: </label>
+          <label for="avatar">Avatar: </label>
+          <br />
           {{ profile_form.avatar|addclass:'form-control-file' }}
           <label for="first_name">First Name: </label>
           {{ user_form.first_name|addclass:'form-control'}}
