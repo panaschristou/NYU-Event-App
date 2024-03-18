@@ -1,11 +1,21 @@
 import datetime
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import User
+
+from backend.storage import OverwriteStorage
 
 
+def profile_avatar_name(instance, filename):
+    ext = filename.split(".")[-1]
+    return "profile_images/%s.%s" % (instance.user.username, ext)
+
+
+# Profile model
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to="profile_images")
+    avatar = models.ImageField(
+        storage=OverwriteStorage(), upload_to=profile_avatar_name
+    )
     description = models.TextField()
 
     def __str__(self):
