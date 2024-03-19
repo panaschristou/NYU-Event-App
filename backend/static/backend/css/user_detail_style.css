@@ -1,0 +1,10 @@
+.edit-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.user-avatar {
+  width: 90px;
+  border-radius: 50%;
+}

@@ -38,40 +38,40 @@ class TestUrls(TestCase):
 
     def test_login_url_is_resolved(self):
         url = reverse("login")
-        self.assertEqual(resolve(url).func, views.login_user)
+        self.assertEqual(resolve(url).func, views.base.login_user)
 
     def test_register_url_is_resolved(self):
         url = reverse("register")
-        self.assertEqual(resolve(url).func, views.register_user)
+        self.assertEqual(resolve(url).func, views.base.register_user)
 
     def test_activate_url_is_resolved(self):
         url = reverse("activate", kwargs={"uidb64": self.uid, "token": self.token})
-        self.assertEqual(resolve(url).func, views.activate)
+        self.assertEqual(resolve(url).func, views.base.activate)
 
     def test_event_detail_url_is_resolved(self):
         url = reverse("event_detail", kwargs={"event_id": self.event.pk})
-        self.assertEqual(resolve(url).func, views.event_detail)
+        self.assertEqual(resolve(url).func, views.base.event_detail)
 
     def test_user_detail_url_is_resolved(self):
         user = get_user_model().objects.create(username="john_doe", password="12345")
         url = reverse("user_detail", kwargs={"username": user.username})
-        self.assertEqual(resolve(url).func, views.user_detail)
+        self.assertEqual(resolve(url).func, views.base.user_detail)
 
     def test_search_results_url_is_resolved(self):
         url = reverse("search_results")
-        self.assertEqual(resolve(url).func, views.search_results)
+        self.assertEqual(resolve(url).func, views.base.search_results)
 
     def test_index_url_is_resolved(self):
         url = reverse("index")
-        self.assertEqual(resolve(url).func, views.index_with_categories_view)
+        self.assertEqual(resolve(url).func, views.base.index_with_categories_view)
 
     def test_events_by_category_url_is_resolved(self):
         url = reverse("events_by_category", kwargs={"category": "music"})
-        self.assertEqual(resolve(url).func, views.events_by_category)
+        self.assertEqual(resolve(url).func, views.base.events_by_category)
 
     def test_logout_url_is_resolved(self):
         url = reverse("logout")
-        self.assertEqual(resolve(url).func, views.logout_user)
+        self.assertEqual(resolve(url).func, views.base.logout_user)
 
     def test_reset_password_url(self):
         reset_password_url = reverse("reset_password")
@@ -86,4 +86,8 @@ class TestUrls(TestCase):
 
     def test_interst_list_url_is_resolved(self):
         url = reverse("interest_list")
-        self.assertEqual(resolve(url).func, views.interest_list)
+        self.assertEqual(resolve(url).func, views.interest_list_handlers.interest_list)
+
+    def test_search_history_url(self):
+        view = resolve("/user/search_history/")
+        self.assertEqual(view.func, views.base.search_history)

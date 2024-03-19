@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from backend.models import Event, Review, UserEvent, Chat
+from backend.models import Event, Review, UserEvent, Chat, SearchHistory
+from django.urls import reverse
 import datetime
 
 
@@ -84,3 +85,26 @@ class UserModelTest(TestCase):
         # Fetch the user and check attributes
         user = User.objects.get(username="testuser")
         self.assertEqual(user.email, "testuser@nyu.edu")
+
+
+class SearchHistoryModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Create a user for the test
+        cls.user = User.objects.create_user(
+            username="testuser", email="testuser@nyu.edu", password="testpassword"
+        )
+        # Create a SearchHistory object for the test
+        cls.search_history = SearchHistory.objects.create(
+            user=cls.user, search="Django Testing", search_type="Shows"
+        )
+
+    def test_search_history_content(self):
+        # Test the content of the SearchHistory object
+        self.assertEqual(self.search_history.user, self.user)
+        self.assertEqual(self.search_history.search, "Django Testing")
+        self.assertEqual(self.search_history.search_type, "Shows")
+
+    def test_search_history_str(self):
+        # Test the string representation of the SearchHistory object
+        self.assertEqual(str(self.search_history.search), "Django Testing")

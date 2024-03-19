@@ -2,6 +2,25 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
+from backend.storage import OverwriteStorage
+
+
+def profile_avatar_name(instance, filename):
+    ext = filename.split(".")[-1]
+    return "profile_images/%s.%s" % (instance.user.username, ext)
+
+
+# Profile model
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(
+        storage=OverwriteStorage(), upload_to=profile_avatar_name, null=True, blank=True
+    )
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+
 
 # Event model
 class Event(models.Model):
@@ -45,3 +64,11 @@ class Chat(models.Model):
     )
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+
+
+# Search History Model
+class SearchHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    search = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    search_type = models.CharField(max_length=10)

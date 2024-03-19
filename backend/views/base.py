@@ -2,17 +2,16 @@ from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.loader import render_to_string
-from .models import Event, UserEvent
-from .forms import UserRegistrationForm
-from .tokens import account_activation_token
+from ..models import Event, UserEvent, SearchHistory
+from ..forms import UserRegistrationForm
+from ..tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.views.decorators.http import require_POST, require_GET
-from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.db.models import Q
 
@@ -51,9 +50,10 @@ def event_detail(request, event_id):
 def user_detail(request, username):
     User = get_user_model()
     user = get_object_or_404(User, username=username)
-    return render(request, "user_detail.html", {"user": user})
+    return render(request, "user_detail.html", {"detail_user": user})
 
 
+@login_required
 def interest_list(request):
     User = get_user_model()
     interestList = []
@@ -105,6 +105,24 @@ def search_results(request):
         "search_type": search_type,
     }
     return render(request, "search_results.html", context)
+
+
+def search_history(request):
+    user = request.user
+    search_history = SearchHistory.objects.filter(user=user).order_by("-timestamp")
+    return render(request, "search_history.html", {"search_history": search_history})
+
+
+def delete_search_view(request, search_id):
+    search = SearchHistory.objects.get(id=search_id)
+    if search.user == request.user:
+        search.delete()
+    return redirect("search_history")
+
+
+def clear_history_view(request):
+    SearchHistory.objects.filter(user=request.user).delete()
+    return redirect("search_history")
 
 
 EVENT_CATEGORIES = [
@@ -248,51 +266,3 @@ def logout_user(request):
     logout(request)
     messages.success(request, ("You are successfully logged out!"))
     return redirect("index")
-
-
-# AJAX
-# Interest list
-@require_POST
-@csrf_exempt
-def add_interest(request, event_id):
-    if (
-        request.user.is_authenticated
-        and not UserEvent.objects.filter(
-            event_id=event_id, user_id=request.user.id
-        ).exists()
-    ):
-        User = get_user_model()
-        UserEvent.objects.create(
-            event=Event.objects.get(pk=event_id),
-            user=User.objects.get(pk=request.user.id),
-            saved=True,
-        )
-        return JsonResponse({"message": "added to the interest list"})
-    else:
-        raise Http404("Operation Failed")
-
-
-@require_POST
-@csrf_exempt
-def remove_interest(request, event_id):
-    if request.user.is_authenticated:
-        User = get_user_model()
-        (
-            UserEvent.objects.get(
-                event=Event.objects.get(pk=event_id),
-                user=User.objects.get(pk=request.user.id),
-            )
-        ).delete()
-        return JsonResponse({"message": "removed from the interest list"})
-    else:
-        raise Http404("Unauthorized Operation")
-
-
-@require_GET
-@csrf_exempt
-def view_interest_list(request):
-    if request.user.is_authenticated:
-        User = get_user_model()
-        UserEvent.objects.filter(user=User.objects.get(pk=request.user.id))
-    else:
-        raise Http404("Unauthorized Operation")

@@ -1,0 +1,18 @@
+.user-avatar {
+  width: 90px;
+  border-radius: 50%;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-form-edit > input {
+  margin-bottom: 12px;
+}
+
+.profile-form-submit {
+  margin-top: 15px;
+}
