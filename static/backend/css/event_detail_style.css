@@ -56,7 +56,7 @@ body {
   line-height: 1.5;
 }
 
-.heart-button-container {
+.buttons-container {
   top: 0;
   right: 0;
   padding: 30px;
@@ -84,3 +84,4 @@ body {
 .hidden {
   display: none;
 }
+

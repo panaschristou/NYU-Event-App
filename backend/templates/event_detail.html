@@ -45,7 +45,7 @@
 
     <div class="event-detail py-5">
       <div class="container container-transparent">
-        <div class="heart-button-container text-right">
+        <div class="buttons-container text-right">
           {% if loggedIn %}
           <button
             class="heart-button {% if interested %} hidden {% endif %}"
@@ -84,8 +84,48 @@
               />
             </svg>
           </button>
+
+          <button class="btn-outline-dark" id="write-review" aria-label="Write a review">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+            </svg>
+            Review
+          </button>
+
+          <!-- Review Modal (initially hidden) -->
+          <div id="review-modal" class="modal">
+            <div class="modal-content">
+              <!-- Close button with SVG -->
+              <button id="close-modal" class="close" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                </svg>
+              </button>
+              <h2>Write a Review</h2>
+              <div class="star-rating">
+                <input type="radio" id="star5" name="rating" value="5" />
+                <label for="star5" title="5 stars">&#9733;</label>
+                <input type="radio" id="star4" name="rating" value="4" />
+                <label for="star4" title="4 stars">&#9733;</label>
+                <input type="radio" id="star3" name="rating" value="3" />
+                <label for="star3" title="3 stars">&#9733;</label>
+                <input type="radio" id="star2" name="rating" value="2" />
+                <label for="star2" title="2 stars">&#9733;</label>
+                <input type="radio" id="star1" name="rating" value="1" />
+                <label for="star1" title="1 star">&#9733;</label>
+              </div>
+              <!-- Textarea for review text -->
+              <textarea id="review-text" class="review-text" placeholder="Share your thoughts..."></textarea>
+              <!-- Post button -->
+              <button id="post-review" class="post-btn">Post</button>
+            </div>
+          </div>
           {% endif %}
         </div>
+
+
+
 
         <div class="row">
           <div class="col-lg-8 mx-auto text-center">

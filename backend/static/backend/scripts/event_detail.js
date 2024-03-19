@@ -46,3 +46,20 @@ notInterestBtn.addEventListener("click", function () {
       console.error("Error:", error);
     });
 });
+
+const reviewBtn = document.getElementById("write-review");
+const modal = document.getElementById("review-modal");
+const closeButton = document.getElementById("close-modal");
+const postButton = document.getElementById("post-review");
+
+reviewBtn.addEventListener("click", function () {
+  modal.style.display = "block";
+});
+
+closeButton.addEventListener("click", function () {
+  modal.style.display = "none";
+});
+
+postButton.addEventListener("click", function () {
+
+});
