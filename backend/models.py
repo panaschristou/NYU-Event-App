@@ -43,7 +43,7 @@ class Review(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="reviews")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField()
-    comment = models.TextField()
+    review_text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
 

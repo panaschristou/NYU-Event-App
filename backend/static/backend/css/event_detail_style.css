@@ -170,6 +170,11 @@ body {
   color: #f90;
 }
 
+.star-rating input#star5:checked ~ label {
+  color: #f90;
+  text-shadow: 0 0 5px rgb(184, 112, 58);
+}
+
 .review-text {
   width: 60%; 
   height: 200px; 

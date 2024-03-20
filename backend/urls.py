@@ -14,6 +14,7 @@ urlpatterns = [
     ),
     path("activate/<uidb64>/<token>", views.base.activate, name="activate"),
     path("events/<int:event_id>/", views.base.event_detail, name="event_detail"),
+    path("events/<int:event_id>/post-review/", views.review_handler.post_review, name="post_review"),
     path("users/<str:username>/", views.base.user_detail, name="user_detail"),
     path("profile-edit/", views.profile_handlers.profile_edit, name="profile_edit"),
     path("search/", views.base.search_results, name="search_results"),
