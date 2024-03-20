@@ -47,7 +47,10 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    'daphne',
     "django.contrib.staticfiles",
+    'channels',
+    'room',
 ]
 
 MIDDLEWARE = [
@@ -81,6 +84,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "nyu_event.wsgi.application"
+ASGI_APPLICATION = 'nyu_event.asgi.application'
+# ASGI_APPLICATION = 'room.routing.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
 
 
 # Database
@@ -104,7 +115,8 @@ else:
             "ENGINE": "django.db.backends.postgresql_psycopg2",
             "NAME": "nyu_event",
             "USER": "postgres",
-            "PASSWORD": "complexpassword123",
+            # "PASSWORD": "complexpassword123",
+            "PASSWORD": "sansid22",
             "HOST": "localhost",
             "PORT": "5432",
         }
@@ -160,3 +172,4 @@ EMAIL_HOST_USER = "nyuevents24@gmail.com"
 EMAIL_HOST_PASSWORD = "ogtoqvpmcniroelh"
 
 DEFAULT_FROM_EMAIL = "nyuevents24@gmail.com"
+

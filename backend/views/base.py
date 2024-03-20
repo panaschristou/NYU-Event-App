@@ -254,6 +254,7 @@ def login_user(request):
                 request.session.set_expiry(604800)
             else:
                 request.session.set_expiry(0)
+            # return redirect("frontpage")    
             return redirect("index")
         else:
             messages.success(request, ("There Was An Error Logging In, Try Again..."))
@@ -261,8 +262,10 @@ def login_user(request):
     else:
         return render(request, "authenticate/login.html", {})
 
-
 def logout_user(request):
     logout(request)
     messages.success(request, ("You are successfully logged out!"))
     return redirect("index")
+
+def frontpage(request):
+    return render(request, 'chat/frontpage.html')

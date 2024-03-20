@@ -38,4 +38,8 @@ urlpatterns = [
         "events/<int:event_id>/remove-interest/",
         views.interest_list_handlers.remove_interest,
     ),
+
+    #chat app urls
+    path("chat",views.base.frontpage, name='frontpage'),
+    path('rooms', include('room.urls')),
 ]
