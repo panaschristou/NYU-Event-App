@@ -54,6 +54,7 @@ const closeButton = document.getElementById("close-modal");
 const postButton = document.getElementById("post-review");
 
 reviewBtn.addEventListener("click", function () {
+  resetReviewForm();
   modal.style.display = "block";
 });
 
@@ -99,16 +100,13 @@ postButton.addEventListener("click", function () {
     return response.json(); 
   })
   .then(data => {
-    const successMsg = document.createElement("div");
-    successMsg.textContent = "Thank you for your review!";
-    successMsg.classList.add("alert", "alert-success"); 
-    messagesContainer.appendChild(successMsg);
-
+    showTemporaryMessage("Thank you for your review!", "alert-success");
     modal.style.display = "none";
     document.getElementById("review-text").value = '';
     document.querySelectorAll('input[name="rating"]').forEach((input) => {
       input.checked = false;
     });
+    resetReviewForm();
   })
   .catch(error => {
     console.error('Error:', error);
@@ -118,4 +116,25 @@ postButton.addEventListener("click", function () {
     messagesContainer.appendChild(errorMsg);
   });
 });
+
+function showTemporaryMessage(message, messageType) {
+  const tempMessageContainer = document.createElement("div");
+  tempMessageContainer.textContent = message;
+  tempMessageContainer.classList.add("alert", messageType, "temp-message");
+
+  document.body.appendChild(tempMessageContainer);
+
+  setTimeout(() => {
+    tempMessageContainer.remove();
+  }, 2500);
+}
+
+function resetReviewForm() {
+  document.getElementById("review-text").value = '';
+  document.querySelectorAll('input[name="rating"]').forEach((input) => {
+    input.checked = false;
+  });
+  // Clear any messages that might be inside the modal
+  document.getElementById("messages-container").innerHTML = '';
+}
 
