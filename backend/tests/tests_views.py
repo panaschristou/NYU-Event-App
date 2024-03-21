@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from backend.models import Event, User, UserEvent, SearchHistory
+from backend.models import Event, User, UserEvent, SearchHistory, Review
 from django.core import mail
 from django.contrib.messages import get_messages
 from django.contrib.auth.tokens import default_token_generator
@@ -9,6 +9,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth import get_user_model
 import datetime
 from django.utils import timezone
+import json
 
 
 class EventViewsTestCase(TestCase):
@@ -268,6 +269,28 @@ class EventViewsTestCase(TestCase):
         self.assertEqual(
             str(messages[0]), "There Was An Error Logging In, Try Again..."
         )
+
+    def test_post_review(self):
+        self.client.login(username="testuser@nyu.edu", password="12345Password!")
+
+        url = reverse("post_review", kwargs={"event_id": self.current_event.id})
+
+        review_data = {"rating": 5, "review_text": "Great event!"}
+
+        response = self.client.post(url, review_data)
+
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content)
+
+        self.assertTrue(response_data["success"])
+        self.assertIsNotNone(response_data["review_id"])
+
+        review = Review.objects.get(pk=response_data["review_id"])
+        self.assertEqual(review.user, self.user)
+        self.assertEqual(review.event, self.current_event)
+        self.assertEqual(review.rating, 5)
+        self.assertEqual(review.review_text, "Great event!")
 
 
 class SearchHistoryViewTest(TestCase):

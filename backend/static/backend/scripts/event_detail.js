@@ -46,3 +46,95 @@ notInterestBtn.addEventListener("click", function () {
       console.error("Error:", error);
     });
 });
+
+//Rate and review functionality
+const reviewBtn = document.getElementById("write-review");
+const modal = document.getElementById("review-modal");
+const closeButton = document.getElementById("close-modal");
+const postButton = document.getElementById("post-review");
+
+reviewBtn.addEventListener("click", function () {
+  resetReviewForm();
+  modal.style.display = "block";
+});
+
+closeButton.addEventListener("click", function () {
+  modal.style.display = "none";
+});
+
+postButton.addEventListener("click", function () {
+  const selectedRating = document.querySelector('input[name="rating"]:checked');
+  const reviewText = document.getElementById("review-text").value;
+  const messagesContainer = document.getElementById("messages-container");
+  messagesContainer.innerHTML = '';
+
+  if (!selectedRating) {
+    const errorMsg = document.createElement("div");
+    errorMsg.textContent = "Please select a rating before posting your review.";
+    errorMsg.classList.add("alert", "alert-danger"); 
+    messagesContainer.appendChild(errorMsg);
+    return; 
+  }
+
+  const rating = document.querySelector('input[name="rating"]:checked').value;
+
+  const formData = new FormData();
+  formData.append('rating', rating);
+  formData.append('review_text', reviewText);
+
+  const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+  fetch("post-review/", {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest', 
+      'X-CSRFToken': csrftoken,
+    },
+    credentials: 'same-origin',
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+    return response.json(); 
+  })
+  .then(data => {
+    showTemporaryMessage("Thank you for your review!", "alert-success");
+    modal.style.display = "none";
+    document.getElementById("review-text").value = '';
+    document.querySelectorAll('input[name="rating"]').forEach((input) => {
+      input.checked = false;
+    });
+    resetReviewForm();
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    const errorMsg = document.createElement("div");
+    errorMsg.textContent = "An error occurred while posting your review. Please try again.";
+    errorMsg.classList.add("alert", "alert-danger"); 
+    messagesContainer.appendChild(errorMsg);
+  });
+});
+
+function showTemporaryMessage(message, messageType) {
+  const tempMessageContainer = document.createElement("div");
+  tempMessageContainer.textContent = message;
+  tempMessageContainer.classList.add("alert", messageType, "temp-message");
+
+  document.body.appendChild(tempMessageContainer);
+
+  setTimeout(() => {
+    tempMessageContainer.remove();
+  }, 2500);
+}
+
+function resetReviewForm() {
+  document.getElementById("review-text").value = '';
+  document.querySelectorAll('input[name="rating"]').forEach((input) => {
+    input.checked = false;
+  });
+  // Clear any messages that might be inside the modal
+  document.getElementById("messages-container").innerHTML = '';
+}
+

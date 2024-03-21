@@ -62,14 +62,17 @@ class ReviewModelTest(TestCase):
         cls.user = User.objects.create_user(username="testuser", password="12345")
         cls.event = Event.objects.get(title="Spamalot")
         cls.review = Review.objects.create(
-            event=cls.event, user=cls.user, rating=5, comment="It was a fantastic show!"
+            event=cls.event,
+            user=cls.user,
+            rating=5,
+            review_text="It was a fantastic show!",
         )
 
     def test_review_attributes(self):
         # Test fetching the review from the database
         review = Review.objects.get(id=self.review.id)
         self.assertEqual(review.rating, 5)
-        self.assertEqual(review.comment, "It was a fantastic show!")
+        self.assertEqual(review.review_text, "It was a fantastic show!")
         self.assertEqual(review.user, self.user)
         self.assertEqual(review.event, self.event)
 
