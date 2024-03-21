@@ -305,26 +305,23 @@ class SearchHistoryViewTest(TestCase):
         self.assertFalse(SearchHistory.objects.filter(user=self.user).exists())
 
     def test_post_review(self):
-            self.client.login(username='testuser@nyu.edu', password='12345Password!')
+        self.client.login(username="testuser@nyu.edu", password="12345Password!")
 
-            url = reverse('post_review', kwargs={'event_id': self.current_event.id})
+        url = reverse("post_review", kwargs={"event_id": self.current_event.id})
 
-            review_data = {
-                'rating': 5,
-                'review_text': 'Great event!'
-            }
+        review_data = {"rating": 5, "review_text": "Great event!"}
 
-            response = self.client.post(url, review_data)
+        response = self.client.post(url, review_data)
 
-            self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
-            response_data = json.loads(response.content)
+        response_data = json.loads(response.content)
 
-            self.assertTrue(response_data['success'])
-            self.assertIsNotNone(response_data['review_id'])
+        self.assertTrue(response_data["success"])
+        self.assertIsNotNone(response_data["review_id"])
 
-            review = Review.objects.get(pk=response_data['review_id'])
-            self.assertEqual(review.user, self.user)
-            self.assertEqual(review.event, self.current_event)
-            self.assertEqual(review.rating, 5)
-            self.assertEqual(review.review_text, 'Great event!')
+        review = Review.objects.get(pk=response_data["review_id"])
+        self.assertEqual(review.user, self.user)
+        self.assertEqual(review.event, self.current_event)
+        self.assertEqual(review.rating, 5)
+        self.assertEqual(review.review_text, "Great event!")
