@@ -69,7 +69,7 @@ class ReviewModelTest(TestCase):
         # Test fetching the review from the database
         review = Review.objects.get(id=self.review.id)
         self.assertEqual(review.rating, 5)
-        self.assertEqual(review.comment, "It was a fantastic show!")
+        self.assertEqual(review.review_text, "It was a fantastic show!")
         self.assertEqual(review.user, self.user)
         self.assertEqual(review.event, self.event)
 
