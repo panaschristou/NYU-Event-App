@@ -10,6 +10,10 @@ from django.contrib.auth import get_user_model
 import datetime
 from django.utils import timezone
 import json
+from unittest.mock import mock_open, patch
+from django.core.files.uploadedfile import SimpleUploadedFile
+from io import BytesIO
+from PIL import Image
 
 
 class EventViewsTestCase(TestCase):
@@ -66,14 +70,6 @@ class EventViewsTestCase(TestCase):
         response = self.client.get(reverse("index"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "index.html")
-
-    def test_profile_edit_view(self):
-        self.client.login(username="testuser@nyu.edu", password="12345Password!")
-        response = self.client.get(reverse("profile_edit"))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "profile_edit.html")
-        self.assertIn("user_form", response.context)
-        self.assertIn("profile_form", response.context)
 
     def test_event_detail_view(self):
         response = self.client.get(reverse("event_detail", args=(self.past_event.id,)))
@@ -315,7 +311,48 @@ class EventViewsTestCase(TestCase):
         self.assertEqual(review.review_text, "Great event!")
 
 
-class SearchHistoryViewTest(TestCase):
+class ProfileTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="testuser", password="12345Password!"
+        )
+        self.client.login(username="testuser", password="12345Password!")
+
+    def test_profile_edit_view(self):
+        response = self.client.get(reverse("profile_edit"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "profile_edit.html")
+        self.assertIn("user_form", response.context)
+        self.assertIn("profile_form", response.context)
+
+    def test_profile_edit_post(self):
+        image = Image.new("RGB", (100, 100), color=(73, 109, 137))
+        temp_file = BytesIO()
+        image.save(temp_file, "png")
+        temp_file.seek(0)
+        form_data = {
+            "first_name": "new_first_name",
+            "last_name": "new_last_name",
+            "description": "new description",
+            "avatar": SimpleUploadedFile(
+                "testuser.png", temp_file.read(), content_type="image/png"
+            ),
+        }
+
+        response = self.client.post(reverse("profile_edit"), form_data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        # Refresh the user object from the database
+        self.user.refresh_from_db()
+
+        self.assertEqual(self.user.first_name, "new_first_name")
+        self.assertEqual(self.user.last_name, "new_last_name")
+        # Assuming 'profile' is a OneToOneField linked to the User model
+        self.assertEqual(self.user.profile.description, "new description")
+        self.assertEqual(self.user.profile.avatar.name, "profile_images/testuser.png")
+
+
+class SearchHistoryViewTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             username="testuser", email="testuser@nyu.edu", password="testpassword"
