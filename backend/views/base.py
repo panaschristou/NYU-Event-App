@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.loader import render_to_string
-from ..models import Event, UserEvent, SearchHistory
+from ..models import Event, UserEvent, SearchHistory, Review
 from ..forms import UserRegistrationForm
 from ..tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
@@ -13,7 +13,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Avg
 
 
 def index(request):
@@ -35,6 +35,15 @@ def event_detail(request, event_id):
 
     event = get_object_or_404(Event, pk=event_id)
     category = request.GET.get("category")
+
+    avg_rating_result = Review.objects.filter(event=event).aggregate(Avg("rating"))
+    avg_rating = avg_rating_result["rating__avg"]
+
+    if avg_rating is not None:
+        avg_rating = round(avg_rating, 2)
+        event.avg_rating = avg_rating
+        event.save()
+
     return render(
         request,
         "event_detail.html",
@@ -43,6 +52,7 @@ def event_detail(request, event_id):
             "category": category,
             "loggedIn": loggedIn,
             "interested": interested,
+            "avg_rating": avg_rating,
         },
     )
 
