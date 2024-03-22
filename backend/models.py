@@ -2,6 +2,25 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
+from backend.storage import OverwriteStorage
+
+
+def profile_avatar_name(instance, filename):
+    ext = filename.split(".")[-1]
+    return "profile_images/%s.%s" % (instance.user.username, ext)
+
+
+# Profile model
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(
+        storage=OverwriteStorage(), upload_to=profile_avatar_name, null=True, blank=True
+    )
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+
 
 # Event model
 class Event(models.Model):
@@ -24,7 +43,7 @@ class Review(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="reviews")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField()
-    comment = models.TextField()
+    review_text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
 

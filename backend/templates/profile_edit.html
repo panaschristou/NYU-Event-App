@@ -1,4 +1,5 @@
 {% load static %}
+{% load filters %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -8,32 +9,46 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
+
     <link
-      href="{% static 'backend/css/event_detail_style.css' %}"
+      href="{% static 'backend/css/base_style.css' %}"
+      rel="stylesheet"
+    />
+
+    <link
+      href="{% static 'backend/css/profile_edit_style.css' %}"
       rel="stylesheet"
     />
   </head>
   <body>
     {% include "components/navbar.html" %}
     <div class="user-detail py-5">
-      <div class="container container-transparent">
-        <div class="row">
-          <div class="col-lg-8 mx-auto text-center">
-            <!-- Centered user details -->
-            <h1>{{ user.username }}</h1>
-            <p>Email: {{ user.email }}</p>
-            <p>First Name: {{ user.first_name }}</p>
-            <p>Last Name: {{ user.last_name }}</p>
-            <a href="{% url 'reset_password' %}" class="btn btn-link"
-              >Change My Password</a
-            >
-            <!-- Add more user details as needed -->
-          </div>
-        </div>
+      <div class="container container-transparent profile-form">
+        {% if user.profile.avatar %}
+        <img class="user-avatar" src="/media/{{ user.profile.avatar }}"/>
+        {% else %}
+        <img class="user-avatar" src="{% static 'backend/img/generic_user_image.png' %}"/>
+        {% endif %}
+        <h1>{{ user.username }}</h1>
+        <p>Email: {{ user.email }}</p>
+        <form class="col-lg-8 profile-form-edit" action="{% url 'profile_edit' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <label for="avatar">Avatar: </label>
+          <br />
+          {{ profile_form.avatar|addclass:'form-control-file' }}
+          <label for="first_name">First Name: </label>
+          {{ user_form.first_name|addclass:'form-control'}}
+          <label for="last_name">Last Name: </label>
+          {{ user_form.last_name|addclass:'form-control'}}
+          <label for="description">Personal Description: </label>
+          {{ profile_form.description|addclass:'form-control'}}
+          {{user_form.errors}}
+          {{profile_form.errors}}
+          <button type="submit" class="btn btn-primary profile-form-submit">Save My Changes</button>
+        </form>
+          <a href="{% url 'reset_password' %}" class="text-danger btn btn-link">Change My Password</a>
       </div>
     </div>
-    <button>Save</button>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
