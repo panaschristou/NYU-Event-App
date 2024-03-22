@@ -24,11 +24,6 @@
   
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-  <!-- <script type="text/javascript">
-    const USER_ID = '{{ user_id }}';  // Set by Django template
-    const RECIPIENT_ID = '{{ receiver_id }}';  // Set by Django template
-  </script> -->
-  <!-- <script src="{% static 'backend/scripts/chat.js' %}"></script> -->
 
   <script> 
         const USER_ID = '{{ user_id }}';  // Set by Django template
@@ -45,11 +40,15 @@
         // Bind to a 'new-message' event within the chat channel
         channel.bind('new-message', function(data) {
             // Append new messages to the chat
-            // $('#chat-box').append(`<p>${data.message}</p>`);
             const username = data.sender_name;
             const isMe = username === '{{ request.user.username }}'
-            const messageDiv = `<div class="${isMe ? "me" : "reply"}">${username}: ${data.message}</div>`;
-            $('#chat-box').append(messageDiv);
+            // const messageDiv = `<div class="${isMe ? "me" : "reply"}">${username}: ${data.message}</div>`;
+            // $('#chat-box').append(messageDiv);
+            const messageElement = `<div class="message-item ${isMe ? 'sent' : 'received'}">
+                <span class="username">${username}</span>
+                <p class="message">${data.message}</p>
+            </div>`;
+            $('#chat-box').append(messageElement);
         });
 
         // Form submission to send a new message

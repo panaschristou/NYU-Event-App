@@ -111,3 +111,18 @@ class SearchHistoryModelTest(TestCase):
     def test_search_history_str(self):
         # Test the string representation of the SearchHistory object
         self.assertEqual(str(self.search_history.search), "Django Testing")
+
+  
+
+class ChatModelTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Set up non-modified objects used by all test methods
+        cls.sender = User.objects.create_user(username='sender', password='testpass123')
+        cls.receiver = User.objects.create_user(username='receiver', password='testpass123')
+        cls.chat = Chat.objects.create(sender=cls.sender, receiver=cls.receiver, message="Hello")
+
+    def test_chat_content(self):
+        self.assertEqual(self.chat.sender, self.sender)
+        self.assertEqual(self.chat.receiver, self.receiver)
+        self.assertEqual(self.chat.message, "Hello")
