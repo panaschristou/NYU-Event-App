@@ -72,3 +72,34 @@ class SearchHistory(models.Model):
     search = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
     search_type = models.CharField(max_length=10)
+
+
+class SuspendedUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    reason = models.TextField()
+    suspended_at = models.DateTimeField(auto_now_add=True)
+    unsuspended_at = models.DateTimeField(null=True, blank=True)
+    is_suspended = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
+
+    def unsuspend_user(self):
+        self.is_suspended = False
+        self.user.save()
+        self.delete()
+
+
+class BannedUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    reason = models.TextField()
+    banned_at = models.DateTimeField(auto_now_add=True)
+    unban_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+    def unban_user(self):
+        self.user.is_active = True
+        self.user.save()
+        self.delete()

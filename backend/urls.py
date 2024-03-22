@@ -38,11 +38,14 @@ urlpatterns = [
     ),
     # AJAX
     path(
-        "events/<int:event_id>/add-interest/", views.interest_list_handlers.add_interest
+        "events/<int:event_id>/add-interest/",
+        views.interest_list_handlers.add_interest,
+        name="interest_list_handlers.add_interest",
     ),
     path(
         "events/<int:event_id>/remove-interest/",
         views.interest_list_handlers.remove_interest,
+        name="interest_list_handlers.remove_interest",
     ),
     path("chat/", views.chatHandler.chat_index, name="chat_index"),
     path(
