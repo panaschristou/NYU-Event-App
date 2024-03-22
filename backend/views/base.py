@@ -13,7 +13,8 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils import timezone
-from django.db.models import Q, Avg
+from django.db.models import Q, Avg, Count, Value, FloatField
+from django.db.models.functions import Coalesce
 
 
 def index(request):
@@ -79,6 +80,7 @@ def interest_list(request):
 def search_results(request):
     search_query = request.GET.get("search_events", "").strip()
     search_type = request.GET.get("search_type", "Shows")
+    sort_by = request.GET.get("sort_by", "")
     User = get_user_model()
 
     availability_filter = request.GET.get("availability", "All")
@@ -107,6 +109,17 @@ def search_results(request):
             users = User.objects.filter(
                 Q(username__icontains=search_query) | Q(email__icontains=search_query)
             )
+
+    if sort_by == "Average Rating":
+        events = events.annotate(
+            adjusted_avg_rating=Coalesce(
+                Avg("reviews__rating"), Value(0), output_field=FloatField()
+            )
+        ).order_by("-adjusted_avg_rating")
+    elif sort_by == "Popularity":
+        events = events.annotate(review_count=Count("reviews")).order_by(
+            "-review_count"
+        )
 
     context = {
         "events": events if search_type == "Shows" else None,
@@ -155,6 +168,7 @@ def index_with_categories_view(request):
 def events_by_category(request, category):
     availability_filter = request.GET.get("availability", "All")
     now = timezone.now()
+    sort_by = request.GET.get("sort_by", "")
 
     events = Event.objects.filter(category__icontains=category)
 
@@ -168,6 +182,17 @@ def events_by_category(request, category):
             )
         elif availability_filter == "Upcoming":
             events = events.filter(open_date__gt=now)
+
+    if sort_by == "Average Rating":
+        events = events.annotate(
+            adjusted_avg_rating=Coalesce(
+                Avg("reviews__rating"), Value(0), output_field=FloatField()
+            )
+        ).order_by("-adjusted_avg_rating")
+    elif sort_by == "Popularity":
+        events = events.annotate(review_count=Count("reviews")).order_by(
+            "-review_count"
+        )
 
     return render(
         request,
