@@ -1,6 +1,7 @@
 from django.urls import include, path
-
 from . import views
+from .views import pusher_authentication
+
 
 # app_name = 'backend'
 urlpatterns = [
@@ -34,4 +35,10 @@ urlpatterns = [
         "events/<int:event_id>/remove-interest/",
         views.interest_list_handlers.remove_interest,
     ),
+    path('chat/', views.chatHandler.chat_index, name='chat_index'),
+    path('chat/<int:receiver_id>/', views.chatHandler.chat_with_user, name='chat_with_user'),
+    path('chat/<int:receiver_id>/send_message/', views.chatHandler.send_message, name='send_message'),
+    path('pusher/auth', views.pusher_config.pusher_authentication, name='pusher_auth'),
+     path('search_user/', views.chatHandler.search_users, name="search_users"),
+
 ]

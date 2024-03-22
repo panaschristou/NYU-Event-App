@@ -14,3 +14,5 @@ from .base import (
     logout_user,
 )
 from .interest_list_handlers import add_interest, remove_interest
+from .chatHandler import send_message, chat_history, chat_index, chat_with_user, search_users
+from .pusher_config import pusher_authentication

@@ -18,6 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from backend import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -46,4 +47,5 @@ urlpatterns = [
         ),
         name="password_reset_complete",
     ),
+    path('pusher/auth', views.pusher_config.pusher_authentication, name='pusher_auth'),
 ]
