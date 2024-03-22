@@ -75,7 +75,7 @@ class TestUserAdmin(TestCase):
         user = User.objects.create(username="test_user")
         self.assertFalse(self.user_admin.is_banned(user))
         banned_user = BannedUser.objects.create(user=user)
-        self.assertTrue(self.user_admin.is_banned( banned_user.user))
+        self.assertTrue(self.user_admin.is_banned(banned_user.user))
 
     def test_is_suspended(self):
         user = User.objects.create(username="test_user")
