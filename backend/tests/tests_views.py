@@ -328,58 +328,70 @@ class SearchHistoryViewTest(TestCase):
 
 
 class Chat_1to1_Tests(TestCase):
-
     def setUp(self):
         # Create two users
-        self.user1 = User.objects.create_user(username='user1', password='user1password')
-        self.user2 = User.objects.create_user(username='user2', password='user2password')
+        self.user1 = User.objects.create_user(
+            username="user1", password="user1password"
+        )
+        self.user2 = User.objects.create_user(
+            username="user2", password="user2password"
+        )
         # Create a chat message from user1 to user2
-        self.chat = Chat.objects.create(sender=self.user1, receiver=self.user2, message="Hello")
+        self.chat = Chat.objects.create(
+            sender=self.user1, receiver=self.user2, message="Hello"
+        )
 
     def test_chat_index_view(self):
         # Ensure user is logged in
-        self.client.login(username='user1', password='user1password')
+        self.client.login(username="user1", password="user1password")
         # Get response from chat index view
-        response = self.client.get(reverse('chat_index'))
+        response = self.client.get(reverse("chat_index"))
         # Check if the view returns a 200 status code
         self.assertEqual(response.status_code, 200)
         # Check if the correct template was used
-        self.assertTemplateUsed(response, 'chat_index.html')
+        self.assertTemplateUsed(response, "chat_index.html")
         # Check if the response contains the users
-        self.assertContains(response, 'user2')
+        self.assertContains(response, "user2")
 
     def test_chat_with_user_view(self):
         # Ensure user is logged in
-        self.client.login(username='user1', password='user1password')
+        self.client.login(username="user1", password="user1password")
         # Get response from chat with user view
-        response = self.client.get(reverse('chat_with_user', args=[self.user2.id]))
+        response = self.client.get(reverse("chat_with_user", args=[self.user2.id]))
         # Check if the view returns a 200 status code
         self.assertEqual(response.status_code, 200)
         # Check if the correct template was used
-        self.assertTemplateUsed(response, 'chat_with_user.html')
+        self.assertTemplateUsed(response, "chat_with_user.html")
         # Check if the response contains the messages
-        self.assertContains(response, 'Hello')
+        self.assertContains(response, "Hello")
 
     def test_send_message_view(self):
         # Ensure user is logged in
-        self.client.login(username='user1', password='user1password')
+        self.client.login(username="user1", password="user1password")
         # Send a POST request to send message view
-        response = self.client.post(reverse('send_message', args=[self.user2.id]), {'message': 'Hi there!'})
+        response = self.client.post(
+            reverse("send_message", args=[self.user2.id]), {"message": "Hi there!"}
+        )
         # Check if the response is a JSON response with status
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {'status': 'Message sent successfully.'})
+        self.assertEqual(response.json(), {"status": "Message sent successfully."})
         # Check if the message was created
-        new_message = Chat.objects.get(sender=self.user1, receiver=self.user2, message='Hi there!')
+        new_message = Chat.objects.get(
+            sender=self.user1, receiver=self.user2, message="Hi there!"
+        )
         self.assertIsNotNone(new_message)
 
 
 class PusherAuthenticationTestCase(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='user', password='pass')
+        self.user = User.objects.create_user(username="user", password="pass")
         self.client = Client()
 
     def test_pusher_authentication(self):
-        self.client.login(username='user', password='pass')
-        response = self.client.post(reverse('pusher_auth'), {'channel_name': 'test_channel', 'socket_id': '123.456'})
+        self.client.login(username="user", password="pass")
+        response = self.client.post(
+            reverse("pusher_auth"),
+            {"channel_name": "test_channel", "socket_id": "123.456"},
+        )
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('auth' in response.json())
+        self.assertTrue("auth" in response.json())

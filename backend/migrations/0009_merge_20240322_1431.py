@@ -6,9 +6,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('backend', '0007_alter_chat_id_alter_event_id_alter_review_id_and_more'),
-        ('backend', '0008_rename_comment_review_review_text'),
+        ("backend", "0007_alter_chat_id_alter_event_id_alter_review_id_and_more"),
+        ("backend", "0008_rename_comment_review_review_text"),
     ]
 
-    operations = [
-    ]
+    operations = []

@@ -49,6 +49,5 @@ urlpatterns = [
         ),
         name="password_reset_complete",
     ),
-    path('pusher/auth', views.pusher_config.pusher_authentication, name='pusher_auth'),
-    
+    path("pusher/auth", views.pusher_config.pusher_authentication, name="pusher_auth"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
