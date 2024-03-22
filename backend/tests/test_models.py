@@ -1,6 +1,14 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from backend.models import Event, Review, UserEvent, Chat, SearchHistory
+from backend.models import (
+    Event,
+    Review,
+    UserEvent,
+    Chat,
+    SearchHistory,
+    BannedUser,
+    SuspendedUser,
+)
 from django.urls import reverse
 import datetime
 
@@ -111,3 +119,53 @@ class SearchHistoryModelTest(TestCase):
     def test_search_history_str(self):
         # Test the string representation of the SearchHistory object
         self.assertEqual(str(self.search_history.search), "Django Testing")
+
+
+class SuspendedUserModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(
+            username="testuser", email="testuser@nyu.edu", password="testpassword"
+        )
+        cls.suspended_user = SuspendedUser.objects.create(
+            user=cls.user, reason="Test reason", is_suspended=True
+        )
+
+    def test_suspended_user_attributes(self):
+        suspended_user = SuspendedUser.objects.get(user=self.user)
+        self.assertEqual(suspended_user.user, self.user)
+        self.assertEqual(suspended_user.reason, "Test reason")
+        self.assertTrue(suspended_user.is_suspended)
+        self.assertIsNotNone(suspended_user.suspended_at)
+        self.assertIsNone(suspended_user.unsuspended_at)
+
+    def test_unsuspend_user(self):
+
+        self.suspended_user.unsuspend_user()
+        with self.assertRaises(SuspendedUser.DoesNotExist):
+            SuspendedUser.objects.get(user=self.user)
+
+
+class BannedUserModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(
+            username="testuser",
+            email="testuser@nyu.edu",
+            password="testpassword",
+            is_active=False,
+        )
+        cls.banned_user = BannedUser.objects.create(user=cls.user, reason="Test reason")
+
+    def test_banned_user_attributes(self):
+        banned_user = BannedUser.objects.get(user=self.user)
+        self.assertEqual(banned_user.user, self.user)
+        self.assertEqual(banned_user.reason, "Test reason")
+        self.assertFalse(self.user.is_active)
+        self.assertIsNotNone(banned_user.banned_at)
+        self.assertIsNone(banned_user.unban_at)
+
+    def test_unban_user(self):
+        self.banned_user.unban_user()
+        with self.assertRaises(BannedUser.DoesNotExist):
+            BannedUser.objects.get(user=self.user)
