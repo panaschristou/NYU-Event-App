@@ -40,6 +40,7 @@ deploy:
     app: "postgres"
     env: "postgres-dev"
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
+    skip_cleanup: true
     on:
       branch: develop  
 
@@ -50,5 +51,6 @@ deploy:
     app: "postgres"
     env: "main"
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
+    skip_cleanup: true
     on:
       branch: master  
