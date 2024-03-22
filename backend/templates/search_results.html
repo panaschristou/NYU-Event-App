@@ -99,7 +99,11 @@
         {% for user in users %}
           <div class="user-card">
             <a href="{% url 'user_detail' user.username %}">
-              <img src="{% static 'backend/img/generic_user_image.png' %}" alt="User Image" class="user-card-img" alt="{{ user.username }}" style="cursor: pointer; object-fit: cover" />
+              {% if user.profile.avatar %}
+              <img src="/media/{{ user.profile.avatar }}" alt="User Image" class="user-card-img" style="cursor: pointer; object-fit: cover; border-radius: 50%;" />
+              {% else %}
+              <img src="{% static 'backend/img/generic_user_image.png' %}" alt="User Image" class="user-card-img" style="cursor: pointer; object-fit: cover; border-radius: 50%;" />
+              {% endif %}
               <h5 class="card-title">{{ user.username }}</h5>
             </a>
           </div>
