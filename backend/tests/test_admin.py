@@ -1,10 +1,18 @@
 from django.test import TestCase
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth.models import User
-from backend.admin import (UserAdmin ,SuspendedUserInline, BannedUserInline,SuspendedUserAdmin ,BanneddUserAdmin)
+from backend.admin import (
+    UserAdmin,
+    SuspendedUserInline,
+    BannedUserInline,
+    SuspendedUserAdmin,
+    BanneddUserAdmin,
+)
 from backend.models import SuspendedUser, BannedUser
 from django.contrib import admin
 from unittest.mock import Mock
+
+
 class TestUserAdmin(TestCase):
     def setUp(self):
         self.admin_site = admin.AdminSite()
@@ -40,7 +48,7 @@ class TestUserAdmin(TestCase):
         self.assertIsNone(banned_user)
         user.refresh_from_db()
         self.assertTrue(user.is_active)
-    
+
     def test_suspend_user(self):
         request = Mock()
         request.user = Mock()
@@ -49,7 +57,7 @@ class TestUserAdmin(TestCase):
         suspended_user = SuspendedUser.objects.filter(user=user).first()
         self.assertIsNotNone(suspended_user)
         self.assertTrue(suspended_user.is_suspended)
-    
+
     def test_unsuspend_user(self):
         request = Mock()
         request.user = Mock()
@@ -62,17 +70,16 @@ class TestUserAdmin(TestCase):
         suspended_user = SuspendedUser.objects.filter(user=user).first()
         self.assertIsNone(suspended_user)
         user.refresh_from_db()
-        
+
     def test_is_banned(self):
         user = User.objects.create(username="test_user")
         self.assertFalse(self.user_admin.is_banned(user))
-        banned_user = BannedUser.objects.create(user=user)
         self.assertTrue(self.user_admin.is_banned(user))
 
     def test_is_suspended(self):
         user = User.objects.create(username="test_user")
         self.assertFalse(self.user_admin.is_suspended(user))
-        suspended_user = SuspendedUser.objects.create(user=user,is_suspended=True)
+        suspended_user = SuspendedUser.objects.create(user=user, is_suspended=True)
         self.assertTrue(self.user_admin.is_suspended(suspended_user.user))
 
 
@@ -95,17 +102,21 @@ class TestSuspendedUserAdmin(TestCase):
     def test_filters(self):
         expected_filters = ["suspended_at", "unsuspended_at", "is_suspended"]
         self.assertEqual(self.suspended_user_admin.list_filter, expected_filters)
-        
+
     def test_username(self):
         user = User.objects.create(username="test_user", email="ty@nyu.edu")
         suspended_user = SuspendedUser.objects.create(user=user)
-        self.assertEqual(self.suspended_user_admin.get_username(suspended_user), "test_user")
+        self.assertEqual(
+            self.suspended_user_admin.get_username(suspended_user), "test_user"
+        )
 
     def test_email(self):
         user = User.objects.create(username="test_user", email="ty@nyu.edu")
         suspended_user = SuspendedUser.objects.create(user=user)
-        self.assertEqual(self.suspended_user_admin.get_email(suspended_user), "ty@nyu.edu")
-        
+        self.assertEqual(
+            self.suspended_user_admin.get_email(suspended_user), "ty@nyu.edu"
+        )
+
 
 class TestBannedUserAdmin(TestCase):
     def setUp(self):
@@ -134,8 +145,4 @@ class TestBannedUserAdmin(TestCase):
     def test_email(self):
         user = User.objects.create(username="test_user", email="ty@nyu.edu")
         banned_user = BannedUser.objects.create(user=user)
-        self.assertEqual(self.banned_user_admin.get_email(banned_user), "ty@nyu.edu")        
-
-        
-    
-        
+        self.assertEqual(self.banned_user_admin.get_email(banned_user), "ty@nyu.edu")

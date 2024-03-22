@@ -134,8 +134,10 @@ class UserAdmin(BaseUserAdmin):
         "suspendeduser__is_suspended",
     )
 
+
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+
 
 class SuspendedUserAdmin(admin.ModelAdmin):
     list_display = [
@@ -163,7 +165,8 @@ class SuspendedUserAdmin(admin.ModelAdmin):
         if db_field.name == "user":
             kwargs["queryset"] = User.objects.filter(is_active=False)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-    
+
+
 class BanneddUserAdmin(admin.ModelAdmin):
     list_display = [
         "get_username",
