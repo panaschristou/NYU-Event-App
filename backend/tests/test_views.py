@@ -10,6 +10,10 @@ from django.contrib.auth import get_user_model
 import datetime
 from django.utils import timezone
 import json
+from unittest.mock import mock_open, patch
+from django.core.files.uploadedfile import SimpleUploadedFile
+from io import BytesIO
+from PIL import Image
 
 
 class EventViewsTestCase(TestCase):
@@ -82,15 +86,8 @@ class EventViewsTestCase(TestCase):
         self.assertTemplateUsed(response, "user_detail.html")
         self.assertEqual(response.context["detail_user"].username, "testuser@nyu.edu")
 
-    def test_interest_list_view_without_login(self):
-        response = self.client.get(reverse("interest_list"))
-        self.assertEqual(response.status_code, 302)
-
     def test_interest_list_view(self):
-        self.client.post(
-            reverse("login"),
-            {"username": "testuser@nyu.edu", "password": "12345Password!"},
-        )
+        self.client.login(username="testuser@nyu.edu", password="12345Password!")
         response = self.client.get(reverse("interest_list"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "interest_list.html")
@@ -100,6 +97,27 @@ class EventViewsTestCase(TestCase):
         testIds = [self.current_event.id, self.upcoming_event.id]
         for i in range(len(interestEvents)):
             self.assertEqual(interestEvents[i].id, testIds[i])
+
+    def test_interest_list_add_and_remove_interest(self):
+        self.client.login(username="testuser@nyu.edu", password="12345Password!")
+        # Add interest
+        response = self.client.post(
+            reverse("interest_list_handlers.add_interest", args=(self.past_event.id,))
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            UserEvent.objects.filter(user=self.user, event=self.past_event).exists()
+        )
+        # Remove interest
+        response = self.client.post(
+            reverse(
+                "interest_list_handlers.remove_interest", args=(self.past_event.id,)
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            UserEvent.objects.filter(user=self.user, event=self.past_event).exists()
+        )
 
     def test_search_results_view(self):
         current_date = timezone.now().date()
@@ -293,7 +311,48 @@ class EventViewsTestCase(TestCase):
         self.assertEqual(review.review_text, "Great event!")
 
 
-class SearchHistoryViewTest(TestCase):
+class ProfileTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="testuser", password="12345Password!"
+        )
+        self.client.login(username="testuser", password="12345Password!")
+
+    def test_profile_edit_view(self):
+        response = self.client.get(reverse("profile_edit"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "profile_edit.html")
+        self.assertIn("user_form", response.context)
+        self.assertIn("profile_form", response.context)
+
+    def test_profile_edit_post(self):
+        image = Image.new("RGB", (100, 100), color=(73, 109, 137))
+        temp_file = BytesIO()
+        image.save(temp_file, "png")
+        temp_file.seek(0)
+        form_data = {
+            "first_name": "new_first_name",
+            "last_name": "new_last_name",
+            "description": "new description",
+            "avatar": SimpleUploadedFile(
+                "testuser.png", temp_file.read(), content_type="image/png"
+            ),
+        }
+
+        response = self.client.post(reverse("profile_edit"), form_data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        # Refresh the user object from the database
+        self.user.refresh_from_db()
+
+        self.assertEqual(self.user.first_name, "new_first_name")
+        self.assertEqual(self.user.last_name, "new_last_name")
+        # Assuming 'profile' is a OneToOneField linked to the User model
+        self.assertEqual(self.user.profile.description, "new description")
+        self.assertEqual(self.user.profile.avatar.name, "profile_images/testuser.png")
+
+
+class SearchHistoryViewTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             username="testuser", email="testuser@nyu.edu", password="testpassword"
