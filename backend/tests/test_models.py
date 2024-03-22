@@ -1,4 +1,6 @@
 from django.test import TestCase
+from unittest.mock import mock_open, patch
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import User
 from backend.models import (
     Event,
@@ -8,9 +10,68 @@ from backend.models import (
     SearchHistory,
     BannedUser,
     SuspendedUser,
+    Profile,
 )
 from django.urls import reverse
 import datetime
+
+
+class ProfileModalTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Create test data for Profile model
+        cls.user = User.objects.create_user(
+            username="testuser", email="testuser@nyu.edu", password="12345"
+        )
+        cls.profile = Profile.objects.get(
+            user_id=cls.user.id,
+        )
+        cls.profile.description = "A broadway lover from NYU"
+        mock_file = mock_open(read_data=b"file_content")
+        with patch("builtins.open", mock_file):
+            cls.profile.avatar = SimpleUploadedFile(
+                name="testuser.jpg",
+                content=open("profile_images/testuser.jpg", "rb").read(),
+                content_type="image/png",
+            )
+        cls.profile.save()
+
+    def test_profile_attributes(self):
+        # Test fetching the review from the database
+        profile = Profile.objects.get(id=self.profile.id)
+        self.assertEqual(profile.user, self.user)
+        self.assertEqual(profile.description, "A broadway lover from NYU")
+        self.assertEqual(profile.avatar.name, "profile_images/testuser.jpg")
+
+
+class UserEventModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(
+            username="testuser", email="testuser@nyu.edu", password="12345"
+        )
+        cls.event = Event.objects.create(
+            title="Spamalot",
+            category="Musical, Comedy, Revival, Broadway",
+            description="Lovingly ripped from the film classic",
+            open_date=datetime.date(2023, 11, 16),
+            close_date=datetime.date(2023, 10, 31),
+            location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
+            external_link="http://www.broadway.org/shows/details/spamalot,812",
+            image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
+            avg_rating=0,  # Assuming initial avg_rating
+        )
+        cls.user_event = UserEvent.objects.create(
+            saved=True,
+            user=cls.user,
+            event=cls.event,
+        )
+
+    def test_user_event_attributes(self):
+        user_event = UserEvent.objects.get(id=self.user_event.id)
+        self.assertEqual(user_event.user, self.user)
+        self.assertEqual(user_event.event, self.event)
+        self.assertTrue(user_event.saved)
 
 
 class EventModelTest(TestCase):

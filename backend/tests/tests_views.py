@@ -67,6 +67,14 @@ class EventViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "index.html")
 
+    def test_profile_edit_view(self):
+        self.client.login(username="testuser@nyu.edu", password="12345Password!")
+        response = self.client.get(reverse("profile_edit"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "profile_edit.html")
+        self.assertIn("user_form", response.context)
+        self.assertIn("profile_form", response.context)
+
     def test_event_detail_view(self):
         response = self.client.get(reverse("event_detail", args=(self.past_event.id,)))
         self.assertEqual(response.status_code, 200)
@@ -82,15 +90,8 @@ class EventViewsTestCase(TestCase):
         self.assertTemplateUsed(response, "user_detail.html")
         self.assertEqual(response.context["detail_user"].username, "testuser@nyu.edu")
 
-    def test_interest_list_view_without_login(self):
-        response = self.client.get(reverse("interest_list"))
-        self.assertEqual(response.status_code, 302)
-
     def test_interest_list_view(self):
-        self.client.post(
-            reverse("login"),
-            {"username": "testuser@nyu.edu", "password": "12345Password!"},
-        )
+        self.client.login(username="testuser@nyu.edu", password="12345Password!")
         response = self.client.get(reverse("interest_list"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "interest_list.html")
@@ -100,6 +101,27 @@ class EventViewsTestCase(TestCase):
         testIds = [self.current_event.id, self.upcoming_event.id]
         for i in range(len(interestEvents)):
             self.assertEqual(interestEvents[i].id, testIds[i])
+
+    def test_interest_list_add_and_remove_interest(self):
+        self.client.login(username="testuser@nyu.edu", password="12345Password!")
+        # Add interest
+        response = self.client.post(
+            reverse("interest_list_handlers.add_interest", args=(self.past_event.id,))
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            UserEvent.objects.filter(user=self.user, event=self.past_event).exists()
+        )
+        # Remove interest
+        response = self.client.post(
+            reverse(
+                "interest_list_handlers.remove_interest", args=(self.past_event.id,)
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            UserEvent.objects.filter(user=self.user, event=self.past_event).exists()
+        )
 
     def test_search_results_view(self):
         current_date = timezone.now().date()
