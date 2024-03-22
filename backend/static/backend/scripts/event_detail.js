@@ -100,13 +100,17 @@ postButton.addEventListener("click", function () {
     return response.json(); 
   })
   .then(data => {
+    if (data.success) {
     showTemporaryMessage("Thank you for your review!", "alert-success");
     modal.style.display = "none";
     document.getElementById("review-text").value = '';
     document.querySelectorAll('input[name="rating"]').forEach((input) => {
       input.checked = false;
     });
-    resetReviewForm();
+    resetReviewForm();}
+   else{
+    showTemporaryMessage(data.message, "alert-danger");
+   }
   })
   .catch(error => {
     console.error('Error:', error);
