@@ -1,0 +1,41 @@
+body {
+    background-color: #FFFBF5;
+    margin: 0;
+    height: 100vh;
+    font-family: "Trebuchet MS"; 
+  }
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #77499e;
+  }
+.title {
+    color: rgb(68, 66, 66);
+    text-align: center;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 60px;
+  }
+.navbar-light .navbar-brand {
+    color: rgba(0, 0, 0, 0.9);
+}
+
+.navbar-light .navbar-brand:focus,
+.navbar-light .navbar-brand:hover {
+    color: rgba(0, 0, 0, 0.9);
+}
+
+.navbar-dark .navbar-brand {
+    color: #fff;
+}
+
+.navbar-dark .navbar-brand:focus,
+.navbar-dark .navbar-brand:hover {
+    color: #fff;
+}
+.navbar-brand {
+    font-size: 1.35rem;
+    font-family: apple-system;
+}

@@ -87,6 +87,10 @@ body {
   display: none;
 }
 
+.text-purple {
+  color: #77499e;
+}
+
 .btn-outline-dark {
   color: #77499e; 
   border-color: #77499e;

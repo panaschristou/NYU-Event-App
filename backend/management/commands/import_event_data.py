@@ -1,6 +1,8 @@
+import re
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ValidationError
 from backend.models import Event
+from room.models import Room
 import json
 from dateutil import parser
 
@@ -58,6 +60,23 @@ class Command(BaseCommand):
                         image_url=event_data["image_url"],
                         avg_rating=avg_rating,
                     )
+
+                    pattern = r"[^a-zA-Z0-9\s]"
+
+                    cleaned_title = re.sub(pattern, "", event_data["title"])
+
+                    title_split = cleaned_title.split()
+
+                    room_name = ""
+                    if len(title_split) >= 3:
+                        room_name = "_".join(title_split[:3])
+                    else:
+                        room_name = "_".join(title_split[:])
+
+                    Room.objects.create(
+                        name=event_data["title"], slug=room_name.lower()
+                    )
+
                     self.stdout.write(
                         self.style.SUCCESS(
                             f"Successfully imported event: {event.title}"
