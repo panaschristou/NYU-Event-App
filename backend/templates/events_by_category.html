@@ -29,10 +29,10 @@
               </select>
           </div>
           <div class="col-md-6"> <!-- Adjust the column size as needed -->
-            <select class="custom-select" id="sort">
-              <option selected>Sorted by</option>
-              <option>Average Rating</option>
-              <option>Popularity</option>
+            <select class="custom-select" id="sort" name="sort_by" onchange="this.form.submit()">
+              <option value="" {% if not request.GET.sort_by %}selected{% endif %}>Sorted by</option>
+              <option value="Average Rating" {% if request.GET.sort_by == 'Average Rating' %}selected{% endif %}>Average Rating</option>
+              <option value="Popularity" {% if request.GET.sort_by == 'Popularity' %}selected{% endif %}>Popularity</option>
             </select>
           </div>
       </div>
@@ -70,22 +70,4 @@
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </html>
-
-
-
-
-  <!-- <h1>Events in "{{ current_category }}"</h1>
-
-  {% if events %}
-    <ul>
-      {% for event in events %}
-        <li>
-            <a href="{% url 'event_detail' event.id %}?category={{ current_category }}" class="btn btn-outline-dark">{{ event.title }}</a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>No events found in this category.</p>
-  {% endif %}
- -->
 
