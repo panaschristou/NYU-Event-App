@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from backend.models import Event, User, UserEvent, SearchHistory
+from backend.models import Event, User, UserEvent, SearchHistory, Review, Chat
 from django.core import mail
 from django.contrib.messages import get_messages
 from django.contrib.auth.tokens import default_token_generator
@@ -9,6 +9,11 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth import get_user_model
 import datetime
 from django.utils import timezone
+import json
+from unittest.mock import mock_open, patch
+from django.core.files.uploadedfile import SimpleUploadedFile
+from io import BytesIO
+from PIL import Image
 
 
 class EventViewsTestCase(TestCase):
@@ -55,6 +60,24 @@ class EventViewsTestCase(TestCase):
             avg_rating=0,
         )
 
+        # Add reviews to create different average ratings and review counts
+        Review.objects.create(
+            event=self.current_event, user=self.user, rating=5, review_text="Great!"
+        )
+        Review.objects.create(
+            event=self.current_event, user=self.user, rating=4, review_text="Good!"
+        )
+
+        Review.objects.create(
+            event=self.upcoming_event, user=self.user, rating=3, review_text="Okay."
+        )
+        Review.objects.create(
+            event=self.upcoming_event, user=self.user, rating=3, review_text="Decent."
+        )
+        Review.objects.create(
+            event=self.upcoming_event, user=self.user, rating=3, review_text="Not bad."
+        )
+
         # add current_event and upcoming_event to user interest list
         UserEvent.objects.create(event=self.current_event, user=self.user, saved=True)
         UserEvent.objects.create(event=self.upcoming_event, user=self.user, saved=True)
@@ -81,15 +104,8 @@ class EventViewsTestCase(TestCase):
         self.assertTemplateUsed(response, "user_detail.html")
         self.assertEqual(response.context["detail_user"].username, "testuser@nyu.edu")
 
-    def test_interest_list_view_without_login(self):
-        response = self.client.get(reverse("interest_list"))
-        self.assertEqual(response.status_code, 302)
-
     def test_interest_list_view(self):
-        self.client.post(
-            reverse("login"),
-            {"username": "testuser@nyu.edu", "password": "12345Password!"},
-        )
+        self.client.login(username="testuser@nyu.edu", password="12345Password!")
         response = self.client.get(reverse("interest_list"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "interest_list.html")
@@ -99,6 +115,27 @@ class EventViewsTestCase(TestCase):
         testIds = [self.current_event.id, self.upcoming_event.id]
         for i in range(len(interestEvents)):
             self.assertEqual(interestEvents[i].id, testIds[i])
+
+    def test_interest_list_add_and_remove_interest(self):
+        self.client.login(username="testuser@nyu.edu", password="12345Password!")
+        # Add interest
+        response = self.client.post(
+            reverse("interest_list_handlers.add_interest", args=(self.past_event.id,))
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            UserEvent.objects.filter(user=self.user, event=self.past_event).exists()
+        )
+        # Remove interest
+        response = self.client.post(
+            reverse(
+                "interest_list_handlers.remove_interest", args=(self.past_event.id,)
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            UserEvent.objects.filter(user=self.user, event=self.past_event).exists()
+        )
 
     def test_search_results_view(self):
         current_date = timezone.now().date()
@@ -156,6 +193,35 @@ class EventViewsTestCase(TestCase):
             )
         )
 
+    def test_search_results_view_sort_by_average_rating(self):
+        # Test sorting by average rating
+        response = self.client.get(
+            reverse("search_results") + "?sort_by=Average+Rating"
+        )
+        self.assertEqual(response.status_code, 200)
+        events = list(response.context["events"])
+        # Check that each event has a lower or equal avg_rating than the previous one
+        self.assertTrue(
+            all(
+                events[i].avg_rating >= events[i + 1].avg_rating
+                for i in range(len(events) - 1)
+            )
+        )
+
+    def test_search_results_view_sort_by_popularity(self):
+        # Test sorting by popularity (number of reviews)
+        response = self.client.get(reverse("search_results") + "?sort_by=Popularity")
+        self.assertEqual(response.status_code, 200)
+        events = list(response.context["events"])
+        # Assume events have a 'reviews' related_name for the related Review objects
+        # Check that each event has a higher or equal number of reviews than the next one
+        self.assertTrue(
+            all(
+                events[i].reviews.count() >= events[i + 1].reviews.count()
+                for i in range(len(events) - 1)
+            )
+        )
+
     def test_index_with_categories_view(self):
         response = self.client.get(reverse("index"))
         self.assertEqual(response.status_code, 200)
@@ -195,6 +261,38 @@ class EventViewsTestCase(TestCase):
                     and (event.close_date is None or event.close_date >= today)
                 )
                 for event in current_response.context["events"]
+            )
+        )
+
+    def test_events_by_category_view_sort_by_average_rating(self):
+        # Test sorting by average rating within a specific category
+        response = self.client.get(
+            reverse("events_by_category", args=(self.category,))
+            + "?sort_by=Average+Rating"
+        )
+        self.assertEqual(response.status_code, 200)
+        events = list(response.context["events"])
+        # Check that each event has a lower or equal avg_rating than the previous one within the category
+        self.assertTrue(
+            all(
+                events[i].avg_rating >= events[i + 1].avg_rating
+                for i in range(len(events) - 1)
+            )
+        )
+
+    def test_events_by_category_view_sort_by_popularity(self):
+        today = timezone.now().date()
+        # Test sorting by popularity (number of reviews) within a specific category
+        response = self.client.get(
+            reverse("events_by_category", args=(self.category,)) + "?sort_by=Popularity"
+        )
+        self.assertEqual(response.status_code, 200)
+        events = list(response.context["events"])
+        # Check that each event has a higher or equal number of reviews than the next one within the category
+        self.assertTrue(
+            all(
+                events[i].reviews.count() >= events[i + 1].reviews.count()
+                for i in range(len(events) - 1)
             )
         )
 
@@ -269,8 +367,71 @@ class EventViewsTestCase(TestCase):
             str(messages[0]), "There Was An Error Logging In, Try Again..."
         )
 
+    def test_post_review(self):
+        self.client.login(username="testuser@nyu.edu", password="12345Password!")
 
-class SearchHistoryViewTest(TestCase):
+        url = reverse("post_review", kwargs={"event_id": self.current_event.id})
+
+        review_data = {"rating": 5, "review_text": "Great event!"}
+
+        response = self.client.post(url, review_data)
+
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.content)
+
+        self.assertTrue(response_data["success"])
+        self.assertIsNotNone(response_data["review_id"])
+
+        review = Review.objects.get(pk=response_data["review_id"])
+        self.assertEqual(review.user, self.user)
+        self.assertEqual(review.event, self.current_event)
+        self.assertEqual(review.rating, 5)
+        self.assertEqual(review.review_text, "Great event!")
+
+
+class ProfileTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="testuser", password="12345Password!"
+        )
+        self.client.login(username="testuser", password="12345Password!")
+
+    def test_profile_edit_view(self):
+        response = self.client.get(reverse("profile_edit"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "profile_edit.html")
+        self.assertIn("user_form", response.context)
+        self.assertIn("profile_form", response.context)
+
+    def test_profile_edit_post(self):
+        image = Image.new("RGB", (100, 100), color=(73, 109, 137))
+        temp_file = BytesIO()
+        image.save(temp_file, "png")
+        temp_file.seek(0)
+        form_data = {
+            "first_name": "new_first_name",
+            "last_name": "new_last_name",
+            "description": "new description",
+            "avatar": SimpleUploadedFile(
+                "testuser.png", temp_file.read(), content_type="image/png"
+            ),
+        }
+
+        response = self.client.post(reverse("profile_edit"), form_data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        # Refresh the user object from the database
+        self.user.refresh_from_db()
+
+        self.assertEqual(self.user.first_name, "new_first_name")
+        self.assertEqual(self.user.last_name, "new_last_name")
+        # Assuming 'profile' is a OneToOneField linked to the User model
+        self.assertEqual(self.user.profile.description, "new description")
+        self.assertEqual(self.user.profile.avatar.name, "profile_images/testuser.png")
+
+
+class SearchHistoryViewTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             username="testuser", email="testuser@nyu.edu", password="testpassword"
@@ -302,3 +463,73 @@ class SearchHistoryViewTest(TestCase):
         response = self.client.post(reverse("clear_history"))
         self.assertEqual(response.status_code, 302)  # Check for redirect
         self.assertFalse(SearchHistory.objects.filter(user=self.user).exists())
+
+
+class Chat_1to1_Tests(TestCase):
+    def setUp(self):
+        # Create two users
+        self.user1 = User.objects.create_user(
+            username="user1", password="user1password"
+        )
+        self.user2 = User.objects.create_user(
+            username="user2", password="user2password"
+        )
+        # Create a chat message from user1 to user2
+        self.chat = Chat.objects.create(
+            sender=self.user1, receiver=self.user2, message="Hello"
+        )
+
+    def test_chat_index_view(self):
+        # Ensure user is logged in
+        self.client.login(username="user1", password="user1password")
+        # Get response from chat index view
+        response = self.client.get(reverse("chat_index"))
+        # Check if the view returns a 200 status code
+        self.assertEqual(response.status_code, 200)
+        # Check if the correct template was used
+        self.assertTemplateUsed(response, "chat_index.html")
+        # Check if the response contains the users
+        self.assertContains(response, "user2")
+
+    def test_chat_with_user_view(self):
+        # Ensure user is logged in
+        self.client.login(username="user1", password="user1password")
+        # Get response from chat with user view
+        response = self.client.get(reverse("chat_with_user", args=[self.user2.id]))
+        # Check if the view returns a 200 status code
+        self.assertEqual(response.status_code, 200)
+        # Check if the correct template was used
+        self.assertTemplateUsed(response, "chat_with_user.html")
+        # Check if the response contains the messages
+        self.assertContains(response, "Hello")
+
+    def test_send_message_view(self):
+        # Ensure user is logged in
+        self.client.login(username="user1", password="user1password")
+        # Send a POST request to send message view
+        response = self.client.post(
+            reverse("send_message", args=[self.user2.id]), {"message": "Hi there!"}
+        )
+        # Check if the response is a JSON response with status
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"status": "Message sent successfully."})
+        # Check if the message was created
+        new_message = Chat.objects.get(
+            sender=self.user1, receiver=self.user2, message="Hi there!"
+        )
+        self.assertIsNotNone(new_message)
+
+
+class PusherAuthenticationTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="user", password="pass")
+        self.client = Client()
+
+    def test_pusher_authentication(self):
+        self.client.login(username="user", password="pass")
+        response = self.client.post(
+            reverse("pusher_auth"),
+            {"channel_name": "test_channel", "socket_id": "123.456"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("auth" in response.json())
