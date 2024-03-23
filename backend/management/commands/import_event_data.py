@@ -73,7 +73,7 @@ class Command(BaseCommand):
                     else:
                         room_name = "_".join(title_split[:])
 
-                    room = Room.objects.create(
+                    Room.objects.create(
                         name=event_data["title"], slug=room_name.lower()
                     )
 
