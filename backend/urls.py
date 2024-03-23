@@ -1,5 +1,7 @@
 from django.urls import include, path
 
+import room
+
 from . import views
 
 # app_name = 'backend'
@@ -38,8 +40,8 @@ urlpatterns = [
         "events/<int:event_id>/remove-interest/",
         views.interest_list_handlers.remove_interest,
     ),
-
-    #chat app urls
-    path("chat",views.base.frontpage, name='frontpage'),
-    path('rooms', include('room.urls')),
+    # chat app urls
+    path("chat", views.base.frontpage, name="frontpage"),
+    path("rooms/", include("room.urls")),
+    path("<slug:slug>/", room.views.room, name="chat_room"),
 ]

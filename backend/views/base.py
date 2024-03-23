@@ -1,3 +1,4 @@
+import re
 from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -34,6 +35,21 @@ def event_detail(request, event_id):
     )
 
     event = get_object_or_404(Event, pk=event_id)
+
+    pattern = r"[^a-zA-Z0-9\s]"
+
+    cleaned_title = re.sub(pattern, "", event.title)
+
+    title_split = cleaned_title.split()
+
+    room_name = ""
+    if len(title_split) >= 3:
+        room_name = "_".join(title_split[:3])
+    else:
+        room_name = "_".join(title_split[:])
+
+    room_name = room_name.lower()
+
     category = request.GET.get("category")
     return render(
         request,
@@ -43,6 +59,7 @@ def event_detail(request, event_id):
             "category": category,
             "loggedIn": loggedIn,
             "interested": interested,
+            "room_name": room_name,
         },
     )
 
@@ -254,7 +271,7 @@ def login_user(request):
                 request.session.set_expiry(604800)
             else:
                 request.session.set_expiry(0)
-            # return redirect("frontpage")    
+            # return redirect("frontpage")
             return redirect("index")
         else:
             messages.success(request, ("There Was An Error Logging In, Try Again..."))
@@ -262,10 +279,12 @@ def login_user(request):
     else:
         return render(request, "authenticate/login.html", {})
 
+
 def logout_user(request):
     logout(request)
     messages.success(request, ("You are successfully logged out!"))
     return redirect("index")
 
+
 def frontpage(request):
-    return render(request, 'chat/frontpage.html')
+    return render(request, "chat/frontpage.html")

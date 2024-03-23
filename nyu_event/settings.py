@@ -47,10 +47,10 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    'daphne',
+    "daphne",
     "django.contrib.staticfiles",
-    'channels',
-    'room',
+    "channels",
+    "room",
 ]
 
 MIDDLEWARE = [
@@ -84,14 +84,10 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "nyu_event.wsgi.application"
-ASGI_APPLICATION = 'nyu_event.asgi.application'
+ASGI_APPLICATION = "nyu_event.asgi.application"
 # ASGI_APPLICATION = 'room.routing.application'
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer'
-    }
-}
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 
 # Database
@@ -172,4 +168,3 @@ EMAIL_HOST_USER = "nyuevents24@gmail.com"
 EMAIL_HOST_PASSWORD = "ogtoqvpmcniroelh"
 
 DEFAULT_FROM_EMAIL = "nyuevents24@gmail.com"
-
