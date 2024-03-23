@@ -20,6 +20,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from backend import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -48,4 +49,5 @@ urlpatterns = [
         ),
         name="password_reset_complete",
     ),
+    path("pusher/auth", views.pusher_config.pusher_authentication, name="pusher_auth"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
