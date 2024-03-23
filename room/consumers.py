@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 logger = logging.getLogger(__name__)
 
+
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         try:
