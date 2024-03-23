@@ -60,6 +60,24 @@ class EventViewsTestCase(TestCase):
             avg_rating=0,
         )
 
+        # Add reviews to create different average ratings and review counts
+        Review.objects.create(
+            event=self.current_event, user=self.user, rating=5, review_text="Great!"
+        )
+        Review.objects.create(
+            event=self.current_event, user=self.user, rating=4, review_text="Good!"
+        )
+
+        Review.objects.create(
+            event=self.upcoming_event, user=self.user, rating=3, review_text="Okay."
+        )
+        Review.objects.create(
+            event=self.upcoming_event, user=self.user, rating=3, review_text="Decent."
+        )
+        Review.objects.create(
+            event=self.upcoming_event, user=self.user, rating=3, review_text="Not bad."
+        )
+
         # add current_event and upcoming_event to user interest list
         UserEvent.objects.create(event=self.current_event, user=self.user, saved=True)
         UserEvent.objects.create(event=self.upcoming_event, user=self.user, saved=True)
@@ -175,6 +193,35 @@ class EventViewsTestCase(TestCase):
             )
         )
 
+    def test_search_results_view_sort_by_average_rating(self):
+        # Test sorting by average rating
+        response = self.client.get(
+            reverse("search_results") + "?sort_by=Average+Rating"
+        )
+        self.assertEqual(response.status_code, 200)
+        events = list(response.context["events"])
+        # Check that each event has a lower or equal avg_rating than the previous one
+        self.assertTrue(
+            all(
+                events[i].avg_rating >= events[i + 1].avg_rating
+                for i in range(len(events) - 1)
+            )
+        )
+
+    def test_search_results_view_sort_by_popularity(self):
+        # Test sorting by popularity (number of reviews)
+        response = self.client.get(reverse("search_results") + "?sort_by=Popularity")
+        self.assertEqual(response.status_code, 200)
+        events = list(response.context["events"])
+        # Assume events have a 'reviews' related_name for the related Review objects
+        # Check that each event has a higher or equal number of reviews than the next one
+        self.assertTrue(
+            all(
+                events[i].reviews.count() >= events[i + 1].reviews.count()
+                for i in range(len(events) - 1)
+            )
+        )
+
     def test_index_with_categories_view(self):
         response = self.client.get(reverse("index"))
         self.assertEqual(response.status_code, 200)
@@ -214,6 +261,38 @@ class EventViewsTestCase(TestCase):
                     and (event.close_date is None or event.close_date >= today)
                 )
                 for event in current_response.context["events"]
+            )
+        )
+
+    def test_events_by_category_view_sort_by_average_rating(self):
+        # Test sorting by average rating within a specific category
+        response = self.client.get(
+            reverse("events_by_category", args=(self.category,))
+            + "?sort_by=Average+Rating"
+        )
+        self.assertEqual(response.status_code, 200)
+        events = list(response.context["events"])
+        # Check that each event has a lower or equal avg_rating than the previous one within the category
+        self.assertTrue(
+            all(
+                events[i].avg_rating >= events[i + 1].avg_rating
+                for i in range(len(events) - 1)
+            )
+        )
+
+    def test_events_by_category_view_sort_by_popularity(self):
+        today = timezone.now().date()
+        # Test sorting by popularity (number of reviews) within a specific category
+        response = self.client.get(
+            reverse("events_by_category", args=(self.category,)) + "?sort_by=Popularity"
+        )
+        self.assertEqual(response.status_code, 200)
+        events = list(response.context["events"])
+        # Check that each event has a higher or equal number of reviews than the next one within the category
+        self.assertTrue(
+            all(
+                events[i].reviews.count() >= events[i + 1].reviews.count()
+                for i in range(len(events) - 1)
             )
         )
 
