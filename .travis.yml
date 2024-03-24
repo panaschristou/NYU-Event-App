@@ -7,6 +7,7 @@ env:
   - DJANGO_SETTINGS_MODULE="nyu_event.settings"
 
 install:
+  - pip install --upgrade setuptools
   - pip install -r requirements.txt
 
 services:
