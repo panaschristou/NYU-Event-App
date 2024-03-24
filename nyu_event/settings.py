@@ -13,10 +13,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import ssl
+from dotenv import load_dotenv
 
 from os.path import join, dirname
 
-
+load_dotenv(join(dirname(__file__), ".env"))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -94,7 +95,6 @@ CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-
 if "RDS_DB_NAME" in os.environ:
     DATABASES = {
         "default": {
@@ -112,8 +112,7 @@ else:
             "ENGINE": "django.db.backends.postgresql_psycopg2",
             "NAME": "nyu_event",
             "USER": "postgres",
-            # "PASSWORD": "complexpassword123",
-            "PASSWORD": "sansid22",
+            "PASSWORD": "complexpassword123",
             "HOST": "localhost",
             "PORT": "5432",
         }
