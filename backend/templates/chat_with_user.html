@@ -1,0 +1,87 @@
+{% load static %}
+  <!-- Custom CSS -->
+  <link href="{% static 'backend/css/chatwithuser_style.css' %}" rel="stylesheet">
+  
+  <div class="chat-container">
+    <!-- Messages will be displayed in this box -->
+    <div id="chat-box">
+      {% for message in chat_messages %}
+      <!-- Message Item -->
+      <div class="message-item {% if message.sender.id == user.id %}sent{% else %}received{% endif %}">
+        <span class="username">{{ message.sender.username }}</span>
+        <p class="message">{{ message.message }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  
+    <!-- Message Form -->
+    <form id="message-form">
+      <input type="text" id="message-input" placeholder="Type message here..." required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+
+  <script> 
+        const USER_ID = '{{ user_id }}';  // Set by Django template
+        const RECIPIENT_ID = '{{ receiver_id }}';  // Set by Django template
+        Pusher.logToConsole = true;
+        var pusher = new Pusher('e44f77643020ff731b4f', {
+        cluster: 'mt1'
+        });
+
+        // Subscribe to the chat channel
+        const channelName = getChatChannelName(USER_ID, RECIPIENT_ID);
+        const channel = pusher.subscribe(channelName);
+
+        // Bind to a 'new-message' event within the chat channel
+        channel.bind('new-message', function(data) {
+            // Append new messages to the chat
+            const username = data.sender_name;
+            const isMe = username === '{{ request.user.username }}'
+            // const messageDiv = `<div class="${isMe ? "me" : "reply"}">${username}: ${data.message}</div>`;
+            // $('#chat-box').append(messageDiv);
+            const messageElement = `<div class="message-item ${isMe ? 'sent' : 'received'}">
+                <span class="username">${username}</span>
+                <p class="message">${data.message}</p>
+            </div>`;
+            $('#chat-box').append(messageElement);
+        });
+
+        // Form submission to send a new message
+        $('#message-form').submit(function(e) {
+            e.preventDefault();
+            const message = $('#message-input').val();
+
+            // AJAX POST request to send the message
+            $.ajax({
+                type: 'POST',
+                url: 'send_message/',  // The endpoint in Django app urls.py
+                data: {
+                    'receiver_id': RECIPIENT_ID,
+                    'message': message,
+                    'csrfmiddlewaretoken': getCSRFToken()  // Handle CSRF token
+                },
+                success: function(response) {
+                    console.log('Message sent successfully!');
+                    $('#message-input').val('');  // Clear the input field
+                },
+                error: function() {
+                    alert('There was an error sending your message.');
+                }
+            });
+        });
+
+        // Utility function to generate the channel name consistently
+        function getChatChannelName(userId1, userId2) {
+            return `private-chat-${Math.min(userId1, userId2)}-${Math.max(userId1, userId2)}`;
+        }
+
+        // Utility function to get the CSRF token
+        function getCSRFToken() {
+            return document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1];
+        }
+</script>

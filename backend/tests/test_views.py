@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from backend.models import Event, User, UserEvent, SearchHistory, Review
+from backend.models import Event, User, UserEvent, SearchHistory, Review, Chat
 from django.core import mail
 from django.contrib.messages import get_messages
 from django.contrib.auth.tokens import default_token_generator
