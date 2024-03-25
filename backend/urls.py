@@ -1,10 +1,6 @@
 from django.urls import include, path
 
-import room
-
 from . import views
-from .views import pusher_authentication
-
 
 # app_name = 'backend'
 urlpatterns = [
