@@ -81,7 +81,8 @@ class EventViewsTestCase(TestCase):
         # add current_event and upcoming_event to user interest list
         UserEvent.objects.create(event=self.current_event, user=self.user, saved=True)
         UserEvent.objects.create(event=self.upcoming_event, user=self.user, saved=True)
-
+        self.client = Client()
+        self.client.force_login(self.user)
         self.category = "Musical, Comedy, Revival"
 
     def test_index_view(self):
@@ -138,6 +139,7 @@ class EventViewsTestCase(TestCase):
         )
 
     def test_search_results_view(self):
+        self.client.force_login(self.user)
         current_date = timezone.now().date()
         response = self.client.get(
             reverse("search_results") + "?search_events=Spamalot"
