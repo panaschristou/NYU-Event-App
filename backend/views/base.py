@@ -1,3 +1,4 @@
+import re
 from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -25,13 +26,14 @@ def index(request):
 def event_detail(request, event_id):
     loggedIn = request.user.is_authenticated
     event = get_object_or_404(Event, pk=event_id)
-
+    
     interested = False
     if loggedIn:
         interested = UserEvent.objects.filter(
             event=event,
             user=request.user,
         ).exists()
+
 
     avg_rating_result = Review.objects.filter(event=event).aggregate(Avg("rating"))
     avg_rating = avg_rating_result["rating__avg"]
@@ -48,6 +50,7 @@ def event_detail(request, event_id):
             "event": event,
             "loggedIn": loggedIn,
             "interested": interested,
+            "room_name": room_name,
             "avg_rating": avg_rating,
         },
     )
@@ -300,6 +303,7 @@ def login_user(request):
                 request.session.set_expiry(604800)
             else:
                 request.session.set_expiry(0)
+            # return redirect("frontpage")
             return redirect("index")
         else:
             messages.success(request, ("There Was An Error Logging In, Try Again..."))
@@ -312,3 +316,7 @@ def logout_user(request):
     logout(request)
     messages.success(request, ("You are successfully logged out!"))
     return redirect("index")
+
+
+def frontpage(request):
+    return render(request, "chat/frontpage.html")

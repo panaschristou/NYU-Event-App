@@ -1,0 +1,55 @@
+<!-- {% for user in users %}
+  <p>
+    {{ user.username }} - <a href="{% url 'chat_with_user' user.id %}">Chat</a>
+  </p>
+{% endfor %} -->
+
+{% load static %}
+<!-- Custom CSS -->
+<link href="{% static 'backend/css/chatindex_style.css' %}" rel="stylesheet">
+
+  <div class="chat-sidebar">
+    {% for user in users %}
+      <a href="{% url 'chat_with_user' user.id %}" class="chat-user-link">
+        <div class="chat-user">
+          <div class="user-avatar-placeholder"></div>
+          <div class="user-name">{{ user.username }}</div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+  
+<!-- Search form -->
+    <form id="search-form">
+        <input type="text" id="search-input" placeholder="Search username..." required>
+        <button type="submit">Search</button>
+    </form>
+
+<!-- Chat list -->
+    <div id="chat-list">
+        <!-- Existing chat list code -->
+        {% for user in users %}
+        <p>
+            {{ user.username }} - <a href="{% url 'chat_with_user' user.id %}">Chat</a>
+        </p>
+        {% endfor %}
+    </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- <script> 
+$(document).ready(function() {
+    $('#search-form').submit(function(e) {
+        e.preventDefault();
+        var query = $('#search-input').val();
+        $.ajax({
+            url: '/user/search_user/', 
+            type: 'GET',
+            data: {'query': query},
+            success: function(data) {
+                
+                $('#chat-list').html(data);
+            }
+        });
+    });
+});
+</script> -->
