@@ -7,6 +7,7 @@ env:
   - DJANGO_SETTINGS_MODULE="nyu_event.settings"
 
 install:
+  - pip install --upgrade setuptools
   - pip install -r requirements.txt
 
 services:
@@ -39,9 +40,7 @@ deploy:
     env: "postgres-dev"
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
     on:
-      branches:
-        only:
-          - rollbackchat
+      branch: rollbackchat
 
   - provider: elasticbeanstalk
     access_key_id: $AWS_ACCESS_KEY_ID
@@ -51,6 +50,4 @@ deploy:
     env: "main"
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
     on:
-      branches:
-        only:
-          - master
+      branch: master
