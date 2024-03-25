@@ -37,7 +37,7 @@ deploy:
     secret_access_key: $AWS_SECRET_ACCESS_KEY
     region: "us-east-1"
     app: "postgres"
-    env: "postgres-dev2"
+    env: "postgres-dev1"
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
     skip_cleanup: true
     on:
