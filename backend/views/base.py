@@ -24,18 +24,15 @@ def index(request):
 
 def event_detail(request, event_id):
     User = get_user_model()
-    loggedIn = request.user.id is not None
-    interested = (
-        UserEvent.objects.filter(
-            event=Event.objects.get(pk=event_id),
-            user=User.objects.get(pk=request.user.id),
-        ).exists()
-        if loggedIn
-        else False
-    )
-
+    loggedIn = request.user.is_authenticated
     event = get_object_or_404(Event, pk=event_id)
-    category = request.GET.get("category")
+
+    interested = False
+    if loggedIn:
+        interested = UserEvent.objects.filter(
+            event=event,
+            user=request.user,
+        ).exists()
 
     avg_rating_result = Review.objects.filter(event=event).aggregate(Avg("rating"))
     avg_rating = avg_rating_result["rating__avg"]
@@ -50,13 +47,11 @@ def event_detail(request, event_id):
         "event_detail.html",
         {
             "event": event,
-            "category": category,
             "loggedIn": loggedIn,
             "interested": interested,
             "avg_rating": avg_rating,
         },
     )
-
 
 def user_detail(request, username):
     User = get_user_model()
