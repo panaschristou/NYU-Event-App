@@ -463,3 +463,4 @@ class SearchHistoryViewTestCase(TestCase):
         response = self.client.post(reverse("clear_history"))
         self.assertEqual(response.status_code, 302)  # Check for redirect
         self.assertFalse(SearchHistory.objects.filter(user=self.user).exists())
+

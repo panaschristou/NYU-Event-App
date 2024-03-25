@@ -46,4 +46,5 @@ urlpatterns = [
         views.interest_list_handlers.remove_interest,
         name="interest_list_handlers.remove_interest",
     ),
+    path("recent_searches/", views.base.recent_searches, name="recent_searches"),
 ]
