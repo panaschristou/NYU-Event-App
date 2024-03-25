@@ -94,9 +94,10 @@ def search_results(request):
     users = User.objects.none()
 
     if search_query:
-        SearchHistory.objects.create(
-            user=request.user, search=search_query, search_type=search_type
-        )
+        if request.user.is_authenticated:
+            SearchHistory.objects.create(
+                user=request.user, search=search_query, search_type=search_type
+            )
         if search_type == "Shows":
             if availability_filter != "All":
                 if availability_filter == "Past":

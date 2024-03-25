@@ -463,3 +463,38 @@ class SearchHistoryViewTestCase(TestCase):
         response = self.client.post(reverse("clear_history"))
         self.assertEqual(response.status_code, 302)  # Check for redirect
         self.assertFalse(SearchHistory.objects.filter(user=self.user).exists())
+
+class RecentSearchesViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username='testuser', password='testpassword'
+        )
+        self.client.login(username='testuser', password='testpassword')
+        SearchHistory.objects.create(user=self.user, search='Test Search 1', search_type='Shows')
+        SearchHistory.objects.create(user=self.user, search='Test Search 2', search_type='Shows')
+
+    def test_recent_searches(self):
+        response = self.client.get(reverse('recent_searches'))
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {'recent_searches': ['Test Search 2', 'Test Search 1']}
+        )
+
+class SearchInputTemplateTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username='testuser', password='testpassword'
+        )
+        self.client.login(username='testuser', password='testpassword')
+        SearchHistory.objects.create(user=self.user, search='Test Search 1', search_type='Shows')
+        SearchHistory.objects.create(user=self.user, search='Test Search 2', search_type='Shows')
+
+    def test_dropdown_in_template(self):
+        response = self.client.get(reverse('search_results'))
+        self.assertContains(response, 'id="recent-searches-dropdown"')
+        recent_searches_url = reverse('recent_searches')
+        self.assertContains(response, f"fetch('{recent_searches_url}')")
+
