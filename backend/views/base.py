@@ -23,7 +23,6 @@ def index(request):
 
 
 def event_detail(request, event_id):
-    User = get_user_model()
     loggedIn = request.user.is_authenticated
     event = get_object_or_404(Event, pk=event_id)
 
@@ -52,6 +51,7 @@ def event_detail(request, event_id):
             "avg_rating": avg_rating,
         },
     )
+
 
 def user_detail(request, username):
     User = get_user_model()
