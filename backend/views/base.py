@@ -288,21 +288,38 @@ def register_user(request):
 
 
 # Login existing user
+from django.contrib.auth.models import User
+
 def login_user(request):
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
         remember_me = request.POST.get("remember_me")
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            if remember_me:
-                request.session.set_expiry(604800)
+
+        # Check if the user exists
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = None
+
+        # If the user exists, check the password
+        if user:
+            if user.check_password(password):
+                if user.is_active:
+                    login(request, user)
+                    if remember_me:
+                        request.session.set_expiry(604800)
+                    else:
+                        request.session.set_expiry(0)
+                    return redirect("index")
+                else:
+                    messages.error(request, "Account is not authenticated. Check your email and authenticate before logging in.")
+                    return redirect("login")
             else:
-                request.session.set_expiry(0)
-            return redirect("index")
+                messages.error(request, "Invalid username or password.")
+                return redirect("login")
         else:
-            messages.error(request, ("There Was An Error Logging In, Try Again..."))
+            messages.error(request, "Invalid username or password.")
             return redirect("login")
     else:
         return render(request, "authenticate/login.html", {})
