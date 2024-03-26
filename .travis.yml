@@ -41,7 +41,7 @@ deploy:
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
     skip_cleanup: true
     on:
-      branch: rollbackchat
+      branch: develop
 
   - provider: elasticbeanstalk
     access_key_id: $AWS_ACCESS_KEY_ID
