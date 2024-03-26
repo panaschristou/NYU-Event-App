@@ -302,13 +302,15 @@ def login_user(request):
                 request.session.set_expiry(0)
             return redirect("index")
         else:
-            messages.success(request, ("There Was An Error Logging In, Try Again..."))
+            messages.error(request, ("There Was An Error Logging In, Try Again..."))
             return redirect("login")
     else:
         return render(request, "authenticate/login.html", {})
 
 
 def logout_user(request):
-    logout(request)
-    messages.success(request, ("You are successfully logged out!"))
-    return redirect("index")
+    if request.method == "POST":
+        logout(request)
+        messages.success(request, "You have been successfully logged out.")
+        return redirect("login")
+    return render(request, "confirm_logout.html")
