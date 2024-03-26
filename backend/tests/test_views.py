@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from backend.models import Event, User, UserEvent, SearchHistory, Review, Chat
+from backend.models import Event, User, UserEvent, SearchHistory, Review
 from django.core import mail
 from django.contrib.messages import get_messages
 from django.contrib.auth.tokens import default_token_generator
@@ -81,7 +81,8 @@ class EventViewsTestCase(TestCase):
         # add current_event and upcoming_event to user interest list
         UserEvent.objects.create(event=self.current_event, user=self.user, saved=True)
         UserEvent.objects.create(event=self.upcoming_event, user=self.user, saved=True)
-
+        self.client = Client()
+        self.client.force_login(self.user)
         self.category = "Musical, Comedy, Revival"
 
     def test_index_view(self):
@@ -138,6 +139,7 @@ class EventViewsTestCase(TestCase):
         )
 
     def test_search_results_view(self):
+        self.client.force_login(self.user)
         current_date = timezone.now().date()
         response = self.client.get(
             reverse("search_results") + "?search_events=Spamalot"
@@ -465,71 +467,45 @@ class SearchHistoryViewTestCase(TestCase):
         self.assertFalse(SearchHistory.objects.filter(user=self.user).exists())
 
 
-class Chat_1to1_Tests(TestCase):
+class RecentSearchesViewTest(TestCase):
     def setUp(self):
-        # Create two users
-        self.user1 = User.objects.create_user(
-            username="user1", password="user1password"
-        )
-        self.user2 = User.objects.create_user(
-            username="user2", password="user2password"
-        )
-        # Create a chat message from user1 to user2
-        self.chat = Chat.objects.create(
-            sender=self.user1, receiver=self.user2, message="Hello"
-        )
-
-    def test_chat_index_view(self):
-        # Ensure user is logged in
-        self.client.login(username="user1", password="user1password")
-        # Get response from chat index view
-        response = self.client.get(reverse("chat_index"))
-        # Check if the view returns a 200 status code
-        self.assertEqual(response.status_code, 200)
-        # Check if the correct template was used
-        self.assertTemplateUsed(response, "chat_index.html")
-        # Check if the response contains the users
-        self.assertContains(response, "user2")
-
-    def test_chat_with_user_view(self):
-        # Ensure user is logged in
-        self.client.login(username="user1", password="user1password")
-        # Get response from chat with user view
-        response = self.client.get(reverse("chat_with_user", args=[self.user2.id]))
-        # Check if the view returns a 200 status code
-        self.assertEqual(response.status_code, 200)
-        # Check if the correct template was used
-        self.assertTemplateUsed(response, "chat_with_user.html")
-        # Check if the response contains the messages
-        self.assertContains(response, "Hello")
-
-    def test_send_message_view(self):
-        # Ensure user is logged in
-        self.client.login(username="user1", password="user1password")
-        # Send a POST request to send message view
-        response = self.client.post(
-            reverse("send_message", args=[self.user2.id]), {"message": "Hi there!"}
-        )
-        # Check if the response is a JSON response with status
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"status": "Message sent successfully."})
-        # Check if the message was created
-        new_message = Chat.objects.get(
-            sender=self.user1, receiver=self.user2, message="Hi there!"
-        )
-        self.assertIsNotNone(new_message)
-
-
-class PusherAuthenticationTestCase(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(username="user", password="pass")
         self.client = Client()
-
-    def test_pusher_authentication(self):
-        self.client.login(username="user", password="pass")
-        response = self.client.post(
-            reverse("pusher_auth"),
-            {"channel_name": "test_channel", "socket_id": "123.456"},
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
         )
+        self.client.login(username="testuser", password="testpassword")
+        SearchHistory.objects.create(
+            user=self.user, search="Test Search 1", search_type="Shows"
+        )
+        SearchHistory.objects.create(
+            user=self.user, search="Test Search 2", search_type="Shows"
+        )
+
+    def test_recent_searches(self):
+        response = self.client.get(reverse("recent_searches"))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue("auth" in response.json())
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"recent_searches": ["Test Search 2", "Test Search 1"]},
+        )
+
+
+class SearchInputTemplateTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.client.login(username="testuser", password="testpassword")
+        SearchHistory.objects.create(
+            user=self.user, search="Test Search 1", search_type="Shows"
+        )
+        SearchHistory.objects.create(
+            user=self.user, search="Test Search 2", search_type="Shows"
+        )
+
+    def test_dropdown_in_template(self):
+        response = self.client.get(reverse("search_results"))
+        self.assertContains(response, 'id="recent-searches-dropdown"')
+        recent_searches_url = reverse("recent_searches")
+        self.assertContains(response, f"fetch('{recent_searches_url}')")

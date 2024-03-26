@@ -1,4 +1,3 @@
-import re
 from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -24,34 +23,15 @@ def index(request):
 
 
 def event_detail(request, event_id):
-    User = get_user_model()
-    loggedIn = request.user.id is not None
-    interested = (
-        UserEvent.objects.filter(
-            event=Event.objects.get(pk=event_id),
-            user=User.objects.get(pk=request.user.id),
-        ).exists()
-        if loggedIn
-        else False
-    )
-
+    loggedIn = request.user.is_authenticated
     event = get_object_or_404(Event, pk=event_id)
 
-    pattern = r"[^a-zA-Z0-9\s]"
-
-    cleaned_title = re.sub(pattern, "", event.title)
-
-    title_split = cleaned_title.split()
-
-    room_name = ""
-    if len(title_split) >= 3:
-        room_name = "_".join(title_split[:3])
-    else:
-        room_name = "_".join(title_split[:])
-
-    room_name = room_name.lower()
-
-    category = request.GET.get("category")
+    interested = False
+    if loggedIn:
+        interested = UserEvent.objects.filter(
+            event=event,
+            user=request.user,
+        ).exists()
 
     avg_rating_result = Review.objects.filter(event=event).aggregate(Avg("rating"))
     avg_rating = avg_rating_result["rating__avg"]
@@ -66,10 +46,8 @@ def event_detail(request, event_id):
         "event_detail.html",
         {
             "event": event,
-            "category": category,
             "loggedIn": loggedIn,
             "interested": interested,
-            "room_name": room_name,
             "avg_rating": avg_rating,
         },
     )
@@ -111,6 +89,10 @@ def search_results(request):
     users = User.objects.none()
 
     if search_query:
+        if request.user.is_authenticated:
+            SearchHistory.objects.create(
+                user=request.user, search=search_query, search_type=search_type
+            )
         if search_type == "Shows":
             if availability_filter != "All":
                 if availability_filter == "Past":
@@ -163,6 +145,18 @@ def delete_search_view(request, search_id):
 def clear_history_view(request):
     SearchHistory.objects.filter(user=request.user).delete()
     return redirect("search_history")
+
+
+def recent_searches(request):
+    if request.user.is_authenticated:
+        recent_searches = SearchHistory.objects.filter(user=request.user).order_by(
+            "-timestamp"
+        )[
+            :5
+        ]  # Get the last 5 searches
+        searches = [search.search for search in recent_searches]
+        return JsonResponse({"recent_searches": searches})
+    return JsonResponse({"recent_searches": []})
 
 
 EVENT_CATEGORIES = [
@@ -306,7 +300,6 @@ def login_user(request):
                 request.session.set_expiry(604800)
             else:
                 request.session.set_expiry(0)
-            # return redirect("frontpage")
             return redirect("index")
         else:
             messages.success(request, ("There Was An Error Logging In, Try Again..."))
@@ -319,7 +312,3 @@ def logout_user(request):
     logout(request)
     messages.success(request, ("You are successfully logged out!"))
     return redirect("index")
-
-
-def frontpage(request):
-    return render(request, "chat/frontpage.html")

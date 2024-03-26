@@ -166,5 +166,3 @@ function updateAverageRating(eventId) {
     console.error('Error:', error);
   });
 }
-
-

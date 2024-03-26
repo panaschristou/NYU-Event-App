@@ -14,7 +14,6 @@ from pathlib import Path
 import os
 import ssl
 from dotenv import load_dotenv
-
 from os.path import join, dirname
 
 load_dotenv(join(dirname(__file__), ".env"))
@@ -36,6 +35,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "main2.us-east-1.elasticbeanstalk.com",
     "postgres-dev.us-east-1.elasticbeanstalk.com",
+    "postgres-dev2.us-east-1.elasticbeanstalk.com",
 ]
 
 
@@ -48,10 +48,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "daphne",
     "django.contrib.staticfiles",
-    "channels",
-    "room",
 ]
 
 MIDDLEWARE = [
@@ -86,14 +83,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "nyu_event.wsgi.application"
-ASGI_APPLICATION = "nyu_event.asgi.application"
-# ASGI_APPLICATION = 'room.routing.application'
-
-CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
 
 if "RDS_DB_NAME" in os.environ:
     DATABASES = {
@@ -168,9 +162,3 @@ EMAIL_HOST_USER = "nyuevents24@gmail.com"
 EMAIL_HOST_PASSWORD = "ogtoqvpmcniroelh"
 
 DEFAULT_FROM_EMAIL = "nyuevents24@gmail.com"
-
-# Pusher settings
-PUSHER_APP_ID = "1773977"
-PUSHER_KEY = "e44f77643020ff731b4f"
-PUSHER_SECRET = "064da109d46ae1fd75ee"
-PUSHER_CLUSTER = "mt1"
