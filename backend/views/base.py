@@ -23,6 +23,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils import timezone
 from django.db.models import Q, Avg, Count, Value, FloatField
 from django.db.models.functions import Coalesce
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -295,6 +297,18 @@ def register_user(request):
     )
 
 
+# Delete current user
+@require_POST
+@csrf_exempt
+def delete_user(request):
+    User = get_user_model()
+    user = User.objects.filter(id=request.user.id).first()
+    if user:
+        user.delete()
+    return JsonResponse({"message": "account has been deleted"})
+
+
+# Login existing user
 def login_user(request):
     if request.method == "POST":
         username = request.POST["username"]
