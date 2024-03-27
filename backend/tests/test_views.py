@@ -365,9 +365,7 @@ class EventViewsTestCase(TestCase):
         )
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
-        self.assertEqual(
-            str(messages[0]), "There Was An Error Logging In, Try Again..."
-        )
+        self.assertEqual(str(messages[0]), "Invalid username or password.")
 
     def test_post_review(self):
         self.client.login(username="testuser@nyu.edu", password="12345Password!")

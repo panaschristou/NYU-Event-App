@@ -5,7 +5,15 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.loader import render_to_string
-from ..models import Event, UserEvent, SearchHistory, Review
+from ..models import (
+    Event,
+    UserEvent,
+    SearchHistory,
+    Review,
+    BannedUser,
+    SuspendedUser,
+    User,
+)
 from ..forms import UserRegistrationForm
 from ..tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
@@ -287,28 +295,53 @@ def register_user(request):
     )
 
 
-# Login existing user
 def login_user(request):
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
         remember_me = request.POST.get("remember_me")
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            if remember_me:
-                request.session.set_expiry(604800)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = None
+
+        if user:
+            if user.check_password(password):
+                # Check if the user is banned
+                try:
+                    BannedUser.objects.get(user=user)
+                    messages.error(request, "Your account has been banned.")
+                    return redirect("login")
+                except BannedUser.DoesNotExist:
+                    pass
+
+                if user.is_active:
+                    login(request, user)
+                    if remember_me:
+                        request.session.set_expiry(604800)
+                    else:
+                        request.session.set_expiry(0)
+                    return redirect("index")
+                else:
+                    messages.error(
+                        request,
+                        "Account is not authenticated. Check your email and authenticate before logging in.",
+                    )
+                    return redirect("login")
             else:
-                request.session.set_expiry(0)
-            return redirect("index")
+                messages.error(request, "Invalid username or password.")
+                return redirect("login")
         else:
-            messages.success(request, ("There Was An Error Logging In, Try Again..."))
+            messages.error(request, "Invalid username or password.")
             return redirect("login")
     else:
         return render(request, "authenticate/login.html", {})
 
 
 def logout_user(request):
-    logout(request)
-    messages.success(request, ("You are successfully logged out!"))
-    return redirect("index")
+    if request.method == "POST":
+        logout(request)
+        messages.success(request, "You have been successfully logged out.")
+        return redirect("login")
+    return render(request, "confirm_logout.html")
