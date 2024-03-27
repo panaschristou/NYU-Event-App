@@ -293,15 +293,21 @@ def login_user(request):
         password = request.POST["password"]
         remember_me = request.POST.get("remember_me")
 
-        # Check if the user exists
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             user = None
 
-        # If the user exists, check the password
         if user:
             if user.check_password(password):
+                # Check if the user is banned
+                try:
+                    BannedUser.objects.get(user=user)
+                    messages.error(request, "Your account has been banned.")
+                    return redirect("login")
+                except BannedUser.DoesNotExist:
+                    pass
+
                 if user.is_active:
                     login(request, user)
                     if remember_me:

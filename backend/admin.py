@@ -5,6 +5,8 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 
 admin.site.register(Event)
 admin.site.register(Review)
@@ -26,6 +28,10 @@ class BannedUserInline(admin.StackedInline):
     verbose_name_plural = "Banned Users"
     readonly_fields = ["banned_at"]
 
+def send_notification_email(user, subject, message):
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [user.email]
+        send_mail(subject, message, email_from, recipient_list)
 
 class UserAdmin(BaseUserAdmin):
     inlines = (
@@ -42,6 +48,10 @@ class UserAdmin(BaseUserAdmin):
             if created:
                 user.is_active = False
                 user.save()
+                # Send an email notification
+                subject = "Your Account Has Been Banned"
+                message = "Your account has been banned. If you believe this is a mistake, please contact support."
+                send_notification_email(user, subject, message)
                 self.message_user(
                     request, f"User {user.username} has been banned successfully."
                 )
@@ -83,7 +93,10 @@ class UserAdmin(BaseUserAdmin):
                 },
             )
             if created:
-                user.save()
+                # Send an email notification
+                subject = "Your Account Has Been Suspended"
+                message = "Your account has been suspended. If you believe this is a mistake, please contact support."
+                send_notification_email(user, subject, message)
                 self.message_user(
                     request, f"User {user.username} has been suspended successfully."
                 )
