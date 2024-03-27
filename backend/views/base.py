@@ -298,8 +298,8 @@ def register_user(request):
 
 
 # Delete current user
+@login_required
 @require_POST
-@csrf_exempt
 def delete_user(request):
     User = get_user_model()
     user = User.objects.filter(id=request.user.id).first()
