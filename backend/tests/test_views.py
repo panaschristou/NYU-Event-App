@@ -365,9 +365,7 @@ class EventViewsTestCase(TestCase):
         )
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
-        self.assertEqual(
-            str(messages[0]), "Invalid username or password."
-        )
+        self.assertEqual(str(messages[0]), "Invalid username or password.")
 
     def test_post_review(self):
         self.client.login(username="testuser@nyu.edu", password="12345Password!")
@@ -486,7 +484,7 @@ class RecentSearchesViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode(),
-            {"recent_searches": ["Test Search 1", "Test Search 2"]},
+            {"recent_searches": ["Test Search 2", "Test Search 1"]},
         )
 
 

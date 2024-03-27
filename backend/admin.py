@@ -28,10 +28,12 @@ class BannedUserInline(admin.StackedInline):
     verbose_name_plural = "Banned Users"
     readonly_fields = ["banned_at"]
 
+
 def send_notification_email(user, subject, message):
-        email_from = settings.EMAIL_HOST_USER
-        recipient_list = [user.email]
-        send_mail(subject, message, email_from, recipient_list)
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [user.email]
+    send_mail(subject, message, email_from, recipient_list)
+
 
 class UserAdmin(BaseUserAdmin):
     inlines = (

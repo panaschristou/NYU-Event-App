@@ -5,7 +5,15 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.loader import render_to_string
-from ..models import Event, UserEvent, SearchHistory, Review, BannedUser, SuspendedUser, User
+from ..models import (
+    Event,
+    UserEvent,
+    SearchHistory,
+    Review,
+    BannedUser,
+    SuspendedUser,
+    User,
+)
 from ..forms import UserRegistrationForm
 from ..tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
@@ -316,7 +324,10 @@ def login_user(request):
                         request.session.set_expiry(0)
                     return redirect("index")
                 else:
-                    messages.error(request, "Account is not authenticated. Check your email and authenticate before logging in.")
+                    messages.error(
+                        request,
+                        "Account is not authenticated. Check your email and authenticate before logging in.",
+                    )
                     return redirect("login")
             else:
                 messages.error(request, "Invalid username or password.")
