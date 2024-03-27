@@ -367,6 +367,17 @@ class EventViewsTestCase(TestCase):
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Invalid username or password.")
 
+    def test_account_deletion(self):
+        self.client.post(
+            reverse("login"),
+            {"username": "testuser@nyu.edu", "password": "12345Password!"},
+        )
+        user_id = self.user.id
+        self.client.post(
+            reverse("delete_account"),
+        )
+        self.assertFalse(User.objects.filter(id=user_id).exists())
+
     def test_post_review(self):
         self.client.login(username="testuser@nyu.edu", password="12345Password!")
 
