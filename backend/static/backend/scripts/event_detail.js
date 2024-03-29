@@ -180,7 +180,7 @@ let currentPage = 1; // Keep track of the current page for pagination
 
 function loadReviews(eventId) {
   console.log(`Event ID: ${eventId}`);
-  fetch(`/events/${eventId}/display-reviews/`, {
+  fetch(`display-reviews`, {
       method: 'GET',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',

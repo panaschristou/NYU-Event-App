@@ -76,4 +76,4 @@ def get_reviews_for_event(request, event_id):
         )
     except Exception as e:
         print(e)
-        return HttpResponseServerError('Server Error: {}'.format(e))
+        return HttpResponseServerError("Server Error: {}".format(e))
