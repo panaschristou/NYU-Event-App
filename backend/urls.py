@@ -49,16 +49,16 @@ urlpatterns = [
         name="interest_list_handlers.remove_interest",
     ),
     path("recent_searches/", views.base.recent_searches, name="recent_searches"),
-    path("chat/", views.chatHandler.chat_index, name="chat_index"),
+    path("chat/", views.chat_handlers.chat_index, name="chat_index"),
     path(
         "chat/<int:receiver_id>/",
-        views.chatHandler.chat_with_user,
+        views.chat_handlers.chat_with_user,
         name="chat_with_user",
     ),
     path(
         "chat/<int:receiver_id>/send_message/",
-        views.chatHandler.send_message,
+        views.chat_handlers.send_message,
         name="send_message",
     ),
-    path("search_user/", views.chatHandler.search_users, name="search_users"),
+    path("search_user/", views.chat_handlers.search_users, name="search_users"),
 ]
