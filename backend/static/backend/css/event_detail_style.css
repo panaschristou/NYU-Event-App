@@ -263,6 +263,39 @@ body {
   color: #c0c0c0;
 }
 
+.review-button-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.like-button,
+.reply-button,
+.delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.like-button svg,
+.reply-button svg {
+  fill: #77499e; 
+  width: 18px; 
+  height: 18px;
+}
+
+.delete-button svg {
+  fill: #ff0000; 
+  width: 18px; 
+  height: 18px;
+}
+
+.reply-button
+.like-button {
+  margin-left: 3px;
+}
 
 
 

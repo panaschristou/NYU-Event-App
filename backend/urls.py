@@ -20,9 +20,9 @@ urlpatterns = [
         name="post_review",
     ),
     path(
-    "events/<int:event_id>/avg-rating/",
-    views.review_handlers.get_average_rating,
-    name="get_average_rating",
+        "events/<int:event_id>/avg-rating/",
+        views.review_handlers.get_average_rating,
+        name="get_average_rating",
     ),
     path(
         "events/<int:event_id>/display-reviews/",
