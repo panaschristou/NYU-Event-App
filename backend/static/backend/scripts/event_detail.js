@@ -52,6 +52,7 @@ const reviewBtn = document.getElementById("write-review");
 const modal = document.getElementById("review-modal");
 const closeButton = document.getElementById("close-modal");
 const postButton = document.getElementById("post-review");
+const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 reviewBtn.addEventListener("click", function () {
   resetReviewForm();
@@ -82,7 +83,6 @@ postButton.addEventListener("click", function () {
   formData.append('rating', rating);
   formData.append('review_text', reviewText);
 
-  const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   fetch("post-review/", {
     method: 'POST',
@@ -109,7 +109,7 @@ postButton.addEventListener("click", function () {
     });
     updateAverageRating(eventId);
     resetReviewForm();
-  })
+  }})
   .catch(error => {
     console.error('Error:', error);
     const errorMsg = document.createElement("div");
@@ -167,4 +167,73 @@ function updateAverageRating(eventId) {
   });
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+  loadReviews(eventId);
+  window.onscroll = function() {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+          loadReviews(eventId);
+      }
+  };
+});
 
+let currentPage = 1; // Keep track of the current page for pagination
+
+function loadReviews(eventId) {
+  console.log(`Event ID: ${eventId}`);
+  fetch(`/events/${eventId}/display-reviews/`, {
+      method: 'GET',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': csrftoken,
+      },
+      credentials: 'same-origin',
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    } else if (!response.headers.get("content-type").includes("application/json")) {
+      throw new Error("Not a JSON response");
+    }
+    return response.json();
+  })
+  .then(data => {
+      data.reviews.forEach(review => {
+          const reviewBox = document.createElement('div');
+          reviewBox.className = 'review-box';
+
+          const avatar = document.createElement('img');
+          avatar.className = 'user-avatar';
+          avatar.src = review.user.profile.avatar || '/backend/static/backend/img/generic_user_image.png';
+          reviewBox.appendChild(avatar);
+
+          const content = document.createElement('div');
+          content.className = 'review-content';
+
+          const username = document.createElement('h5');
+          username.textContent = review.user.username;
+          content.appendChild(username);
+
+          const rating = document.createElement('p');
+          rating.textContent = `Rating: ${review.rating}`;
+          content.appendChild(rating);
+
+          const text = document.createElement('p');
+          text.textContent = review.review_text || 'This user did not leave any review text';
+          content.appendChild(text);
+
+          reviewBox.appendChild(content);
+
+          const timestamp = document.createElement('div');
+          timestamp.className = 'review-date';
+          timestamp.textContent = new Date(review.timestamp).toLocaleDateString();
+          reviewBox.appendChild(timestamp);
+
+          document.getElementById('reviews-container').appendChild(reviewBox);
+      });
+
+      currentPage++;
+  })
+  .catch(error => {
+      console.error('Error fetching reviews:', error);
+  });
+}

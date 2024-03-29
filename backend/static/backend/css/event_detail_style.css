@@ -212,5 +212,32 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,.5);
 }
 
+.review-box {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+  float: left;
+}
+
+.review-content {
+  overflow: hidden;
+}
+
+.review-date {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 12px;
+}
+
+
 
 

@@ -201,7 +201,6 @@ class SuspendedUserModelTest(TestCase):
         self.assertIsNone(suspended_user.unsuspended_at)
 
     def test_unsuspend_user(self):
-
         self.suspended_user.unsuspend_user()
         with self.assertRaises(SuspendedUser.DoesNotExist):
             SuspendedUser.objects.get(user=self.user)
