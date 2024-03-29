@@ -209,25 +209,37 @@ function loadReviews(eventId) {
       const reviewBox = document.createElement('div');
       reviewBox.className = 'review-box';
 
+      const avatarWrapper = document.createElement('div');
+      avatarWrapper.className = 'avatar-wrapper';
+
       const avatar = document.createElement('img');
       avatar.className = 'user-avatar';
       avatar.src = review.user.profile.avatar || '/backend/static/backend/img/generic_user_image.png';
-      reviewBox.appendChild(avatar);
+      avatarWrapper.appendChild(avatar);
+
+      reviewBox.appendChild(avatarWrapper);
 
       const content = document.createElement('div');
       content.className = 'review-content';
 
       const username = document.createElement('h5');
       username.textContent = review.user.username;
-      content.appendChild(username);
+      username.className = 'review-username';
+      reviewBox.appendChild(username);
 
       const rating = document.createElement('p');
       rating.textContent = `Rating: ${review.rating}`;
       content.appendChild(rating);
 
       const text = document.createElement('p');
-      text.textContent = review.review_text || 'This user did not leave any review text';
+      if (review.review_text) {
+        text.textContent = review.review_text;
+      } else {
+        text.textContent = 'This user did not leave any review text';
+        text.classList.add('lighter-text'); // Add the class to make the text lighter
+      }
       content.appendChild(text);
+
 
       reviewBox.appendChild(content);
 
