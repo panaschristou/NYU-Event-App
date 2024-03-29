@@ -101,8 +101,10 @@ postButton.addEventListener("click", function () {
           input.checked = false;
         });
         updateAverageRating(eventId);
-        resetReviewForm();
-      }
+        resetReviewForm();}
+      else{
+        showTemporaryMessage(data.message, "alert-danger");
+       }
     })
     .catch((error) => {
       console.error("Error:", error);
