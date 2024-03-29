@@ -176,10 +176,17 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 });
 
-let currentPage = 1; // Keep track of the current page for pagination
+let currentPage = 1; 
+let isLoading = false;
+let hasMorePages = true;
 
 function loadReviews(eventId) {
-  console.log(`Event ID: ${eventId}`);
+  if (isLoading || !hasMorePages) {
+    return;
+  }
+
+  isLoading = true;
+
   fetch(`display-reviews`, {
       method: 'GET',
       headers: {
@@ -197,43 +204,51 @@ function loadReviews(eventId) {
     return response.json();
   })
   .then(data => {
-      data.reviews.forEach(review => {
-          const reviewBox = document.createElement('div');
-          reviewBox.className = 'review-box';
+    
+    data.reviews.forEach(review => {
+      const reviewBox = document.createElement('div');
+      reviewBox.className = 'review-box';
 
-          const avatar = document.createElement('img');
-          avatar.className = 'user-avatar';
-          avatar.src = review.user.profile.avatar || '/backend/static/backend/img/generic_user_image.png';
-          reviewBox.appendChild(avatar);
+      const avatar = document.createElement('img');
+      avatar.className = 'user-avatar';
+      avatar.src = review.user.profile.avatar || '/backend/static/backend/img/generic_user_image.png';
+      reviewBox.appendChild(avatar);
 
-          const content = document.createElement('div');
-          content.className = 'review-content';
+      const content = document.createElement('div');
+      content.className = 'review-content';
 
-          const username = document.createElement('h5');
-          username.textContent = review.user.username;
-          content.appendChild(username);
+      const username = document.createElement('h5');
+      username.textContent = review.user.username;
+      content.appendChild(username);
 
-          const rating = document.createElement('p');
-          rating.textContent = `Rating: ${review.rating}`;
-          content.appendChild(rating);
+      const rating = document.createElement('p');
+      rating.textContent = `Rating: ${review.rating}`;
+      content.appendChild(rating);
 
-          const text = document.createElement('p');
-          text.textContent = review.review_text || 'This user did not leave any review text';
-          content.appendChild(text);
+      const text = document.createElement('p');
+      text.textContent = review.review_text || 'This user did not leave any review text';
+      content.appendChild(text);
 
-          reviewBox.appendChild(content);
+      reviewBox.appendChild(content);
 
-          const timestamp = document.createElement('div');
-          timestamp.className = 'review-date';
-          timestamp.textContent = new Date(review.timestamp).toLocaleDateString();
-          reviewBox.appendChild(timestamp);
+      const timestamp = document.createElement('div');
+      timestamp.className = 'review-date';
+      timestamp.textContent = new Date(review.timestamp).toLocaleDateString();
+      reviewBox.appendChild(timestamp);
 
-          document.getElementById('reviews-container').appendChild(reviewBox);
-      });
+      document.getElementById('reviews-container').appendChild(reviewBox);
+    });
+    
 
-      currentPage++;
+    if (!data.has_next) {
+      hasMorePages = false; 
+    }
+
+    currentPage++;
+    isLoading = false;
   })
   .catch(error => {
       console.error('Error fetching reviews:', error);
+      isLoading = false;
   });
 }
