@@ -36,6 +36,11 @@ def post_review(request, event_id):
         {"success": True, "review_id": review.id, "new_avg_rating": new_avg_rating}
     )
 
+def get_average_rating(request, event_id):
+    reviews = Review.objects.filter(event__id=event_id)
+    average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
+    return JsonResponse({'avg_rating': average_rating})
+
 
 def get_reviews_for_event(request, event_id):
     try:

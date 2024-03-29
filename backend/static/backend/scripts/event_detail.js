@@ -109,6 +109,8 @@ postButton.addEventListener("click", function () {
     });
     updateAverageRating(eventId);
     resetReviewForm();
+    console.log(data);
+    addReviewToPage(data.review);
   }})
   .catch(error => {
     console.error('Error:', error);
@@ -141,7 +143,7 @@ function resetReviewForm() {
 }
 
 function updateAverageRating(eventId) {
-  fetch(`/event/${eventId}/avg_rating`, {
+  fetch("avg-rating", {
     method: 'GET',
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
@@ -206,49 +208,7 @@ function loadReviews(eventId) {
   .then(data => {
     
     data.reviews.forEach(review => {
-      const reviewBox = document.createElement('div');
-      reviewBox.className = 'review-box';
-
-      const avatarWrapper = document.createElement('div');
-      avatarWrapper.className = 'avatar-wrapper';
-
-      const avatar = document.createElement('img');
-      avatar.className = 'user-avatar';
-      avatar.src = review.user.profile.avatar || '/backend/static/backend/img/generic_user_image.png';
-      avatarWrapper.appendChild(avatar);
-
-      reviewBox.appendChild(avatarWrapper);
-
-      const content = document.createElement('div');
-      content.className = 'review-content';
-
-      const username = document.createElement('h5');
-      username.textContent = review.user.username;
-      username.className = 'review-username';
-      reviewBox.appendChild(username);
-
-      const rating = document.createElement('p');
-      rating.textContent = `Rating: ${review.rating}`;
-      content.appendChild(rating);
-
-      const text = document.createElement('p');
-      if (review.review_text) {
-        text.textContent = review.review_text;
-      } else {
-        text.textContent = 'This user did not leave any review text';
-        text.classList.add('lighter-text'); // Add the class to make the text lighter
-      }
-      content.appendChild(text);
-
-
-      reviewBox.appendChild(content);
-
-      const timestamp = document.createElement('div');
-      timestamp.className = 'review-date';
-      timestamp.textContent = new Date(review.timestamp).toLocaleDateString();
-      reviewBox.appendChild(timestamp);
-
-      document.getElementById('reviews-container').appendChild(reviewBox);
+      addReviewToPage(review);
     });
     
 
@@ -263,4 +223,51 @@ function loadReviews(eventId) {
       console.error('Error fetching reviews:', error);
       isLoading = false;
   });
+}
+
+
+function addReviewToPage(review) {
+  const reviewBox = document.createElement('div');
+  reviewBox.className = 'review-box';
+
+  const avatarWrapper = document.createElement('div');
+  avatarWrapper.className = 'avatar-wrapper';
+
+  const avatar = document.createElement('img');
+  avatar.className = 'user-avatar';
+  avatar.src = review.user.profile.avatar || '/backend/static/backend/img/generic_user_image.png';
+  avatarWrapper.appendChild(avatar);
+
+  reviewBox.appendChild(avatarWrapper);
+
+  const content = document.createElement('div');
+  content.className = 'review-content';
+
+  const username = document.createElement('h5');
+  username.className = 'review-username';
+  username.textContent = review.user.username;
+  reviewBox.appendChild(username);
+
+  const rating = document.createElement('p');
+  rating.textContent = `Rating: ${review.rating}`;
+  content.appendChild(rating);
+
+  const text = document.createElement('p');
+  if (review.review_text) {
+    text.textContent = review.review_text;
+  } else {
+    text.textContent = 'This user did not leave any review text';
+    text.classList.add('lighter-text'); // Use this class to style placeholder text differently
+  }
+  content.appendChild(text);
+
+  reviewBox.appendChild(content);
+
+  const timestamp = document.createElement('div');
+  timestamp.className = 'review-date';
+  timestamp.textContent = new Date(review.timestamp).toLocaleDateString();
+  reviewBox.appendChild(timestamp);
+
+  const reviewsContainer = document.getElementById('reviews-container');
+  reviewsContainer.prepend(reviewBox);
 }
