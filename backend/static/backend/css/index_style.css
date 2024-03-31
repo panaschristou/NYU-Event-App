@@ -31,6 +31,7 @@ body {
   .search-form {
     width: 50%; 
     margin-top: 2rem; 
+    position: relative; 
   }
   
   .search-input {
@@ -150,4 +151,27 @@ body {
     height: auto;
   }
   
+
+  .recent-searches-dropdown {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    width: calc(100% - 75px); /* Adjust this to match the width of the search input */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 2;
+    top: 3.5rem; /* Adjust this to match the height of the input group */
+    left: 0; /* Adjust if the search input is not aligned with the left edge */
+    margin-top: 0rem;
+}
+
+
+  .recent-search-item {
+      padding: 12px 16px;
+      cursor: pointer;
+  }
+
+  .recent-search-item:hover {
+      background-color: #f1f1f1;
+  }
+
 
