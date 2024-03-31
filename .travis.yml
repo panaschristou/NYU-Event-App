@@ -7,6 +7,7 @@ env:
   - DJANGO_SETTINGS_MODULE="nyu_event.settings"
 
 install:
+  - pip install --upgrade setuptools
   - pip install -r requirements.txt
 
 services:
@@ -36,12 +37,11 @@ deploy:
     secret_access_key: $AWS_SECRET_ACCESS_KEY
     region: "us-east-1"
     app: "postgres"
-    env: "postgres-dev"
+    env: "postgres-dev2"
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
+    skip_cleanup: true
     on:
-      branches:
-        only:
-          - develop
+      branch: add--delete--review
 
   - provider: elasticbeanstalk
     access_key_id: $AWS_ACCESS_KEY_ID
@@ -51,6 +51,4 @@ deploy:
     env: "main"
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
     on:
-      branches:
-        only:
-          - master
+      branch: master

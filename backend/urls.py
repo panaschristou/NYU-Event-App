@@ -29,6 +29,21 @@ urlpatterns = [
         views.review_handlers.get_reviews_for_event,
         name="event_reviews",
     ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/likes/",
+        views.review_handlers.like_review,
+        name="like_review",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/unlike/",
+        views.review_handlers.unlike_review,
+        name="unlike_review",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/delete/",
+        views.review_handlers.delete_review,
+        name="delete_review",
+    ),
     path("users/<str:username>/", views.base.user_detail, name="user_detail"),
     path("profile-edit/", views.profile_handlers.profile_edit, name="profile_edit"),
     path("search/", views.base.search_results, name="search_results"),
