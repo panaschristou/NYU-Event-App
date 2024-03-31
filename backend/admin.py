@@ -1,6 +1,16 @@
 # admin.py
 from django.contrib import admin
-from .models import Event, Review, UserEvent, Chat, Profile, SuspendedUser, BannedUser, ChatRoom, Room
+from .models import (
+    Event,
+    Review,
+    UserEvent,
+    Chat,
+    Profile,
+    SuspendedUser,
+    BannedUser,
+    ChatRoom,
+    Room,
+)
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
