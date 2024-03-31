@@ -66,6 +66,22 @@ class Chat(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
+# Group Chat model
+class Room(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True)
+
+
+class ChatRoom(models.Model):
+    sender_ChatRoom = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="sent_chats_room"
+    )
+    receiver_room_slug = models.TextField()
+    # receiver_room_slug = models.ForeignKey(Room, related_name="received_chats_room", on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+
 # Search History Model
 class SearchHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
