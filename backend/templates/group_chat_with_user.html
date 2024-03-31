@@ -6,7 +6,7 @@
 
 <div class="chat-container">
     {% include "components/navbar.html" %} 
-    <h1>{{room}}</h1>
+    <h1>{{room.name}}</h1>
     <!-- Messages will be displayed in this box -->
     <div id="chat-box">
       {% for message in chat_messages %}
@@ -30,7 +30,7 @@
 
 <script> 
     const USER_ID = '{{ user_id }}';  // Set by Django template
-    const RECIPIENT_ID = '{{ room }}';  // Set by Django template
+    const RECIPIENT_ID = '{{ room.slug }}';  // Set by Django template
     Pusher.logToConsole = true;
     var pusher = new Pusher('e44f77643020ff731b4f', {
     cluster: 'mt1'
@@ -39,8 +39,6 @@
     // Subscribe to the chat channel
     const channelName = getChatChannelName(RECIPIENT_ID);
     const channel = pusher.subscribe(channelName);
-
-    console.log('channelName1: ',channelName)
 
     // Bind to a 'new-message' event within the chat channel
     channel.bind('new-message', function(data) {
@@ -57,7 +55,6 @@
         $('#chat-box').append(messageElement);
     });
 
-    console.log('channelName2: ',channelName)
 
     // Form submission to send a new message
     $('#message-form').submit(function(e) {

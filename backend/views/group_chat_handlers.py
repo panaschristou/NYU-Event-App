@@ -32,18 +32,18 @@ def chat_with_room(request, receiver_room_slug):
     room = get_object_or_404(Room, slug=receiver_room_slug)
 
     chat_messages = ChatRoom.objects.filter(
-        Q(sender_ChatRoom=request.user, receiver_room_slug=receiver_room_slug)
+        # Q(sender_ChatRoom=request.user, receiver_room_slug=receiver_room_slug)
+        Q(receiver_room_slug=receiver_room_slug)
         # | Q(sender_id=receiver_room_slug, receiver=request.user)
     ).order_by("timestamp")
 
-    print("sender_ChatRoom: ", request.user.id, " receiver_room_slug: ", room)
 
     return render(
         request,
         "group_chat_with_user.html",
         {
             "user_id": request.user.id,
-            "room": room.name,
+            "room": room,
             "chat_messages": chat_messages,
         },
     )
