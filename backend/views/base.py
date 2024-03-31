@@ -55,6 +55,7 @@ def event_detail(request, event_id):
         request,
         "event_detail.html",
         {
+            "event_id": event_id,
             "event": event,
             "loggedIn": loggedIn,
             "interested": interested,

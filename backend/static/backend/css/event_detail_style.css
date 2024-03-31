@@ -212,5 +212,90 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,.5);
 }
 
+.review-box {
+  border: 1px solid #ccc;
+  padding: 15px;
+  padding-left: 0;
+  margin: 20px;
+  position: relative;
+  border-radius: 10px;
+  background-color: #fffbf5;
+}
+
+.avatar-wrapper {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-top: 5px;
+  margin-left: 0px;
+}
+
+.user-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.review-username {
+  position: absolute;
+  margin-left: 85px; 
+  margin-top: 8px;
+  font-size: 18px;
+}
+
+.review-content {
+  margin-top: 55px;
+  overflow: hidden;
+  text-align: left;
+  margin-left: 35px;
+}
+
+.review-date {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 12px;
+}
+
+.lighter-text {
+  color: #c0c0c0;
+}
+
+.review-button-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.like-button,
+.reply-button,
+.delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.like-button svg,
+.reply-button svg {
+  fill: #77499e; 
+  width: 18px; 
+  height: 18px;
+}
+
+.delete-button svg {
+  fill: #ff0000; 
+  width: 18px; 
+  height: 18px;
+}
+
+.reply-button
+.like-button {
+  margin-left: 3px;
+}
+
 
 
