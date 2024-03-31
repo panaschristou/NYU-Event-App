@@ -440,7 +440,9 @@ function addReviewToPage(review) {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
+        updateAverageRating(eventId);  
         window.location.reload();
+        showTemporaryMessage("you delete successful", "alert-success");
       })
       .catch(error => {
         console.error('Error:', error);
