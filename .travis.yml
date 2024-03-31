@@ -24,12 +24,11 @@ before_script:
 script:
   - black --check .
   - flake8 .
-  - python manage.py makemigrations
   - python manage.py migrate
   - python manage.py test
   - coverage run manage.py test
   - coverage report
-  - env
+
 after_success:
   - coveralls
 
