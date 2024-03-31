@@ -160,7 +160,7 @@ function updateAverageRating(eventId) {
   })
   .then(data => {
     const avgRatingElement = document.getElementById("average-rating");
-    if (data.avg_rating !== undefined) {
+    if (data.avg_rating !== null && data.avg_rating !== undefined) {
       avgRatingElement.textContent = data.avg_rating.toFixed(2);
     } else {
       avgRatingElement.textContent = "Not rated yet";
@@ -275,7 +275,7 @@ function addReviewToPage(review) {
   buttonContainer.style.justifyContent = 'flex-end'; // Aligns buttons to the right
   buttonContainer.style.marginTop = '10px';
 
-
+  
   let likeCount = review.likes_count;
   const likeCountSpan = document.createElement('span');
   likeCountSpan.className = 'like-count';
@@ -302,7 +302,6 @@ function addReviewToPage(review) {
       updateButtonAppearance(); 
       likeCountSpan.textContent = likeCount.toString(); 
       updateAllReviewsLikesCount(likeCount, review.id, isLiked);
-      console.log(review.id);
   });
   
   buttonContainer.appendChild(likeButton);
@@ -411,6 +410,7 @@ function addReviewToPage(review) {
     let index;
   
     deleteButton.addEventListener('click', function() {
+     
       index = review.id;
       modal.style.display = 'block';
     });
@@ -440,9 +440,15 @@ function addReviewToPage(review) {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        updateAverageRating(eventId);  
-        window.location.reload();
-        showTemporaryMessage("you delete successful", "alert-success");
+       
+        updateAverageRating(eventId);
+
+        showTemporaryMessage("You have successfully deleted the review.", "alert-success");
+        setTimeout(function() {
+          setTimeout(function() {
+            window.location.reload();
+          }, 2000);
+        }, 2000);
       })
       .catch(error => {
         console.error('Error:', error);
@@ -450,7 +456,6 @@ function addReviewToPage(review) {
     }
 
     confirmDeleteButton.addEventListener('click', function() {
-      console.log(index);
       deletereview(index);
       modal.style.display = 'none';
     });

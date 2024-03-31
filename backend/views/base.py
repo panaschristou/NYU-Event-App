@@ -44,6 +44,9 @@ def event_detail(request, event_id):
         avg_rating = round(avg_rating, 2)
         event.avg_rating = avg_rating
         event.save()
+    else:
+        event.avg_rating = avg_rating
+        event.save()
 
     return render(
         request,
