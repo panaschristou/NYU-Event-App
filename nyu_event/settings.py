@@ -34,7 +34,6 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "main2.us-east-1.elasticbeanstalk.com",
-    "postgres-dev.us-east-1.elasticbeanstalk.com",
     "postgres-dev2.us-east-1.elasticbeanstalk.com",
 ]
 
