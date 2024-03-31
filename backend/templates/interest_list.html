@@ -15,6 +15,7 @@
       href="{% static 'backend/css/interest_list_style.css' %}"
       rel="stylesheet"
     />
+    <meta name="csrf-token" content="{{ csrf_token }}">
   </head>
   <body>
     {% include "components/navbar.html" %}
@@ -66,5 +67,6 @@
     </div>
     {% endif %}
   </body>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="{% static 'backend/scripts/interest_list.js' %}"></script>
 </html>

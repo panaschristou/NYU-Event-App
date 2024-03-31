@@ -81,7 +81,8 @@ class EventViewsTestCase(TestCase):
         # add current_event and upcoming_event to user interest list
         UserEvent.objects.create(event=self.current_event, user=self.user, saved=True)
         UserEvent.objects.create(event=self.upcoming_event, user=self.user, saved=True)
-
+        self.client = Client()
+        self.client.force_login(self.user)
         self.category = "Musical, Comedy, Revival"
 
     def test_index_view(self):
@@ -138,6 +139,7 @@ class EventViewsTestCase(TestCase):
         )
 
     def test_search_results_view(self):
+        self.client.force_login(self.user)
         current_date = timezone.now().date()
         response = self.client.get(
             reverse("search_results") + "?search_events=Spamalot"
@@ -363,9 +365,18 @@ class EventViewsTestCase(TestCase):
         )
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
-        self.assertEqual(
-            str(messages[0]), "There Was An Error Logging In, Try Again..."
+        self.assertEqual(str(messages[0]), "Invalid username or password.")
+
+    def test_account_deletion(self):
+        self.client.post(
+            reverse("login"),
+            {"username": "testuser@nyu.edu", "password": "12345Password!"},
         )
+        user_id = self.user.id
+        self.client.post(
+            reverse("delete_account"),
+        )
+        self.assertFalse(User.objects.filter(id=user_id).exists())
 
     def test_post_review(self):
         self.client.login(username="testuser@nyu.edu", password="12345Password!")
@@ -463,3 +474,47 @@ class SearchHistoryViewTestCase(TestCase):
         response = self.client.post(reverse("clear_history"))
         self.assertEqual(response.status_code, 302)  # Check for redirect
         self.assertFalse(SearchHistory.objects.filter(user=self.user).exists())
+
+
+class RecentSearchesViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.client.login(username="testuser", password="testpassword")
+        SearchHistory.objects.create(
+            user=self.user, search="Test Search 1", search_type="Shows"
+        )
+        SearchHistory.objects.create(
+            user=self.user, search="Test Search 2", search_type="Shows"
+        )
+
+    def test_recent_searches(self):
+        response = self.client.get(reverse("recent_searches"))
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"recent_searches": ["Test Search 2", "Test Search 1"]},
+        )
+
+
+class SearchInputTemplateTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.client.login(username="testuser", password="testpassword")
+        SearchHistory.objects.create(
+            user=self.user, search="Test Search 1", search_type="Shows"
+        )
+        SearchHistory.objects.create(
+            user=self.user, search="Test Search 2", search_type="Shows"
+        )
+
+    def test_dropdown_in_template(self):
+        response = self.client.get(reverse("search_results"))
+        self.assertContains(response, 'id="recent-searches-dropdown"')
+        recent_searches_url = reverse("recent_searches")
+        self.assertContains(response, f"fetch('{recent_searches_url}')")
