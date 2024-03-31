@@ -37,7 +37,6 @@ def chat_with_room(request, receiver_room_slug):
         # | Q(sender_id=receiver_room_slug, receiver=request.user)
     ).order_by("timestamp")
 
-
     return render(
         request,
         "group_chat_with_user.html",
