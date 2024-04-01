@@ -1,3 +1,4 @@
+import re
 from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -13,6 +14,7 @@ from ..models import (
     BannedUser,
     SuspendedUser,
     User,
+    Room,
 )
 from ..forms import UserRegistrationForm
 from ..tokens import account_activation_token
