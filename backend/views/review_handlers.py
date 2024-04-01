@@ -51,9 +51,7 @@ def post_review(request, event_id):
             "review_text": review.review_text,
             "timestamp": review.timestamp.isoformat(),
             "likes_count": review.likes_count,
-            "liked_by": list(
-                review.liked_by.values_list("username", flat=True)
-            ),  # 新增字段
+            "liked_by": list(review.liked_by.values_list("username", flat=True)),
         }
     )
 
@@ -61,7 +59,10 @@ def post_review(request, event_id):
 def get_average_rating(request, event_id):
     reviews = Review.objects.filter(event__id=event_id)
     average_rating = reviews.aggregate(Avg("rating"))["rating__avg"]
-    return JsonResponse({"avg_rating": average_rating})
+    if average_rating is not None:
+        return JsonResponse({"avg_rating": average_rating})
+    else:
+        return JsonResponse({"avg_rating": None})
 
 
 def get_reviews_for_event(request, event_id):
@@ -95,7 +96,7 @@ def get_reviews_for_event(request, event_id):
                     "likes_count": review.likes_count,
                     "liked_by": list(
                         review.liked_by.values_list("username", flat=True)
-                    ),  # 新增字段
+                    ),
                 }
             )
 

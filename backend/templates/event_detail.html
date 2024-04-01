@@ -126,7 +126,7 @@
               <p><strong>End Date:</strong> {{ event.close_date }}</p>
               <p><strong>Location:</strong> {{ event.location }}</p>
               <p><strong>Description:</strong> {{ event.description }}</p>
-              <p><strong>Average Rating:</strong> <span id="average-rating">{{ event.avg_rating | default:"Not rated yet" }}</span></p>
+              <p><strong>Average Rating:</strong> <span id="average-rating">{{  event.avg_rating| default:"Not rated yet" }}</span></p>
             </div>
           </div>
         </div>

@@ -1,4 +1,6 @@
 const notInterestBtns = document.getElementsByClassName("remove-interest");
+const csrftoken = $('meta[name="csrf-token"]').attr("content");
+
 Array.from(notInterestBtns).forEach((btn) => {
   btn.addEventListener("click", (e) => {
     const event_id = e.currentTarget.getAttribute("event-id");
@@ -6,10 +8,7 @@ Array.from(notInterestBtns).forEach((btn) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // Include CSRF token from meta tag
-        //   "X-CSRFToken": document
-        //     .querySelector('meta[name="csrf-token"]')
-        //     .getAttribute("content"),
+        "X-CSRFToken": csrftoken,
       },
       body: JSON.stringify({}),
     })
