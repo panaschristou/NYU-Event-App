@@ -13,6 +13,7 @@ pusher_client = Pusher(
     ssl=True,
 )
 
+
 @csrf_exempt
 def pusher_authentication(request):
     if request.method == "POST":

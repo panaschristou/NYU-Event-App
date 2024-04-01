@@ -75,6 +75,4 @@ urlpatterns = [
         views.group_chat_handlers.send_message,
         name="send_message",
     ),
-    # To be deleted
-    path("import_rooms", views.base.import_rooms, name="import_rooms"),
 ]

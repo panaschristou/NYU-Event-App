@@ -61,7 +61,7 @@ def send_message(request, receiver_id):
 def get_chat_channel_name(user_id1, user_id2):
     # Ensure the lower ID always comes first in the channel name
     if user_id1 > user_id2:
-        user_id1,user_id2 = user_id2, user_id1
+        user_id1, user_id2 = user_id2, user_id1
     return f"private-chat-{user_id1}-{user_id2}"
 
 
