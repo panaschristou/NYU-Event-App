@@ -1,6 +1,7 @@
 const interestBtn = document.getElementById("add-interest");
 const notInterestBtn = document.getElementById("remove-interest");
 
+
 interestBtn.addEventListener("click", function () {
   fetch("add-interest/", {
     method: "POST",
