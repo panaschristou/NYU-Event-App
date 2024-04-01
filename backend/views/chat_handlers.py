@@ -63,7 +63,7 @@ def get_chat_channel_name(user_id1, user_id2):
     if user_id1 > user_id2:
         user_id1, user_id2 = user_id2, user_id1
     return f"private-chat-{user_id1}-{user_id2}"
-
+ 
 
 @login_required
 def chat_history(request, receiver_id):
