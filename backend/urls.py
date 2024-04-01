@@ -3,6 +3,7 @@ from django.urls import include, path
 from . import views
 
 from backend.views import group_chat_handlers
+from backend.views import chat_handlers
 
 # app_name = 'backend'
 urlpatterns = [

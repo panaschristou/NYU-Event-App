@@ -12,7 +12,7 @@ pusher_client = Pusher(
     cluster="mt1",
     ssl=True,
 )
- 
+
 
 @csrf_exempt
 def pusher_authentication(request):
