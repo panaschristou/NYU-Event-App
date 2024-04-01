@@ -21,7 +21,6 @@ def interest_list(request):
 
 
 @require_POST
-@csrf_exempt
 def add_interest(request, event_id):
     if (
         request.user.is_authenticated
@@ -41,7 +40,6 @@ def add_interest(request, event_id):
 
 
 @require_POST
-@csrf_exempt
 def remove_interest(request, event_id):
     if request.user.is_authenticated:
         User = get_user_model()

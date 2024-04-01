@@ -5,7 +5,15 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.loader import render_to_string
-from ..models import Event, UserEvent, SearchHistory, Review
+from ..models import (
+    Event,
+    UserEvent,
+    SearchHistory,
+    Review,
+    BannedUser,
+    SuspendedUser,
+    User,
+)
 from ..forms import UserRegistrationForm
 from ..tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
@@ -15,6 +23,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils import timezone
 from django.db.models import Q, Avg, Count, Value, FloatField
 from django.db.models.functions import Coalesce
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -23,19 +33,15 @@ def index(request):
 
 
 def event_detail(request, event_id):
-    User = get_user_model()
-    loggedIn = request.user.id is not None
-    interested = (
-        UserEvent.objects.filter(
-            event=Event.objects.get(pk=event_id),
-            user=User.objects.get(pk=request.user.id),
-        ).exists()
-        if loggedIn
-        else False
-    )
-
+    loggedIn = request.user.is_authenticated
     event = get_object_or_404(Event, pk=event_id)
-    category = request.GET.get("category")
+
+    interested = False
+    if loggedIn:
+        interested = UserEvent.objects.filter(
+            event=event,
+            user=request.user,
+        ).exists()
 
     avg_rating_result = Review.objects.filter(event=event).aggregate(Avg("rating"))
     avg_rating = avg_rating_result["rating__avg"]
@@ -54,7 +60,6 @@ def event_detail(request, event_id):
         {
             "event_id": event_id,
             "event": event,
-            "category": category,
             "loggedIn": loggedIn,
             "interested": interested,
             "avg_rating": avg_rating,
@@ -98,6 +103,10 @@ def search_results(request):
     users = User.objects.none()
 
     if search_query:
+        if request.user.is_authenticated:
+            SearchHistory.objects.create(
+                user=request.user, search=search_query, search_type=search_type
+            )
         if search_type == "Shows":
             if availability_filter != "All":
                 if availability_filter == "Past":
@@ -150,6 +159,18 @@ def delete_search_view(request, search_id):
 def clear_history_view(request):
     SearchHistory.objects.filter(user=request.user).delete()
     return redirect("search_history")
+
+
+def recent_searches(request):
+    if request.user.is_authenticated:
+        recent_searches = SearchHistory.objects.filter(user=request.user).order_by(
+            "-timestamp"
+        )[
+            :5
+        ]  # Get the last 5 searches
+        searches = [search.search for search in recent_searches]
+        return JsonResponse({"recent_searches": searches})
+    return JsonResponse({"recent_searches": []})
 
 
 EVENT_CATEGORIES = [
@@ -280,28 +301,65 @@ def register_user(request):
     )
 
 
+# Delete current user
+@login_required
+@require_POST
+def delete_user(request):
+    User = get_user_model()
+    user = User.objects.filter(id=request.user.id).first()
+    if user:
+        user.delete()
+    return JsonResponse({"message": "account has been deleted"})
+
+
 # Login existing user
 def login_user(request):
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
         remember_me = request.POST.get("remember_me")
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            if remember_me:
-                request.session.set_expiry(604800)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = None
+
+        if user:
+            if user.check_password(password):
+                # Check if the user is banned
+                try:
+                    BannedUser.objects.get(user=user)
+                    messages.error(request, "Your account has been banned.")
+                    return redirect("login")
+                except BannedUser.DoesNotExist:
+                    pass
+
+                if user.is_active:
+                    login(request, user)
+                    if remember_me:
+                        request.session.set_expiry(604800)
+                    else:
+                        request.session.set_expiry(0)
+                    return redirect("index")
+                else:
+                    messages.error(
+                        request,
+                        "Account is not authenticated. Check your email and authenticate before logging in.",
+                    )
+                    return redirect("login")
             else:
-                request.session.set_expiry(0)
-            return redirect("index")
+                messages.error(request, "Invalid username or password.")
+                return redirect("login")
         else:
-            messages.success(request, ("There Was An Error Logging In, Try Again..."))
+            messages.error(request, "Invalid username or password.")
             return redirect("login")
     else:
         return render(request, "authenticate/login.html", {})
 
 
 def logout_user(request):
-    logout(request)
-    messages.success(request, ("You are successfully logged out!"))
-    return redirect("index")
+    if request.method == "POST":
+        logout(request)
+        messages.success(request, "You have been successfully logged out.")
+        return redirect("login")
+    return render(request, "confirm_logout.html")

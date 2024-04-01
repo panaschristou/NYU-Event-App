@@ -12,7 +12,7 @@
     />
     <link href="{% static 'backend/css/index_style.css' %}" rel="stylesheet" />
   </head>
-
+  <body>
   {% block content %}
   {% include "components/navbar.html" %}
 
@@ -27,7 +27,7 @@
                     </svg>
                 </span>
             </div>
-            <input type="text" class="form-control search-input col-8" name="search_events" placeholder="Search events or users..." aria-label="Search" value="{{ request.GET.search_events }}" />
+            <input type="text" class="form-control search-input col-8" id="search-input" name="search_events" placeholder="Search events or users..." aria-label="Search" value="{{ request.GET.search_events }}" />
             <select class="custom-select col-3" id="filter" name="search_type">
                 <option selected>Shows</option>
                 <option>Users</option>
@@ -35,6 +35,9 @@
             <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
             
         </div>
+        <div id="recent-searches-dropdown" class="recent-searches-dropdown">
+          <!-- Recent searches will be appended here -->
+       </div>
         <a href="{% url 'search_history' %}">
           <button class="btn btn-outline-dark" type="button">Search History</button>
       </a>
@@ -122,4 +125,38 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</html>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('search-input');
+        const dropdown = document.getElementById('recent-searches-dropdown');
+
+        searchInput.addEventListener('focus', function() {
+            fetch('{% url "recent_searches" %}')
+                .then(response => response.json())
+                .then(data => {
+                    dropdown.innerHTML = '';  // Clear existing entries
+                    data.recent_searches.forEach(search => {
+                        const div = document.createElement('div');
+                        div.textContent = search;
+                        div.classList.add('recent-search-item');
+                        div.addEventListener('click', function() {
+                            searchInput.value = search;
+                        });
+                        dropdown.appendChild(div);
+                    });
+                    if (data.recent_searches.length > 0) {
+                        dropdown.style.display = 'block';
+                    }
+                });
+        });
+
+        searchInput.addEventListener('blur', function() {
+            setTimeout(() => {
+                dropdown.style.display = 'none';
+            }, 200);  // Delay to allow click event on dropdown items
+        });
+    });
+  </script>
+  </body>
+  </html>
