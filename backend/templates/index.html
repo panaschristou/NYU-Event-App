@@ -1,115 +1,104 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Homepage</title>
     <!-- Include Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-    />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <link href="{% static 'backend/css/index_style.css' %}" rel="stylesheet" />
-  </head>
+</head>
+<body>
+    {% block content %}
+    {% include "components/navbar.html" %}
 
-  {% block content %}
-  <nav class="navbar navbar-expand-lg navbar-dark header">
-    <a class="navbar-brand" href="#">Homepage</a>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          {% if user.is_authenticated %}
-          <a class="nav-link" href="#">User Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'interest_list' %}">Interest List</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-        </li>
-        {% else %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}">Login</a>
-        </li>
-        {% endif %}
-      </ul>
+    <div class="search-bar-container">
+        <form action="{% url 'search_results' %}" method="get" class="search-form">
+            <div class="input-group mb-1 mt-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <!-- search icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                        </svg>
+                    </span>
+                </div>
+                <input type="text" class="form-control search-input col-8" id="search-input" name="search_events" placeholder="Search events or users..." aria-label="Search" value="{{ request.GET.search_events }}" />
+                <select class="custom-select col-3" id="filter" name="search_type">
+                    <option selected>Shows</option>
+                    <option>Users</option>
+                </select>
+                <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
+            </div>
+            <div id="recent-searches-dropdown" class="recent-searches-dropdown">
+                <!-- Recent searches will be appended here -->
+            </div>
+            <a href="{% url 'search_history' %}">
+                <button class="btn btn-outline-dark" type="button">Search History</button>
+            </a>
+        </form>
     </div>
-  </nav>
 
-  <div class="search-bar-container">
-    <form action="{% url 'search_results' %}" method="get" class="search-form">
-      <div class="input-group mb-1 mt-3">
-        <div class="input-group-prepend">
-          <span class="input-group-text">
-            <!-- search icon -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-search"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
-              />
-            </svg>
-          </span>
+    <div class="category-container mt-1 mb-5">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            {% for category in categories %}
+            <a href="{% url 'events_by_category' category %}" class="btn btn-outline-dark">{{ category }}</a>
+            {% endfor %}
         </div>
-        <input
-          type="text"
-          class="form-control search-input col-8"
-          name="search_events"
-          placeholder="Search"
-          aria-label="Search"
-          value="{{ request.GET.search_events }}"
-        />
-        <select class="custom-select col-3" id="filter" name="search_type">
-          <option selected>Shows</option>
-          <option>Users</option>
-        </select>
-        <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">
-          Search
-        </button>
-      </div>
-    </form>
-  </div>
-
-  <div class="category-container mt-1 mb-5">
-    <div class="btn-group" role="group" aria-label="Basic example">
-      {% for category in categories %}
-      <a
-        href="{% url 'events_by_category' category %}"
-        class="btn btn-outline-dark"
-        >{{ category }}</a
-      >
-      {% endfor %}
     </div>
-  </div>
 
-  <div class="container">
-    <div class="events-container">
-      {% for event in events %}
-      <div class="event-card">
-        <a href="{% url 'event_detail' event.id %}">
-          <img
-            src="{{ event.image_url }}"
-            class="card-img-top"
-            alt="{{ event.title }}"
-            style="cursor: pointer; object-fit: cover"
-          />
-          <h5 class="card-title">{{ event.title }}</h5>
-        </a>
-      </div>
-      {% endfor %}
+    <div class="container">
+        <div class="events-container">
+            {% for event in events %}
+            <div class="event-card">
+                <a href="{% url 'event_detail' event.id %}">
+                    <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}" style="cursor: pointer; object-fit: cover" />
+                    <h5 class="card-title">{{ event.title }}</h5>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-  </div>
 
-  {% endblock %}
+    {% endblock %}
 
-  <!-- Include Bootstrap JS and dependencies at the bottom of the body -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.2/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</html>
+    <!-- Include Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const searchInput = document.getElementById('search-input');
+          const dropdown = document.getElementById('recent-searches-dropdown');
+  
+          searchInput.addEventListener('focus', function() {
+              fetch('{% url "recent_searches" %}')
+                  .then(response => response.json())
+                  .then(data => {
+                      dropdown.innerHTML = '';  // Clear existing entries
+                      data.recent_searches.forEach(search => {
+                          const div = document.createElement('div');
+                          div.textContent = search;
+                          div.classList.add('recent-search-item');
+                          div.addEventListener('click', function() {
+                              searchInput.value = search;
+                          });
+                          dropdown.appendChild(div);
+                      });
+                      if (data.recent_searches.length > 0) {
+                          dropdown.style.display = 'block';
+                      }
+                  });
+          });
+  
+          searchInput.addEventListener('blur', function() {
+              setTimeout(() => {
+                  dropdown.style.display = 'none';
+              }, 200);  // Delay to allow click event on dropdown items
+          });
+      });
+  </script>
+  </body>
+  </html>
+  

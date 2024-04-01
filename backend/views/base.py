@@ -2,19 +2,29 @@ from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.template.loader import render_to_string
-from .models import Event, UserEvent
-from .forms import UserRegistrationForm
-from .tokens import account_activation_token
+from ..models import (
+    Event,
+    UserEvent,
+    SearchHistory,
+    Review,
+    BannedUser,
+    SuspendedUser,
+    User,
+)
+from ..forms import UserRegistrationForm
+from ..tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.views.decorators.http import require_POST, require_GET
-from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Avg, Count, Value, FloatField
+from django.db.models.functions import Coalesce
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -23,27 +33,36 @@ def index(request):
 
 
 def event_detail(request, event_id):
-    User = get_user_model()
-    loggedIn = request.user.id is not None
-    interested = (
-        UserEvent.objects.filter(
-            event=Event.objects.get(pk=event_id),
-            user=User.objects.get(pk=request.user.id),
-        ).exists()
-        if loggedIn
-        else False
-    )
-
+    loggedIn = request.user.is_authenticated
     event = get_object_or_404(Event, pk=event_id)
-    category = request.GET.get("category")
+
+    interested = False
+    if loggedIn:
+        interested = UserEvent.objects.filter(
+            event=event,
+            user=request.user,
+        ).exists()
+
+    avg_rating_result = Review.objects.filter(event=event).aggregate(Avg("rating"))
+    avg_rating = avg_rating_result["rating__avg"]
+
+    if avg_rating is not None:
+        avg_rating = round(avg_rating, 2)
+        event.avg_rating = avg_rating
+        event.save()
+    else:
+        event.avg_rating = avg_rating
+        event.save()
+
     return render(
         request,
         "event_detail.html",
         {
+            "event_id": event_id,
             "event": event,
-            "category": category,
             "loggedIn": loggedIn,
             "interested": interested,
+            "avg_rating": avg_rating,
         },
     )
 
@@ -51,9 +70,10 @@ def event_detail(request, event_id):
 def user_detail(request, username):
     User = get_user_model()
     user = get_object_or_404(User, username=username)
-    return render(request, "user_detail.html", {"user": user})
+    return render(request, "user_detail.html", {"detail_user": user})
 
 
+@login_required
 def interest_list(request):
     User = get_user_model()
     interestList = []
@@ -69,6 +89,7 @@ def interest_list(request):
 def search_results(request):
     search_query = request.GET.get("search_events", "").strip()
     search_type = request.GET.get("search_type", "Shows")
+    sort_by = request.GET.get("sort_by", "")
     User = get_user_model()
 
     availability_filter = request.GET.get("availability", "All")
@@ -82,6 +103,10 @@ def search_results(request):
     users = User.objects.none()
 
     if search_query:
+        if request.user.is_authenticated:
+            SearchHistory.objects.create(
+                user=request.user, search=search_query, search_type=search_type
+            )
         if search_type == "Shows":
             if availability_filter != "All":
                 if availability_filter == "Past":
@@ -98,6 +123,17 @@ def search_results(request):
                 Q(username__icontains=search_query) | Q(email__icontains=search_query)
             )
 
+    if sort_by == "Average Rating":
+        events = events.annotate(
+            adjusted_avg_rating=Coalesce(
+                Avg("reviews__rating"), Value(0), output_field=FloatField()
+            )
+        ).order_by("-adjusted_avg_rating")
+    elif sort_by == "Popularity":
+        events = events.annotate(review_count=Count("reviews")).order_by(
+            "-review_count"
+        )
+
     context = {
         "events": events if search_type == "Shows" else None,
         "users": users if search_type == "Users" else None,
@@ -105,6 +141,36 @@ def search_results(request):
         "search_type": search_type,
     }
     return render(request, "search_results.html", context)
+
+
+def search_history(request):
+    user = request.user
+    search_history = SearchHistory.objects.filter(user=user).order_by("-timestamp")
+    return render(request, "search_history.html", {"search_history": search_history})
+
+
+def delete_search_view(request, search_id):
+    search = SearchHistory.objects.get(id=search_id)
+    if search.user == request.user:
+        search.delete()
+    return redirect("search_history")
+
+
+def clear_history_view(request):
+    SearchHistory.objects.filter(user=request.user).delete()
+    return redirect("search_history")
+
+
+def recent_searches(request):
+    if request.user.is_authenticated:
+        recent_searches = SearchHistory.objects.filter(user=request.user).order_by(
+            "-timestamp"
+        )[
+            :5
+        ]  # Get the last 5 searches
+        searches = [search.search for search in recent_searches]
+        return JsonResponse({"recent_searches": searches})
+    return JsonResponse({"recent_searches": []})
 
 
 EVENT_CATEGORIES = [
@@ -127,6 +193,7 @@ def index_with_categories_view(request):
 def events_by_category(request, category):
     availability_filter = request.GET.get("availability", "All")
     now = timezone.now()
+    sort_by = request.GET.get("sort_by", "")
 
     events = Event.objects.filter(category__icontains=category)
 
@@ -140,6 +207,17 @@ def events_by_category(request, category):
             )
         elif availability_filter == "Upcoming":
             events = events.filter(open_date__gt=now)
+
+    if sort_by == "Average Rating":
+        events = events.annotate(
+            adjusted_avg_rating=Coalesce(
+                Avg("reviews__rating"), Value(0), output_field=FloatField()
+            )
+        ).order_by("-adjusted_avg_rating")
+    elif sort_by == "Popularity":
+        events = events.annotate(review_count=Count("reviews")).order_by(
+            "-review_count"
+        )
 
     return render(
         request,
@@ -223,76 +301,65 @@ def register_user(request):
     )
 
 
+# Delete current user
+@login_required
+@require_POST
+def delete_user(request):
+    User = get_user_model()
+    user = User.objects.filter(id=request.user.id).first()
+    if user:
+        user.delete()
+    return JsonResponse({"message": "account has been deleted"})
+
+
 # Login existing user
 def login_user(request):
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
         remember_me = request.POST.get("remember_me")
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            if remember_me:
-                request.session.set_expiry(604800)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = None
+
+        if user:
+            if user.check_password(password):
+                # Check if the user is banned
+                try:
+                    BannedUser.objects.get(user=user)
+                    messages.error(request, "Your account has been banned.")
+                    return redirect("login")
+                except BannedUser.DoesNotExist:
+                    pass
+
+                if user.is_active:
+                    login(request, user)
+                    if remember_me:
+                        request.session.set_expiry(604800)
+                    else:
+                        request.session.set_expiry(0)
+                    return redirect("index")
+                else:
+                    messages.error(
+                        request,
+                        "Account is not authenticated. Check your email and authenticate before logging in.",
+                    )
+                    return redirect("login")
             else:
-                request.session.set_expiry(0)
-            return redirect("index")
+                messages.error(request, "Invalid username or password.")
+                return redirect("login")
         else:
-            messages.success(request, ("There Was An Error Logging In, Try Again..."))
+            messages.error(request, "Invalid username or password.")
             return redirect("login")
     else:
         return render(request, "authenticate/login.html", {})
 
 
 def logout_user(request):
-    logout(request)
-    messages.success(request, ("You are successfully logged out!"))
-    return redirect("index")
-
-
-# AJAX
-# Interest list
-@require_POST
-@csrf_exempt
-def add_interest(request, event_id):
-    if (
-        request.user.is_authenticated
-        and not UserEvent.objects.filter(
-            event_id=event_id, user_id=request.user.id
-        ).exists()
-    ):
-        User = get_user_model()
-        UserEvent.objects.create(
-            event=Event.objects.get(pk=event_id),
-            user=User.objects.get(pk=request.user.id),
-            saved=True,
-        )
-        return JsonResponse({"message": "added to the interest list"})
-    else:
-        raise Http404("Operation Failed")
-
-
-@require_POST
-@csrf_exempt
-def remove_interest(request, event_id):
-    if request.user.is_authenticated:
-        User = get_user_model()
-        (
-            UserEvent.objects.get(
-                event=Event.objects.get(pk=event_id),
-                user=User.objects.get(pk=request.user.id),
-            )
-        ).delete()
-        return JsonResponse({"message": "removed from the interest list"})
-    else:
-        raise Http404("Unauthorized Operation")
-
-
-@require_GET
-@csrf_exempt
-def view_interest_list(request):
-    if request.user.is_authenticated:
-        User = get_user_model()
-        UserEvent.objects.filter(user=User.objects.get(pk=request.user.id))
-    else:
-        raise Http404("Unauthorized Operation")
+    if request.method == "POST":
+        logout(request)
+        messages.success(request, "You have been successfully logged out.")
+        return redirect("login")
+    return render(request, "confirm_logout.html")

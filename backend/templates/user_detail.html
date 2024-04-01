@@ -4,38 +4,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ user.username }}'s Profile</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
     <link
-      href="{% static 'backend/css/event_detail_style.css' %}"
+      href="{% static 'backend/css/base_style.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      href="{% static 'backend/css/user_detail_style.css' %}"
       rel="stylesheet"
     />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark header">
-      <a class="navbar-brand" href="#">{{ user.username }}'s Profile</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'index' %}">Homepage</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">User Home</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
+    {% include "components/navbar.html" %} 
     <div class="user-detail py-5">
       <div class="container container-transparent">
         <div class="row">
           <div class="col-lg-8 mx-auto text-center">
+            {% if user.profile.avatar %}
+            <img class="user-avatar" src="/media/{{ detail_user.profile.avatar }}"/>
+            {% else %}
+            <img class="user-avatar" src="{% static 'backend/img/generic_user_image.png' %}"/>
+            {% endif %}
+            {% if user.username == detail_user.username %}
+            <a class="edit-btn" href="{% url 'profile_edit' %}">Edit</a>
+            {% endif %}
             <!-- Centered user details -->
-            <h1>{{ user.username }}</h1>
-            <p>Email: {{ user.email }}</p>
+            <h1>{{ detail_user.username }}</h1>
+            <p>Email: {{ detail_user.email }}</p>
+            <p>First Name: {{ detail_user.first_name }}</p>
+            <p>Last Name: {{ detail_user.last_name }}</p>
+            <p>Personal Description:</p>
+            <p>{{ detail_user.profile.description }}</p>
             <!-- Add more user details as needed -->
           </div>
         </div>

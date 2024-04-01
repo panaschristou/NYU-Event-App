@@ -2,6 +2,25 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
+from backend.storage import OverwriteStorage
+
+
+def profile_avatar_name(instance, filename):
+    ext = filename.split(".")[-1]
+    return "profile_images/%s.%s" % (instance.user.username, ext)
+
+
+# Profile model
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(
+        storage=OverwriteStorage(), upload_to=profile_avatar_name, null=True, blank=True
+    )
+    description = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+
 
 # Event model
 class Event(models.Model):
@@ -24,8 +43,10 @@ class Review(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="reviews")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField()
-    comment = models.TextField()
+    review_text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    likes_count = models.IntegerField(default=0)
+    liked_by = models.ManyToManyField(User, related_name="liked_reviews", blank=True)
 
 
 # UserEvent model for likes/saves
@@ -45,3 +66,42 @@ class Chat(models.Model):
     )
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+
+
+# Search History Model
+class SearchHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    search = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    search_type = models.CharField(max_length=10)
+
+
+class SuspendedUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    reason = models.TextField()
+    suspended_at = models.DateTimeField(auto_now_add=True)
+    unsuspended_at = models.DateTimeField(null=True, blank=True)
+    is_suspended = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
+
+    def unsuspend_user(self):
+        self.is_suspended = False
+        self.user.save()
+        self.delete()
+
+
+class BannedUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    reason = models.TextField()
+    banned_at = models.DateTimeField(auto_now_add=True)
+    unban_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+    def unban_user(self):
+        self.user.is_active = True
+        self.user.save()
+        self.delete()

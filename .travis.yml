@@ -1,17 +1,17 @@
 dist: jammy
 language: python
 python:
-  - "3.8"  # Use the development version of Python 3.8
+  - "3.8" # Use the development version of Python 3.8
 
 env:
   - DJANGO_SETTINGS_MODULE="nyu_event.settings"
 
 install:
+  - pip install --upgrade setuptools
   - pip install -r requirements.txt
 
 services:
   - postgresql
-
 
 before_script:
   - psql -c 'create database nyu_event;' -U postgres
@@ -26,11 +26,10 @@ script:
   - flake8 .
   - python manage.py migrate
   - python manage.py test
-  - coverage run manage.py test  
-  - coverage report  
+  - coverage run manage.py test
+  - coverage report
 after_success:
   - coveralls
-
 
 deploy:
   - provider: elasticbeanstalk
@@ -38,10 +37,11 @@ deploy:
     secret_access_key: $AWS_SECRET_ACCESS_KEY
     region: "us-east-1"
     app: "postgres"
-    env: "postgres-dev"
+    env: "postgres-dev2"
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
+    skip_cleanup: true
     on:
-      branch: develop  
+      branch: develop
 
   - provider: elasticbeanstalk
     access_key_id: $AWS_ACCESS_KEY_ID
@@ -51,4 +51,4 @@ deploy:
     env: "main"
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
     on:
-      branch: master  
+      branch: master

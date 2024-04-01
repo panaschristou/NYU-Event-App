@@ -12,56 +12,35 @@
     />
     <link href="{% static 'backend/css/index_style.css' %}" rel="stylesheet" />
   </head>
-
+  <body>
   {% block content %}
-  <nav class="navbar navbar-expand-lg navbar-dark header">
-    <a class="navbar-brand" >Search Results</a>
-    <div class="collapse navbar-collapse">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'index' %}">Homepage</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-            {% if user.is_authenticated %}
-            <li class="nav-item">
-                <a class="nav-link" href="#">User Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'interest_list' %}">Interest List</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">Login</a>
-            </li>
-            {% endif %}
-        </ul>
-      </div>
-  </nav>
+  {% include "components/navbar.html" %}
 
   <div class="search-bar-container">
     <form action="{% url 'search_results' %}" method="get" class="search-form">
-      <div class="input-group mb-1 mt-3">
-        <input
-          type="text"
-          class="form-control search-input mr-sm-2"
-          name="search_events"
-          placeholder="Search events..."
-          aria-label="Search"
-          value="{{ request.GET.search_events }}"
-        />
-        <select class="custom-select" id="filter" name="search_type">
-          <option {% if search_type == 'Shows' %}selected{% endif %}>Shows</option>
-          <option {% if search_type == 'Users' %}selected{% endif %}>Users</option>
-      </select>
-        <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">
-          Search
-        </button>
-        
-      </div>
+        <div class="input-group mb-1 mt-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <!-- search icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                    </svg>
+                </span>
+            </div>
+            <input type="text" class="form-control search-input col-8" id="search-input" name="search_events" placeholder="Search events or users..." aria-label="Search" value="{{ request.GET.search_events }}" />
+            <select class="custom-select col-3" id="filter" name="search_type">
+                <option selected>Shows</option>
+                <option>Users</option>
+            </select>
+            <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
+            
+        </div>
+        <div id="recent-searches-dropdown" class="recent-searches-dropdown">
+          <!-- Recent searches will be appended here -->
+       </div>
+        <a href="{% url 'search_history' %}">
+          <button class="btn btn-outline-dark" type="button">Search History</button>
+      </a>
     </form>
   </div>
 
@@ -81,10 +60,10 @@
               </select>
           </div>
           <div class="col-md-6"> <!-- Adjust the column size as needed -->
-            <select class="custom-select" id="sort">
-              <option selected>Sorted by</option>
-              <option>Average Rating</option>
-              <option>Popularity</option>
+            <select class="custom-select" id="sort" name="sort_by" onchange="this.form.submit()">
+              <option value="" {% if not request.GET.sort_by %}selected{% endif %}>Sorted by</option>
+              <option value="Average Rating" {% if request.GET.sort_by == 'Average Rating' %}selected{% endif %}>Average Rating</option>
+              <option value="Popularity" {% if request.GET.sort_by == 'Popularity' %}selected{% endif %}>Popularity</option>
             </select>
           </div>
       </div>
@@ -123,7 +102,11 @@
         {% for user in users %}
           <div class="user-card">
             <a href="{% url 'user_detail' user.username %}">
-              <img src="{% static 'backend/img/generic_user_image.png' %}" alt="User Image" class="user-card-img" alt="{{ user.username }}" style="cursor: pointer; object-fit: cover" />
+              {% if user.profile.avatar %}
+              <img src="/media/{{ user.profile.avatar }}" alt="User Image" class="user-card-img" style="cursor: pointer; object-fit: cover; border-radius: 50%;" />
+              {% else %}
+              <img src="{% static 'backend/img/generic_user_image.png' %}" alt="User Image" class="user-card-img" style="cursor: pointer; object-fit: cover; border-radius: 50%;" />
+              {% endif %}
               <h5 class="card-title">{{ user.username }}</h5>
             </a>
           </div>
@@ -142,4 +125,38 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</html>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('search-input');
+        const dropdown = document.getElementById('recent-searches-dropdown');
+
+        searchInput.addEventListener('focus', function() {
+            fetch('{% url "recent_searches" %}')
+                .then(response => response.json())
+                .then(data => {
+                    dropdown.innerHTML = '';  // Clear existing entries
+                    data.recent_searches.forEach(search => {
+                        const div = document.createElement('div');
+                        div.textContent = search;
+                        div.classList.add('recent-search-item');
+                        div.addEventListener('click', function() {
+                            searchInput.value = search;
+                        });
+                        dropdown.appendChild(div);
+                    });
+                    if (data.recent_searches.length > 0) {
+                        dropdown.style.display = 'block';
+                    }
+                });
+        });
+
+        searchInput.addEventListener('blur', function() {
+            setTimeout(() => {
+                dropdown.style.display = 'none';
+            }, 200);  // Delay to allow click event on dropdown items
+        });
+    });
+  </script>
+  </body>
+  </html>
