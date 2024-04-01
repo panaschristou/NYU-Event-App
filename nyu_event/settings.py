@@ -34,7 +34,6 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "main2.us-east-1.elasticbeanstalk.com",
-    "postgres-dev.us-east-1.elasticbeanstalk.com",
     "postgres-dev2.us-east-1.elasticbeanstalk.com",
 ]
 
@@ -162,8 +161,3 @@ EMAIL_HOST_USER = "nyuevents24@gmail.com"
 EMAIL_HOST_PASSWORD = "ogtoqvpmcniroelh"
 
 DEFAULT_FROM_EMAIL = "nyuevents24@gmail.com"
-
-PUSHER_APP_ID = "1773977"
-PUSHER_KEY = "e44f77643020ff731b4f"
-PUSHER_SECRET = "064da109d46ae1fd75ee"
-PUSHER_CLUSTER = "mt1"

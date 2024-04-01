@@ -45,6 +45,8 @@ class Review(models.Model):
     rating = models.IntegerField()
     review_text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    likes_count = models.IntegerField(default=0)
+    liked_by = models.ManyToManyField(User, related_name="liked_reviews", blank=True)
 
 
 # UserEvent model for likes/saves

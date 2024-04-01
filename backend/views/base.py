@@ -52,11 +52,15 @@ def event_detail(request, event_id):
         avg_rating = round(avg_rating, 2)
         event.avg_rating = avg_rating
         event.save()
+    else:
+        event.avg_rating = avg_rating
+        event.save()
 
     return render(
         request,
         "event_detail.html",
         {
+            "event_id": event_id,
             "event": event,
             "loggedIn": loggedIn,
             "interested": interested,

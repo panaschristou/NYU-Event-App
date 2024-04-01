@@ -19,8 +19,33 @@ urlpatterns = [
     path("events/<int:event_id>/", views.base.event_detail, name="event_detail"),
     path(
         "events/<int:event_id>/post-review/",
-        views.review_handler.post_review,
+        views.review_handlers.post_review,
         name="post_review",
+    ),
+    path(
+        "events/<int:event_id>/avg-rating/",
+        views.review_handlers.get_average_rating,
+        name="get_average_rating",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/",
+        views.review_handlers.get_reviews_for_event,
+        name="event_reviews",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/likes/",
+        views.review_handlers.like_review,
+        name="like_review",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/unlike/",
+        views.review_handlers.unlike_review,
+        name="unlike_review",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/delete/",
+        views.review_handlers.delete_review,
+        name="delete_review",
     ),
     path("users/<str:username>/", views.base.user_detail, name="user_detail"),
     path("profile-edit/", views.profile_handlers.profile_edit, name="profile_edit"),
