@@ -81,5 +81,7 @@ def get_chat_channel_name(user_id, receiver_room_slug):
 
 @login_required
 def chat_history(request, receiver_room_slug):
-    messages = ChatRoom3.objects.filter(sender=request.user, receiver=receiver_room_slug)
+    messages = ChatRoom3.objects.filter(
+        sender=request.user, receiver=receiver_room_slug
+    )
     return JsonResponse(list(messages), safe=False)

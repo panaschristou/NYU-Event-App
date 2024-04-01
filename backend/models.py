@@ -67,6 +67,7 @@ class Chat(models.Model):
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
+
 # Group Chat model
 class Room3(models.Model):
     name = models.CharField(max_length=255)

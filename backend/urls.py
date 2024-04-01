@@ -89,7 +89,7 @@ urlpatterns = [
         name="send_message",
     ),
     path("search_user/", views.chat_handlers.search_users, name="search_users"),
-    #group chat
+    # group chat
     path("rooms/", views.group_chat_handlers.group_chat_index, name="search_rooms"),
     path(
         "chat/<str:receiver_room_slug>/",
@@ -102,5 +102,5 @@ urlpatterns = [
         name="send_message",
     ),
     # To be deleted
-    path("import_rooms",views.base.import_rooms,name="import_rooms")
+    path("import_rooms", views.base.import_rooms, name="import_rooms"),
 ]

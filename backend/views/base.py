@@ -14,7 +14,7 @@ from ..models import (
     BannedUser,
     SuspendedUser,
     User,
-    Room3
+    Room3,
 )
 from ..forms import UserRegistrationForm
 from ..tokens import account_activation_token
@@ -365,6 +365,7 @@ def logout_user(request):
         messages.success(request, "You have been successfully logged out.")
         return redirect("login")
     return render(request, "confirm_logout.html")
+
 
 def import_rooms(request):
 
