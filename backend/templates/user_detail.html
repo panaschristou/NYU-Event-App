@@ -30,6 +30,8 @@
             {% endif %}
             {% if user.username == detail_user.username %}
             <a class="edit-btn" href="{% url 'profile_edit' %}">Edit</a>
+            {% else %}
+            <a class="edit-btn" href="{% url 'chat_with_user' detail_user.id %}">Chat</a>
             {% endif %}
             <!-- Centered user details -->
             <h1>{{ detail_user.username }}</h1>

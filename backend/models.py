@@ -69,12 +69,12 @@ class Chat(models.Model):
 
 
 # Group Chat model
-class Room(models.Model):
+class Room3(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
 
 
-class ChatRoom(models.Model):
+class ChatRoom3(models.Model):
     sender_ChatRoom = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="sent_chats_room"
     )

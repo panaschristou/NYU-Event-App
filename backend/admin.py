@@ -8,8 +8,8 @@ from .models import (
     Profile,
     SuspendedUser,
     BannedUser,
-    ChatRoom,
-    Room,
+    ChatRoom3,
+    Room3,
 )
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
@@ -23,8 +23,8 @@ admin.site.register(Review)
 admin.site.register(UserEvent)
 admin.site.register(Chat)
 admin.site.register(Profile)
-admin.site.register(ChatRoom)
-admin.site.register(Room)
+admin.site.register(ChatRoom3)
+admin.site.register(Room3)
 
 
 class SuspendedUserInline(admin.StackedInline):
