@@ -7,6 +7,7 @@ from django.db.models import Avg
 from django.core.paginator import Paginator
 from backend.huggingface import censorbot
 
+
 @login_required
 @require_POST
 def post_review(request, event_id):
