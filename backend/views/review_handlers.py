@@ -41,12 +41,10 @@ def post_review(request, event_id):
             "review_id": review.id,
             "new_avg_rating": new_avg_rating,
             "user": {
-                "username": user.username, 
+                "username": user.username,
                 "profile": {
-                    "avatar": (
-                        user.profile.avatar.url if user.profile.avatar else None
-                    )
-                }, 
+                    "avatar": (user.profile.avatar.url if user.profile.avatar else None)
+                },
             },
             "rating": review.rating,
             "review_text": review.review_text,
@@ -55,6 +53,7 @@ def post_review(request, event_id):
             "liked_by": [user.username for user in liked_by_users],
         }
     )
+
 
 def get_average_rating(request, event_id):
     reviews = Review.objects.filter(event__id=event_id)
