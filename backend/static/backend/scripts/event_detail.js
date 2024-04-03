@@ -109,7 +109,7 @@ postButton.addEventListener("click", function () {
     });
     updateAverageRating(eventId);
     resetReviewForm();
-    addReviewToPage(data.review);
+    addReviewToPage(data);
   }else{
     showTemporaryMessage(data.message, "alert-danger");
   }
@@ -233,7 +233,7 @@ function addReviewToPage(review) {
   reviewBox.className = 'review-box';
   const avatarWrapper = document.createElement('div');
   avatarWrapper.className = 'avatar-wrapper';
-
+  console.log(review);
   const avatar = document.createElement('img');
   avatar.className = 'user-avatar';
   avatar.src = review.user.profile.avatar || '/backend/static/backend/img/generic_user_image.png';
@@ -410,7 +410,6 @@ function addReviewToPage(review) {
     let index;
   
     deleteButton.addEventListener('click', function() {
-     
       index = review.id;
       modal.style.display = 'block';
     });
@@ -447,8 +446,8 @@ function addReviewToPage(review) {
         setTimeout(function() {
           setTimeout(function() {
             window.location.reload();
-          }, 2000);
-        }, 2000);
+          }, 1000);
+        }, 1000);
       })
       .catch(error => {
         console.error('Error:', error);

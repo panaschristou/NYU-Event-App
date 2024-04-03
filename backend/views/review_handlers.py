@@ -22,15 +22,18 @@ def post_review(request, event_id):
     rating = request.POST.get("rating")
     review_text = request.POST.get("review_text")
     review = Review(event=event, user=user, rating=rating, review_text=review_text)
+
+    review.likes_count = 0
+
     review.save()
 
-    avg_rating_result = Review.objects.filter(event=event).aggregate(Avg("rating"))
-    new_avg_rating = avg_rating_result["rating__avg"]
+    liked_by_users = review.liked_by.all()
 
-    if new_avg_rating is not None:
-        new_avg_rating = round(new_avg_rating, 2)
-        event.avg_rating = new_avg_rating
-        event.save()
+    avg_rating_result = Review.objects.filter(event=event).aggregate(Avg("rating"))
+    new_avg_rating = avg_rating_result["rating__avg"] or 0
+    new_avg_rating = round(new_avg_rating, 2)
+    event.avg_rating = new_avg_rating
+    event.save()
 
     return JsonResponse(
         {
@@ -38,23 +41,20 @@ def post_review(request, event_id):
             "review_id": review.id,
             "new_avg_rating": new_avg_rating,
             "user": {
-                "username": review.user.username,
+                "username": user.username, 
                 "profile": {
                     "avatar": (
-                        review.user.profile.avatar.url
-                        if review.user.profile.avatar
-                        else None
+                        user.profile.avatar.url if user.profile.avatar else None
                     )
-                },
+                }, 
             },
             "rating": review.rating,
             "review_text": review.review_text,
             "timestamp": review.timestamp.isoformat(),
             "likes_count": review.likes_count,
-            "liked_by": list(review.liked_by.values_list("username", flat=True)),
+            "liked_by": [user.username for user in liked_by_users],
         }
     )
-
 
 def get_average_rating(request, event_id):
     reviews = Review.objects.filter(event__id=event_id)
