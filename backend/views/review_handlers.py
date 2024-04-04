@@ -5,6 +5,7 @@ from backend.models import Event, Review, SuspendedUser
 from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Avg
 from django.core.paginator import Paginator
+from backend.huggingface import censorbot
 
 
 @login_required
@@ -21,6 +22,13 @@ def post_review(request, event_id):
         )
     rating = request.POST.get("rating")
     review_text = request.POST.get("review_text")
+    if censorbot.detect_hate_speech(review_text)[0]["label"] == "hate":
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Your review contains hate speech. Please remove it and try again.",
+            }
+        )
     review = Review(event=event, user=user, rating=rating, review_text=review_text)
     review.save()
 
