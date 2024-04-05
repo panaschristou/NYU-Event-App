@@ -1,7 +1,7 @@
 dist: jammy
 language: python
 python:
-  - "3.8" # Use the development version of Python 3.8
+  - "3.8" 
 
 env:
   - DJANGO_SETTINGS_MODULE="nyu_event.settings"
