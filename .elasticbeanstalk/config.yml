@@ -1,6 +1,6 @@
 branch-defaults:
-  mainenv:
-    environment: postgres-dev2
+  fixiing-deployment-error:
+    environment: dev-env
     group_suffix: null
 global:
   application_name: postgres
