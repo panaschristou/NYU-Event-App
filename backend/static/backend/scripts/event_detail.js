@@ -1,6 +1,7 @@
 const interestBtn = document.getElementById("add-interest");
 const notInterestBtn = document.getElementById("remove-interest");
 
+
 interestBtn.addEventListener("click", function () {
   fetch("add-interest/", {
     method: "POST",
@@ -10,6 +11,7 @@ interestBtn.addEventListener("click", function () {
       //   "X-CSRFToken": document
       //     .querySelector('meta[name="csrf-token"]')
       //     .getAttribute("content"),
+      'X-CSRFToken': csrftoken,
     },
     body: JSON.stringify({}),
   })
@@ -33,6 +35,7 @@ notInterestBtn.addEventListener("click", function () {
       //   "X-CSRFToken": document
       //     .querySelector('meta[name="csrf-token"]')
       //     .getAttribute("content"),
+      'X-CSRFToken': csrftoken,
     },
     body: JSON.stringify({}),
   })
@@ -217,6 +220,7 @@ function loadReviews(eventId) {
     if (!data.has_next) {
       hasMorePages = false; 
     }
+
 
     currentPage++;
     isLoading = false;
