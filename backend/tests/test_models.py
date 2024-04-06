@@ -127,7 +127,7 @@ class ReviewModelTest(TestCase):
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
             external_link="http://www.broadway.org/shows/details/spamalot,812",
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
-            avg_rating=0, 
+            avg_rating=0,
         )
         cls.user = User.objects.create_user(username="testuser", password="12345")
         cls.event = Event.objects.get(title="Spamalot")
@@ -148,7 +148,7 @@ class ReviewModelTest(TestCase):
         self.assertEqual(review.likes_count, 0)
         self.assertEqual(review.reply_count, 0)
         self.assertFalse(review.liked_by.exists())
-    
+
     def test_likes_count_default_value(self):
         # Test the default value of likes_count
         self.assertEqual(self.review.likes_count, 0)
@@ -156,6 +156,7 @@ class ReviewModelTest(TestCase):
     def test_reply_count_default_value(self):
         # Test the default value of reply_count
         self.assertEqual(self.review.reply_count, 0)
+
 
 class ReplyToReviewModelTest(TestCase):
     @classmethod

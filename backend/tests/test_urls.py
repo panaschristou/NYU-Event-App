@@ -8,7 +8,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth import get_user_model
-from backend.models import Event, User, Profile, Review, ReplyToReview
+from backend.models import Event, Review
 import datetime
 from django.http import HttpResponseRedirect
 
@@ -105,35 +105,50 @@ class TestUrls(TestCase):
         self.assertEqual(view.func, views.base.search_history)
 
     def test_post_review_url(self):
-        url = reverse('post_review', kwargs={'event_id': self.event.pk})
+        url = reverse("post_review", kwargs={"event_id": self.event.pk})
         self.assertEqual(resolve(url).func, views.review_handlers.post_review)
 
     def test_get_average_rating_url(self):
-        url = reverse('get_average_rating', kwargs={'event_id': self.event.pk})
+        url = reverse("get_average_rating", kwargs={"event_id": self.event.pk})
         self.assertEqual(resolve(url).func, views.review_handlers.get_average_rating)
 
     def test_get_reviews_for_event_url(self):
-        url = reverse('event_reviews', kwargs={'event_id': self.event.pk})
+        url = reverse("event_reviews", kwargs={"event_id": self.event.pk})
         self.assertEqual(resolve(url).func, views.review_handlers.get_reviews_for_event)
 
     def test_like_review_url(self):
-        url = reverse('like_review', kwargs={'event_id': self.event.pk, 'review_id': self.review.pk})
+        url = reverse(
+            "like_review",
+            kwargs={"event_id": self.event.pk, "review_id": self.review.pk},
+        )
         self.assertEqual(resolve(url).func, views.review_handlers.like_review)
 
     def test_unlike_review_url(self):
-        url = reverse('unlike_review', kwargs={'event_id': self.event.pk, 'review_id': self.review.pk})
+        url = reverse(
+            "unlike_review",
+            kwargs={"event_id": self.event.pk, "review_id": self.review.pk},
+        )
         self.assertEqual(resolve(url).func, views.review_handlers.unlike_review)
 
     def test_delete_review_url(self):
-        url = reverse('delete_review', kwargs={'event_id': self.event.pk, 'review_id': self.review.pk})
+        url = reverse(
+            "delete_review",
+            kwargs={"event_id": self.event.pk, "review_id": self.review.pk},
+        )
         self.assertEqual(resolve(url).func, views.review_handlers.delete_review)
 
     def test_reply_to_review_url(self):
-        url = reverse('reply_to_review', kwargs={'event_id': self.event.pk, 'review_id': self.review.pk})
+        url = reverse(
+            "reply_to_review",
+            kwargs={"event_id": self.event.pk, "review_id": self.review.pk},
+        )
         self.assertEqual(resolve(url).func, views.review_handlers.reply_to_review)
 
     def test_get_replies_for_review_url(self):
-        url = reverse('display_replies', kwargs={'event_id': self.event.pk, 'review_id': self.review.pk})
-        self.assertEqual(resolve(url).func, views.review_handlers.get_replies_for_review)
-    
-
+        url = reverse(
+            "display_replies",
+            kwargs={"event_id": self.event.pk, "review_id": self.review.pk},
+        )
+        self.assertEqual(
+            resolve(url).func, views.review_handlers.get_replies_for_review
+        )
