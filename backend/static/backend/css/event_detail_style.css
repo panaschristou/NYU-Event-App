@@ -212,7 +212,17 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,.5);
 }
 
-.review-box {
+.review-box{
+  border: 1px solid #ccc;
+  padding: 15px;
+  padding-left: 0;
+  margin: 20px;
+  position: relative;
+  border-radius: 10px;
+  background-color: #fffbf5;
+}
+
+.reply-box {
   border: 1px solid #ccc;
   padding: 15px;
   padding-left: 0;
@@ -232,27 +242,31 @@ body {
   margin-left: 0px;
 }
 
-.user-avatar {
+.user-avatar,
+.reply-user-avatar {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.review-username {
+.review-username,
+.reply-username {
   position: absolute;
   margin-left: 85px; 
   margin-top: 8px;
   font-size: 18px;
 }
 
-.review-content {
+.review-content,
+.reply-text {
   margin-top: 55px;
   overflow: hidden;
   text-align: left;
   margin-left: 35px;
 }
 
-.review-date {
+.review-date,
+.reply-date {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -263,7 +277,8 @@ body {
   color: #c0c0c0;
 }
 
-.review-button-container {
+.review-button-container,
+.reply-button-container {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -272,7 +287,9 @@ body {
 
 .like-button,
 .reply-button,
-.delete-button {
+.delete-button,
+.reply-like-button,
+.reply-delete-button {
   background: none;
   border: none;
   cursor: pointer;
@@ -280,13 +297,15 @@ body {
 }
 
 .like-button svg,
-.reply-button svg {
+.reply-button svg, 
+.reply-like-button svg {
   fill: #77499e; 
   width: 18px; 
   height: 18px;
 }
 
-.delete-button svg {
+.delete-button svg,
+.reply-delete-button svg {
   fill: #ff0000; 
   width: 18px; 
   height: 18px;
@@ -297,5 +316,35 @@ body {
   margin-left: 3px;
 }
 
+.reply-modal {
+  margin-top: 0px;
+}
+
+.reply-container {
+  display: flex; 
+  align-items: center;
+  gap: 10px; 
+}
+
+.reply-text {
+  flex-grow: 1; 
+  margin-left: 35px;
+
+  height: 60px; 
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.reply-post-button {
+  height: 40px;
+  cursor: pointer; 
+  margin: auto 10px 5px auto; 
+  background-color: #77499e;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 5px 15px;
+  width: 70px; 
+}
 
 

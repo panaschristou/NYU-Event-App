@@ -47,6 +47,22 @@ class Review(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     likes_count = models.IntegerField(default=0)
     liked_by = models.ManyToManyField(User, related_name="liked_reviews", blank=True)
+    reply_count = models.IntegerField(default=0)
+
+
+class ReplyToReview(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="replies")
+    fromUser = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="replies_from"
+    )
+    toUser = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="replies_to"
+    )
+    reply_text = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.reply_text
 
 
 # UserEvent model for likes/saves

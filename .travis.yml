@@ -20,6 +20,7 @@ before_script:
   - psql -c "ALTER ROLE nyu_event SET default_transaction_isolation TO 'read committed';" -U postgres
   - psql -c "ALTER ROLE nyu_event SET timezone TO 'UTC';" -U postgres
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE nyu_event TO nyu_event;" -U postgres
+  - psql -c 'DROP DATABASE IF EXISTS "test_nyu_event";' -U postgres
 
 script:
   - black --check .

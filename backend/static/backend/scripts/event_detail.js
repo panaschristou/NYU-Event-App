@@ -109,7 +109,7 @@ postButton.addEventListener("click", function () {
     });
     updateAverageRating(eventId);
     resetReviewForm();
-    addReviewToPage(data.review);
+    addReviewToPage(data);
   }else{
     showTemporaryMessage(data.message, "alert-danger");
   }
@@ -208,7 +208,6 @@ function loadReviews(eventId) {
     return response.json();
   })
   .then(data => {
-    
     data.reviews.forEach(review => {
       addReviewToPage(review);
     });
@@ -233,7 +232,7 @@ function addReviewToPage(review) {
   reviewBox.className = 'review-box';
   const avatarWrapper = document.createElement('div');
   avatarWrapper.className = 'avatar-wrapper';
-
+  console.log(review);
   const avatar = document.createElement('img');
   avatar.className = 'user-avatar';
   avatar.src = review.user.profile.avatar || '/backend/static/backend/img/generic_user_image.png';
@@ -285,9 +284,9 @@ function addReviewToPage(review) {
   let  isLiked;
   if (review.liked_by.includes(currentUsername)) {
     isLiked=true;
-} else {
-  isLiked=false;
-}
+  } else {
+    isLiked=false;
+  }
   const likeButton = document.createElement('button');
   likeButton.className = 'like-button';
   updateButtonAppearance(); 
@@ -371,6 +370,13 @@ function addReviewToPage(review) {
               </svg>`;
       }
   }
+
+  //Reply functionality
+  let replyCount = review.reply_count;
+  const replyCountSpan = document.createElement('span');
+  replyCountSpan.className = 'reply-count';
+  replyCountSpan.textContent = replyCount.toString();
+  buttonContainer.appendChild(replyCountSpan);
     
   const replyButton = document.createElement('button');
   replyButton.className = 'reply-button';
@@ -394,8 +400,206 @@ function addReviewToPage(review) {
     </svg>`;
   });
 
+  let replyModal;
+  let replyText;
+
+  replyButton.addEventListener('click', function() {
+  
+    if (!replyModal) {
+      replyModal = document.createElement('div');
+      replyModal.className = 'reply-modal';
+
+      const replyContainer = document.createElement('div');
+      replyContainer.className = 'reply-container';
+
+      replyText = document.createElement('textarea');
+      replyText.className = 'reply-text';
+
+      const replyPostButton = document.createElement('button');
+      replyPostButton.className = 'reply-post-button';
+      replyPostButton.textContent = 'Reply'; 
+
+      const replyMessagesContainer = document.createElement('div');
+      replyMessagesContainer.className = 'reply-messages-container';
+
+      replyContainer.appendChild(replyText);
+      replyContainer.appendChild(replyPostButton);
+      replyModal.appendChild(replyContainer);
+      replyModal.appendChild(replyMessagesContainer); 
+  
+      reviewBox.appendChild(replyModal); 
+
+      replyPostButton.addEventListener('click', function() {
+        postReply(replyText.value, replyMessagesContainer, review.id); 
+      });
+
+      loadReplies(eventId, review.id, replyModal);
+    }
+
+    replyModal.style.display = replyModal.style.display === 'block' ? 'none' : 'block';
+  });
+
+  function postReply(replyTextValue, replyMessagesContainer, reviewId) {
+
+    if (replyTextValue.length === 0) {
+      const errorMsg = document.createElement('div');
+      errorMsg.textContent = "Please enter a reply before posting.";
+      errorMsg.classList.add("alert", "alert-danger"); 
+      replyMessagesContainer.appendChild(errorMsg);
+      setTimeout(() => {
+        errorMsg.remove();
+      }, 2000);
+      return; 
+    }
+
+    const formData = new FormData();
+    formData.append('reply_text', replyTextValue);
+
+
+    fetch(`display-reviews/${reviewId}/reply/`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': csrftoken,
+      },
+      credentials: 'same-origin',
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json(); 
+    })
+    .then(data => {
+      if (data.success) {
+        console.log(data);
+        showTemporaryMessage("Thank you for your reply!", "alert-success");
+        replyModal.style.display = "none";
+        replyText.value = '';
+        replyCount++;
+        replyCountSpan.textContent = replyCount.toString();
+        addRepliesToPage(data, replyModal);
+      } else {
+        showTemporaryMessage(data.message, "alert-danger");
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      const errorMsg = document.createElement("div");
+      errorMsg.textContent = "An error occurred while posting your reply. Please try again.";
+      errorMsg.classList.add("alert", "alert-danger"); 
+      setTimeout(() => {
+        errorMsg.remove();
+      }, 2000);
+      replyMessagesContainer.appendChild(errorMsg);
+    });
+  }
+
+  function loadReplies(eventId, reviewId, replyModal) {
+    fetch(`display-reviews/${reviewId}/display-replies/`, {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': csrftoken,
+        },
+        credentials: 'same-origin',
+      })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+          const replies = data.replies;
+          replies.forEach(reply => {
+              addRepliesToPage(reply, replyModal);
+          });
+        })
+        .catch(error => {
+            console.error('Error fetching replies:', error);
+        });
+  }
+
+  function addRepliesToPage(reply, replyModal) {
+    const replyBox = document.createElement('div');
+    replyBox.className = 'reply-box';
+
+    const avatarWrapper = document.createElement('div');
+    avatarWrapper.className = 'avatar-wrapper';
+    const avatar = document.createElement('img');
+    avatar.className = 'reply-user-avatar';
+    avatar.src = reply.from_user.profile.avatar || '/backend/static/backend/img/generic_user_image.png';
+    avatarWrapper.appendChild(avatar);
+    replyBox.appendChild(avatarWrapper);
+
+    const content = document.createElement('div');
+    content.className = 'reply-content';
+
+    const username = document.createElement('h5');
+    username.className = 'reply-username';
+    username.textContent = reply.from_user.username;
+    replyBox.appendChild(username);
+
+    const text = document.createElement('p');
+    text.textContent = reply.reply_text;
+    text.className = 'reply-text';
+    content.appendChild(text);
+
+    replyBox.appendChild(content);
+
+    const timestamp = document.createElement('div');
+    timestamp.className = 'reply-date';
+    timestamp.textContent = new Date(reply.timestamp).toLocaleDateString();
+    replyBox.appendChild(timestamp);
+    
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'reply-button-container';
+    buttonContainer.style.display = 'flex';
+    buttonContainer.style.justifyContent = 'flex-end'; // Aligns buttons to the right
+    buttonContainer.style.marginTop = '10px';
+
+    const replyLikeButton = document.createElement('button');
+    replyLikeButton.className = 'reply-like-button';
+    replyLikeButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hand-thumbs-up" viewBox="0 0 16 16">
+      <path d="M8.864.046C7.908-.193 7.02.53 6.956 1.466c-.072 1.051-.23 2.016-.428 2.59-.125.36-.479 1.013-1.04 1.639-.557.623-1.282 1.178-2.131 1.41C2.685 7.288 2 7.87 2 8.72v4.001c0 .845.682 1.464 1.448 1.545 1.07.114 1.564.415 2.068.723l.048.03c.272.165.578.348.97.484.397.136.861.217 1.466.217h3.5c.937 0 1.599-.477 1.934-1.064a1.86 1.86 0 0 0 .254-.912c0-.152-.023-.312-.077-.464.201-.263.38-.578.488-.901.11-.33.172-.762.004-1.149.069-.13.12-.269.159-.403.077-.27.113-.568.113-.857 0-.288-.036-.585-.113-.856a2 2 0 0 0-.138-.362 1.9 1.9 0 0 0 .234-1.734c-.206-.592-.682-1.1-1.2-1.272-.847-.282-1.803-.276-2.516-.211a10 10 0 0 0-.443.05 9.4 9.4 0 0 0-.062-4.509A1.38 1.38 0 0 0 9.125.111zM11.5 14.721H8c-.51 0-.863-.069-1.14-.164-.281-.097-.506-.228-.776-.393l-.04-.024c-.555-.339-1.198-.731-2.49-.868-.333-.036-.554-.29-.554-.55V8.72c0-.254.226-.543.62-.65 1.095-.3 1.977-.996 2.614-1.708.635-.71 1.064-1.475 1.238-1.978.243-.7.407-1.768.482-2.85.025-.362.36-.594.667-.518l.262.066c.16.04.258.143.288.255a8.34 8.34 0 0 1-.145 4.725.5.5 0 0 0 .595.644l.003-.001.014-.003.058-.014a9 9 0 0 1 1.036-.157c.663-.06 1.457-.054 2.11.164.175.058.45.3.57.65.107.308.087.67-.266 1.022l-.353.353.353.354c.043.043.105.141.154.315.048.167.075.37.075.581 0 .212-.027.414-.075.582-.05.174-.111.272-.154.315l-.353.353.353.354c.047.047.109.177.005.488a2.2 2.2 0 0 1-.505.805l-.353.353.353.354c.006.005.041.05.041.17a.9.9 0 0 1-.121.416c-.165.288-.503.56-1.066.56z"/>
+    </svg>`;
+
+    buttonContainer.appendChild(replyLikeButton);
+
+    if (currentUsername === review.user.username) {
+      const replyDeleteButton = document.createElement('button');
+      replyDeleteButton.className = 'reply-delete-button';
+      replyDeleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+      </svg>`;
+  
+      replyDeleteButton.addEventListener('mouseenter', function() {
+        this.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+        </svg>`;
+      });
+  
+      replyDeleteButton.addEventListener('mouseleave', function() {
+        this.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+        </svg>`;
+      });
+
+      buttonContainer.appendChild(replyDeleteButton);
+    }
+
+    replyBox.appendChild(buttonContainer);
+    replyModal.appendChild(replyBox);
+  }
+
   buttonContainer.appendChild(replyButton);
 
+  //Delete functionality
   if (currentUsername === review.user.username) {
     const deleteButton = document.createElement('button');
     deleteButton.className = 'delete-button';
@@ -410,7 +614,6 @@ function addReviewToPage(review) {
     let index;
   
     deleteButton.addEventListener('click', function() {
-     
       index = review.id;
       modal.style.display = 'block';
     });
@@ -447,8 +650,8 @@ function addReviewToPage(review) {
         setTimeout(function() {
           setTimeout(function() {
             window.location.reload();
-          }, 2000);
-        }, 2000);
+          }, 1000);
+        }, 1000);
       })
       .catch(error => {
         console.error('Error:', error);
