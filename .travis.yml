@@ -8,7 +8,7 @@ env:
 
 install:
   - pip install --upgrade setuptools
-  - pip install -r requirements.txt
+  - pip install -r installed_dependencies.txt --extra-index-url https://download.pytorch.org/whl/cpu
 
 services:
   - postgresql
@@ -28,6 +28,7 @@ script:
   - python manage.py test
   - coverage run manage.py test
   - coverage report
+
 after_success:
   - coveralls
 
@@ -37,7 +38,7 @@ deploy:
     secret_access_key: $AWS_SECRET_ACCESS_KEY
     region: "us-east-1"
     app: "postgres"
-    env: "postgres-dev2"
+    env: "dev-env"
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
     skip_cleanup: true
     on:
