@@ -117,7 +117,6 @@ class EventModelTest(TestCase):
 class ReviewModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # Set up data for the whole TestCase
         cls.event = Event.objects.create(
             title="Spamalot",
             category="Musical, Comedy, Revival, Broadway",
