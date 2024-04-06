@@ -14,7 +14,6 @@ from .base import (
 )
 from .interest_list_handlers import interest_list, add_interest, remove_interest
 from .profile_handlers import profile_edit
-from .review_handlers import post_review, get_reviews_for_event
 from .chat_handlers import (
     send_message,
     chat_history,
