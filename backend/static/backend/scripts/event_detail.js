@@ -208,7 +208,6 @@ function loadReviews(eventId) {
     return response.json();
   })
   .then(data => {
-    
     data.reviews.forEach(review => {
       addReviewToPage(review);
     });
@@ -285,9 +284,9 @@ function addReviewToPage(review) {
   let  isLiked;
   if (review.liked_by.includes(currentUsername)) {
     isLiked=true;
-} else {
-  isLiked=false;
-}
+  } else {
+    isLiked=false;
+  }
   const likeButton = document.createElement('button');
   likeButton.className = 'like-button';
   updateButtonAppearance(); 
@@ -371,6 +370,12 @@ function addReviewToPage(review) {
               </svg>`;
       }
   }
+
+  let replyCount = review.reply_count;
+  const replyCountSpan = document.createElement('span');
+  replyCountSpan.className = 'reply-count';
+  replyCountSpan.textContent = replyCount.toString();
+  buttonContainer.appendChild(replyCountSpan);
     
   const replyButton = document.createElement('button');
   replyButton.className = 'reply-button';
@@ -393,6 +398,99 @@ function addReviewToPage(review) {
     <path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6m0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
     </svg>`;
   });
+
+  let replyModal;
+  let replyText;
+
+  replyButton.addEventListener('click', function() {
+  
+    if (!replyModal) {
+      replyModal = document.createElement('div');
+      replyModal.className = 'reply-modal';
+
+      const replyContainer = document.createElement('div');
+      replyContainer.className = 'reply-container';
+
+      replyText = document.createElement('textarea');
+      replyText.className = 'reply-text';
+
+      const replyPostButton = document.createElement('button');
+      replyPostButton.className = 'reply-post-button';
+      replyPostButton.textContent = 'Reply'; 
+
+      const replyMessagesContainer = document.createElement('div');
+      replyMessagesContainer.className = 'reply-messages-container';
+
+      replyContainer.appendChild(replyText);
+      replyContainer.appendChild(replyPostButton);
+      replyModal.appendChild(replyContainer);
+      replyModal.appendChild(replyMessagesContainer); 
+  
+      reviewBox.appendChild(replyModal); 
+
+      replyPostButton.addEventListener('click', function() {
+        postReply(replyText.value, replyMessagesContainer, review.id); 
+      });
+    }
+
+    replyModal.style.display = replyModal.style.display === 'block' ? 'none' : 'block';
+  });
+
+  function postReply(replyTextValue, replyMessagesContainer, reviewId) {
+
+    if (replyTextValue.length === 0) {
+      const errorMsg = document.createElement('div');
+      errorMsg.textContent = "Please enter a reply before posting.";
+      errorMsg.classList.add("alert", "alert-danger"); 
+      replyMessagesContainer.appendChild(errorMsg);
+      setTimeout(() => {
+        errorMsg.remove();
+      }, 2000);
+      return; 
+    }
+
+    const formData = new FormData();
+    formData.append('reply_text', replyTextValue);
+
+
+    fetch(`display-reviews/${reviewId}/reply/`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': csrftoken,
+      },
+      credentials: 'same-origin',
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json(); 
+    })
+    .then(data => {
+      if (data.success) {
+        console.log(data);
+        showTemporaryMessage("Thank you for your reply!", "alert-success");
+        replyModal.style.display = "none";
+        replyText.value = '';
+        replyCount++;
+        replyCountSpan.textContent = replyCount.toString();
+      } else {
+        showTemporaryMessage(data.message, "alert-danger");
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      const errorMsg = document.createElement("div");
+      errorMsg.textContent = "An error occurred while posting your reply. Please try again.";
+      errorMsg.classList.add("alert", "alert-danger"); 
+      setTimeout(() => {
+        errorMsg.remove();
+      }, 2000);
+      replyMessagesContainer.appendChild(errorMsg);
+    });
+  }
 
   buttonContainer.appendChild(replyButton);
 

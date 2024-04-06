@@ -1,10 +1,14 @@
+import logging
 from django.http import JsonResponse, HttpResponseServerError
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from backend.models import Event, Review, SuspendedUser
+from backend.models import Event, Review, SuspendedUser, ReplyToReview
 from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Avg
+from django.db.models import F
 from django.core.paginator import Paginator
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -51,6 +55,7 @@ def post_review(request, event_id):
             "timestamp": review.timestamp.isoformat(),
             "likes_count": review.likes_count,
             "liked_by": [user.username for user in liked_by_users],
+            "reply_count": review.reply_count,
         }
     )
 
@@ -96,6 +101,7 @@ def get_reviews_for_event(request, event_id):
                     "liked_by": list(
                         review.liked_by.values_list("username", flat=True)
                     ),
+                    "reply_count": review.reply_count,
                 }
             )
 
@@ -144,3 +150,42 @@ def delete_review(request, event_id, review_id):
         return JsonResponse({"success": True})
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+
+@login_required
+@require_POST
+def reply_to_review(request, event_id, review_id):
+    user = request.user
+    if SuspendedUser.objects.filter(user=user, is_suspended=True).exists():
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Your account is suspended. You cannot post a reply.",
+            }
+        )
+    review = get_object_or_404(Review, pk=review_id)
+    reply_text = request.POST.get("reply_text")
+
+    if not reply_text:
+        return JsonResponse(
+            {"success": False, "message": "Reply text is required."}, status=400
+        )
+
+    reply = ReplyToReview.objects.create(
+        review=review, fromUser=user, toUser=review.user, reply_text=reply_text
+    )
+    review.reply_count = F("reply_count") + 1
+    review.save()
+    review.refresh_from_db(fields=["reply_count"])
+
+    return JsonResponse(
+        {
+            "success": True,
+            "reply_id": reply.id,
+            "reply_text": reply.reply_text,
+            "from_user": user.username,
+            "to_user": review.user.username,
+            "timestamp": reply.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            "reply_count": review.reply_count,
+        }
+    )

@@ -45,6 +45,11 @@ urlpatterns = [
         views.review_handlers.delete_review,
         name="delete_review",
     ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/reply/",
+        views.review_handlers.reply_to_review,
+        name="reply_to_review",
+    ),
     path("users/<str:username>/", views.base.user_detail, name="user_detail"),
     path("profile-edit/", views.profile_handlers.profile_edit, name="profile_edit"),
     path("search/", views.base.search_results, name="search_results"),

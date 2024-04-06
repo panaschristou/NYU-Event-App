@@ -297,5 +297,35 @@ body {
   margin-left: 3px;
 }
 
+.reply-modal {
+  margin-top: 10px;
+}
+
+.reply-container {
+  display: flex; 
+  align-items: center;
+  gap: 10px; 
+}
+
+.reply-text {
+  flex-grow: 1; 
+  margin-left: 35px;
+
+  height: 60px; 
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.reply-post-button {
+  height: 30px;
+  cursor: pointer; 
+  margin: 10px 10px 5px 10px; 
+  background-color: #77499e;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 5px 15px;
+  width: 70px; 
+}
 
 
