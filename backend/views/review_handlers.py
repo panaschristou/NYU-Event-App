@@ -183,9 +183,50 @@ def reply_to_review(request, event_id, review_id):
             "success": True,
             "reply_id": reply.id,
             "reply_text": reply.reply_text,
-            "from_user": user.username,
+            "from_user": {
+                "username": reply.fromUser.username,
+                "profile": {
+                    "avatar": (
+                        reply.fromUser.profile.avatar.url
+                        if reply.fromUser.profile.avatar
+                        else None
+                    )
+                },
+            },
             "to_user": review.user.username,
             "timestamp": reply.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             "reply_count": review.reply_count,
         }
     )
+
+
+def get_replies_for_review(request, event_id, review_id):
+    try:
+        replies = ReplyToReview.objects.filter(review__id=review_id).order_by(
+            "-timestamp"
+        )
+        replies_data = []
+        for reply in replies:
+            replies_data.append(
+                {
+                    "id": reply.id,
+                    "from_user": {
+                        "username": reply.fromUser.username,
+                        "profile": {
+                            "avatar": (
+                                reply.fromUser.profile.avatar.url
+                                if reply.fromUser.profile.avatar
+                                else None
+                            )
+                        },
+                    },
+                    "to_user": reply.toUser.username,
+                    "reply_text": reply.reply_text,
+                    "timestamp": reply.timestamp.isoformat(),
+                }
+            )
+        return JsonResponse({"replies": replies_data})
+
+    except Exception as e:
+        print(e)
+        return HttpResponseServerError("Server Error: {}".format(e))

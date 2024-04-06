@@ -371,6 +371,7 @@ function addReviewToPage(review) {
       }
   }
 
+  //Reply functionality
   let replyCount = review.reply_count;
   const replyCountSpan = document.createElement('span');
   replyCountSpan.className = 'reply-count';
@@ -431,6 +432,8 @@ function addReviewToPage(review) {
       replyPostButton.addEventListener('click', function() {
         postReply(replyText.value, replyMessagesContainer, review.id); 
       });
+
+      loadReplies(eventId, review.id, replyModal);
     }
 
     replyModal.style.display = replyModal.style.display === 'block' ? 'none' : 'block';
@@ -476,6 +479,7 @@ function addReviewToPage(review) {
         replyText.value = '';
         replyCount++;
         replyCountSpan.textContent = replyCount.toString();
+        addRepliesToPage(data, replyModal);
       } else {
         showTemporaryMessage(data.message, "alert-danger");
       }
@@ -492,8 +496,70 @@ function addReviewToPage(review) {
     });
   }
 
+  function loadReplies(eventId, reviewId, replyModal) {
+    fetch(`display-reviews/${reviewId}/display-replies/`, {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': csrftoken,
+        },
+        credentials: 'same-origin',
+      })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+          const replies = data.replies;
+          replies.forEach(reply => {
+              addRepliesToPage(reply, replyModal);
+          });
+        })
+        .catch(error => {
+            console.error('Error fetching replies:', error);
+        });
+  }
+
+  function addRepliesToPage(reply, replyModal) {
+    const replyBox = document.createElement('div');
+    replyBox.className = 'reply-box';
+
+    const avatarWrapper = document.createElement('div');
+    avatarWrapper.className = 'avatar-wrapper';
+    const avatar = document.createElement('img');
+    avatar.className = 'reply-user-avatar';
+    avatar.src = reply.from_user.profile.avatar || '/backend/static/backend/img/generic_user_image.png';
+    avatarWrapper.appendChild(avatar);
+    replyBox.appendChild(avatarWrapper);
+
+    const content = document.createElement('div');
+    content.className = 'reply-content';
+
+    const username = document.createElement('h5');
+    username.className = 'reply-username';
+    username.textContent = reply.from_user.username;
+    replyBox.appendChild(username);
+
+    const text = document.createElement('p');
+    text.textContent = reply.reply_text;
+    text.className = 'reply-text';
+    content.appendChild(text);
+
+    replyBox.appendChild(content);
+
+    const timestamp = document.createElement('div');
+    timestamp.className = 'reply-date';
+    timestamp.textContent = new Date(reply.timestamp).toLocaleDateString();
+    replyBox.appendChild(timestamp);
+
+    replyModal.appendChild(replyBox);
+  }
+
   buttonContainer.appendChild(replyButton);
 
+  //Delete functionality
   if (currentUsername === review.user.username) {
     const deleteButton = document.createElement('button');
     deleteButton.className = 'delete-button';
