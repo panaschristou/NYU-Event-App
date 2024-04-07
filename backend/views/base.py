@@ -38,6 +38,17 @@ def event_detail(request, event_id):
     loggedIn = request.user.is_authenticated
     event = get_object_or_404(Event, pk=event_id)
 
+    pattern = r"[^a-zA-Z0-9\s]"
+    cleaned_title = re.sub(pattern, "", event.title)
+    title_split = cleaned_title.split()
+    room_slug = ""
+    if len(title_split) >= 3:
+        room_slug = "_".join(title_split[:3])
+    else:
+        room_slug = "_".join(title_split[:])
+
+    room_slug = room_slug.lower()
+
     interested = False
     if loggedIn:
         interested = UserEvent.objects.filter(
@@ -65,6 +76,7 @@ def event_detail(request, event_id):
             "loggedIn": loggedIn,
             "interested": interested,
             "avg_rating": avg_rating,
+            "room_slug": room_slug,
         },
     )
 

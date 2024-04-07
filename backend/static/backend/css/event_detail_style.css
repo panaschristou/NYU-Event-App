@@ -316,6 +316,12 @@ body {
   margin-left: 3px;
 }
 
+.bottom-center1 {
+  position: fixed;
+  bottom: 20px; /* Adjust as needed */
+  left: 90%;
+  transform: translateX(-50%);
+
 .reply-modal {
   margin-top: 0px;
 }
@@ -347,4 +353,13 @@ body {
   width: 70px; 
 }
 
+.bottom-center {
+  position: absolute;
+  bottom: 20px; /* Adjust as needed */
+  left: 80%;
+  transform: translateX(-50%);
+}
 
+.center-button {
+  text-align: center;
+}

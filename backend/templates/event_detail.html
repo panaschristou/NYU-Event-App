@@ -88,7 +88,14 @@
               />
             </svg>
             Review
-          </button>
+          </button>  
+          
+          <a href="{% url 'chat_with_room' room_slug %}" class="top-left-button" style="display: none;"></a>
+
+          <button onclick="window.location.href='{% url 'chat_with_room' room_slug %}'" class="btn-outline-dark" id="write-review" aria-label="Write a review">
+              Join Group Chat
+          </button>  
+   
 
           <!-- Review Modal -->
           <div id="review-modal" class="modal">
@@ -169,11 +176,11 @@
               <h2>Reviews</h2>
               <div id="reviews-container">
                 <!-- Insert reviews here -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+              </div>        
+            </div>                     
+          </div>                    
+        </div> 
+      </div>   
     </div>
 
     <script type="text/javascript">
