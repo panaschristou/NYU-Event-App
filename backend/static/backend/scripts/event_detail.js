@@ -2,6 +2,7 @@ const interestBtn = document.getElementById("add-interest");
 const notInterestBtn = document.getElementById("remove-interest");
 const csrftoken = $('meta[name="csrf-token"]').attr("content");
 
+
 interestBtn.addEventListener("click", function () {
   fetch("add-interest/", {
     method: "POST",
@@ -27,6 +28,7 @@ notInterestBtn.addEventListener("click", function () {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+
       "X-CSRFToken": csrftoken,
     },
     body: JSON.stringify({}),
