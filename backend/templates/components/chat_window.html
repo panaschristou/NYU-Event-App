@@ -1,6 +1,11 @@
 <!-- This is components/chat_window.html -->
+<div id="chat-header">
+  <!-- Dynamically set the receiver's name using a template variable -->
+  <h2 id="receiver-name">{{ receiver_name }}</h2>
+</div>
 
 <!-- Chat message display area -->
+
 <div id="chat-messages">
     {% for message in chat_messages %}
       <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">

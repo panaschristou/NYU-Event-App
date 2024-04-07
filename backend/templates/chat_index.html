@@ -126,4 +126,23 @@ function getCSRFToken() {
         .find(row => row.startsWith('csrftoken='))
         .split('=')[1];
 }
+
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+// Load chat window from URL query parameter
+function loadChatWindowFromUrl() {
+    const userId = getQueryParam('user_id');
+    if (userId) {
+        loadChatWindow(userId);
+    }
+}
+// On document ready, try to load chat window from URL
+$(document).ready(function() {
+    loadChatWindowFromUrl();
+});
+
+
 </script>

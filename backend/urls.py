@@ -97,6 +97,7 @@ urlpatterns = [
         name="interest_list_handlers.remove_interest",
     ),
     path("recent_searches/", views.base.recent_searches, name="recent_searches"),
+    # chat1-1
     path("chat/", views.chat_handlers.chat_index, name="chat_index"),
     path(
         "chat/send_message/",
