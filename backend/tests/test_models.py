@@ -11,6 +11,7 @@ from backend.models import (
     BannedUser,
     SuspendedUser,
     Profile,
+    ReplyToReview,
 )
 from django.urls import reverse
 import datetime
@@ -116,7 +117,6 @@ class EventModelTest(TestCase):
 class ReviewModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        # Set up data for the whole TestCase
         cls.event = Event.objects.create(
             title="Spamalot",
             category="Musical, Comedy, Revival, Broadway",
@@ -126,7 +126,7 @@ class ReviewModelTest(TestCase):
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
             external_link="http://www.broadway.org/shows/details/spamalot,812",
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
-            avg_rating=0,  # Assuming initial avg_rating
+            avg_rating=0,
         )
         cls.user = User.objects.create_user(username="testuser", password="12345")
         cls.event = Event.objects.get(title="Spamalot")
@@ -144,6 +144,63 @@ class ReviewModelTest(TestCase):
         self.assertEqual(review.review_text, "It was a fantastic show!")
         self.assertEqual(review.user, self.user)
         self.assertEqual(review.event, self.event)
+        self.assertEqual(review.likes_count, 0)
+        self.assertEqual(review.reply_count, 0)
+        self.assertFalse(review.liked_by.exists())
+
+    def test_likes_count_default_value(self):
+        # Test the default value of likes_count
+        self.assertEqual(self.review.likes_count, 0)
+
+    def test_reply_count_default_value(self):
+        # Test the default value of reply_count
+        self.assertEqual(self.review.reply_count, 0)
+
+
+class ReplyToReviewModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Set up data for the whole TestCase
+        cls.from_user = User.objects.create_user(username="fromuser", password="12345")
+        cls.to_user = User.objects.create_user(username="touser", password="12345")
+        cls.event = Event.objects.create(
+            title="Spamalot",
+            category="Musical, Comedy, Revival, Broadway",
+            description="Lovingly ripped from the film classic",
+            open_date=datetime.date(2023, 11, 16),
+            close_date=datetime.date(2023, 10, 31),
+            location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
+            external_link="http://www.broadway.org/shows/details/spamalot,812",
+            image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
+            avg_rating=0,
+        )
+        cls.review = Review.objects.create(
+            event=cls.event,
+            user=cls.to_user,
+            rating=4,
+            review_text="Nice event!",
+        )
+        cls.reply = ReplyToReview.objects.create(
+            review=cls.review,
+            fromUser=cls.from_user,
+            toUser=cls.to_user,
+            reply_text="Thank you!",
+        )
+
+    def test_reply_attributes(self):
+        # Test fetching the reply from the database
+        reply = ReplyToReview.objects.get(id=self.reply.id)
+        self.assertEqual(reply.review, self.review)
+        self.assertEqual(reply.fromUser, self.from_user)
+        self.assertEqual(reply.toUser, self.to_user)
+        self.assertEqual(reply.reply_text, "Thank you!")
+        # The timestamp is automatically set to the current time; we can't test its exact value,
+        # but we can check that it's been set.
+        self.assertIsNotNone(reply.timestamp)
+
+    def test_str_method(self):
+        # The __str__ method should return the text of the reply
+        self.assertEqual(str(self.reply), "Thank you!")
 
 
 class UserModelTest(TestCase):
@@ -229,3 +286,21 @@ class BannedUserModelTest(TestCase):
         self.banned_user.unban_user()
         with self.assertRaises(BannedUser.DoesNotExist):
             BannedUser.objects.get(user=self.user)
+
+
+class ChatModelTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Set up non-modified objects used by all test methods
+        cls.sender = User.objects.create_user(username="sender", password="testpass123")
+        cls.receiver = User.objects.create_user(
+            username="receiver", password="testpass123"
+        )
+        cls.chat = Chat.objects.create(
+            sender=cls.sender, receiver=cls.receiver, message="Hello"
+        )
+
+    def test_chat_content(self):
+        self.assertEqual(self.chat.sender, self.sender)
+        self.assertEqual(self.chat.receiver, self.receiver)
+        self.assertEqual(self.chat.message, "Hello")

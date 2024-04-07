@@ -1,6 +1,17 @@
 # admin.py
 from django.contrib import admin
-from .models import Event, Review, UserEvent, Chat, Profile, SuspendedUser, BannedUser
+from .models import (
+    Event,
+    Review,
+    UserEvent,
+    Chat,
+    Profile,
+    SuspendedUser,
+    BannedUser,
+    ChatRoom3,
+    Room3,
+    user_rooms,
+)
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
@@ -13,6 +24,9 @@ admin.site.register(Review)
 admin.site.register(UserEvent)
 admin.site.register(Chat)
 admin.site.register(Profile)
+admin.site.register(ChatRoom3)
+admin.site.register(Room3)
+admin.site.register(user_rooms)
 
 
 class SuspendedUserInline(admin.StackedInline):

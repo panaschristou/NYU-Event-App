@@ -1,3 +1,4 @@
+import re
 from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -13,6 +14,7 @@ from ..models import (
     BannedUser,
     SuspendedUser,
     User,
+    Room3,
 )
 from ..forms import UserRegistrationForm
 from ..tokens import account_activation_token
@@ -35,6 +37,17 @@ def index(request):
 def event_detail(request, event_id):
     loggedIn = request.user.is_authenticated
     event = get_object_or_404(Event, pk=event_id)
+
+    pattern = r"[^a-zA-Z0-9\s]"
+    cleaned_title = re.sub(pattern, "", event.title)
+    title_split = cleaned_title.split()
+    room_slug = ""
+    if len(title_split) >= 3:
+        room_slug = "_".join(title_split[:3])
+    else:
+        room_slug = "_".join(title_split[:])
+
+    room_slug = room_slug.lower()
 
     interested = False
     if loggedIn:
@@ -63,6 +76,7 @@ def event_detail(request, event_id):
             "loggedIn": loggedIn,
             "interested": interested,
             "avg_rating": avg_rating,
+            "room_slug": room_slug,
         },
     )
 
@@ -363,3 +377,23 @@ def logout_user(request):
         messages.success(request, "You have been successfully logged out.")
         return redirect("login")
     return render(request, "confirm_logout.html")
+
+
+def import_rooms(request):
+    event_titles = Event.objects.values_list("title", flat=True)
+
+    pattern = r"[^a-zA-Z0-9\s]"
+
+    for title in event_titles:
+        cleaned_title = re.sub(pattern, "", title)
+
+        title_split = cleaned_title.split()
+
+        room_name = ""
+
+        if len(title_split) >= 3:
+            room_name = "_".join(title_split[:3])
+        else:
+            room_name = "_".join(title_split[:])
+
+        Room3.objects.create(name=title, slug=room_name.lower())

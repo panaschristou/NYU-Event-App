@@ -47,6 +47,22 @@ class Review(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     likes_count = models.IntegerField(default=0)
     liked_by = models.ManyToManyField(User, related_name="liked_reviews", blank=True)
+    reply_count = models.IntegerField(default=0)
+
+
+class ReplyToReview(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="replies")
+    fromUser = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="replies_from"
+    )
+    toUser = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="replies_to"
+    )
+    reply_text = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.reply_text
 
 
 # UserEvent model for likes/saves
@@ -66,6 +82,31 @@ class Chat(models.Model):
     )
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+
+
+# Group Chat model
+class Room3(models.Model):
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True)
+
+
+class ChatRoom3(models.Model):
+    sender_ChatRoom = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="sent_chats_room"
+    )
+    receiver_room_slug = models.TextField()
+    # receiver_room_slug = models.ForeignKey(Room, related_name="received_chats_room", on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+
+class user_rooms(models.Model):
+    user_detail = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="user_detail"
+    )
+    room_joined = models.ForeignKey(
+        Room3, on_delete=models.CASCADE, related_name="room_joined"
+    )
 
 
 # Search History Model
