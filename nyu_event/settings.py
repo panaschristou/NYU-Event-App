@@ -32,6 +32,7 @@ DEBUG = True
 
 # ALLOWED_HOSTS = ['*','nyu-event-dev.us-east-1.elasticbeanstalk.com']
 ALLOWED_HOSTS = [
+    "*",
     "127.0.0.1",
     "main2.us-east-1.elasticbeanstalk.com",
     "postgres-dev2.us-east-1.elasticbeanstalk.com",
@@ -125,6 +126,23 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "": {  # 'root' logger
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": True,
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

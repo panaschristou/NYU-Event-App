@@ -14,10 +14,19 @@ from .base import (
 )
 from .interest_list_handlers import interest_list, add_interest, remove_interest
 from .profile_handlers import profile_edit
-from .review_handlers import post_review, get_reviews_for_event
 from .chat_handlers import (
     send_message,
     chat_index,
     get_chat,
 )
 from .pusher_config import pusher_authentication
+from .review_handlers import (
+    post_review,
+    get_reviews_for_event,
+    get_average_rating,
+    like_review,
+    unlike_review,
+    delete_review,
+    reply_to_review,
+    get_replies_for_review,
+)
