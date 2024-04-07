@@ -1,6 +1,16 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
-from backend.models import Event, User, UserEvent, SearchHistory, Review, Chat
+from backend.models import (
+    Event,
+    User,
+    UserEvent,
+    SearchHistory,
+    Review,
+    Chat,
+    Room3,
+    ChatRoom3,
+    user_rooms,
+)
 from django.core import mail
 from django.contrib.messages import get_messages
 from django.contrib.auth.tokens import default_token_generator
@@ -14,6 +24,9 @@ from unittest.mock import mock_open, patch
 from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
 from PIL import Image
+
+from backend.views.group_chat_handlers import group_chat_index
+from django.contrib.auth.models import AnonymousUser, User
 
 
 class EventViewsTestCase(TestCase):
@@ -573,6 +586,53 @@ class Chat_1to1_Tests(TestCase):
             sender=self.user1, receiver=self.user2, message="Hi there!"
         )
         self.assertIsNotNone(new_message)
+
+
+class GroupChatHandlersTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.room = Room3.objects.create(name="Test Room", slug="test-room")
+        self.user_room = user_rooms.objects.create(
+            user_detail=self.user, room_joined=self.room
+        )
+
+    def test_group_chat_index(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("search_rooms"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "group_chat_index.html")
+
+    # def test_search_rooms(self):
+    #     response = self.client.get(reverse('search_rooms') + '?query=test')
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'partials/user_search_results.html')
+
+    def test_chat_with_room(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("chat_with_room", kwargs={"receiver_room_slug": "test-room"})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "group_chat_with_user.html")
+
+    def test_send_message(self):
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse("send_message", kwargs={"receiver_room_slug": "test-room"}),
+            {"message": "Test message"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            ChatRoom3.objects.filter(
+                sender_ChatRoom=self.user,
+                receiver_room_slug="test-room",
+                message="Test message",
+            ).count(),
+            1,
+        )
 
 
 class PusherAuthenticationTestCase(TestCase):
