@@ -126,10 +126,10 @@
 }
 
 #chat-header {
-  background-color: #160a76; 
+  background-color: #f7f7f7;
   color: rgb(10, 3, 3);
   padding: 10px;
-  text-align: center;
+  text-align: left;
 }
 
 #receiver-name {
