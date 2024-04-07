@@ -86,4 +86,3 @@ def get_chat(request):
             "receiver_name": receiver_name,
         },
     )
-

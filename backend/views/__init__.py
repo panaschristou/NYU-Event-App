@@ -18,7 +18,6 @@ from .chat_handlers import (
     send_message,
     chat_index,
     get_chat,
-
 )
 from .pusher_config import pusher_authentication
 from .review_handlers import (
