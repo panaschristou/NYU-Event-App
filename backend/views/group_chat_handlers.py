@@ -11,7 +11,6 @@ from django.views.decorators.http import require_POST
 
 @login_required
 def group_chat_index(request):
-    rooms = Room3.objects.all
 
     current_user = request.user
 
@@ -39,10 +38,8 @@ def chat_with_room(request, receiver_room_slug):
 
     current_room = Room3.objects.get(slug=receiver_room_slug)
 
-    try:
-        user_room = user_rooms.objects.get(
-            user_detail=current_user, room_joined=current_room
-        )
+    try:        
+        pass
     except user_rooms.DoesNotExist:
         user_rooms.objects.create(user_detail=current_user, room_joined=current_room)
 
