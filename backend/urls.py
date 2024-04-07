@@ -57,7 +57,7 @@ urlpatterns = [
         "users/<str:username>/reviewhistory/<int:review_id>/delete/",
         views.review_handlers.delete_reviewhistory,
         name="delete_reviewhistory",
-
+    ),
     path(
         "events/<int:event_id>/display-reviews/<int:review_id>/reply/",
         views.review_handlers.reply_to_review,
@@ -67,7 +67,6 @@ urlpatterns = [
         "events/<int:event_id>/display-reviews/<int:review_id>/display-replies/",
         views.review_handlers.get_replies_for_review,
         name="display_replies",
-
     ),
     path("users/<str:username>/", views.base.user_detail, name="user_detail"),
     path("profile-edit/", views.profile_handlers.profile_edit, name="profile_edit"),

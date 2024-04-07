@@ -14,7 +14,6 @@ from backend.huggingface import censorbot
 logger = logging.getLogger(__name__)
 
 
-
 @login_required
 @require_POST
 def post_review(request, event_id):
@@ -196,6 +195,7 @@ def delete_reviewhistory(request, review_id, username):
         return JsonResponse({"success": True})
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)}, status=500)
+
 
 @require_POST
 def reply_to_review(request, event_id, review_id):
