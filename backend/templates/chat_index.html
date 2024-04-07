@@ -41,7 +41,6 @@ function loadChatWindow(userId) {
     type: 'GET',
     data: { 'user_id': userId },
     success: function(response) {
-      // Assuming 'response' is the HTML content of your chat with the user
       $('#chat-window').html(response); // Update the chat area with the new HTML
       bindPusherEvents(userId); // Call a function to re-bind Pusher events as needed
       // Reinitialize the chat form to attach the AJAX submit event handler

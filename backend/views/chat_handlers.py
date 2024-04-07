@@ -71,7 +71,6 @@ def get_chat(request):
     receiver_id = request.GET.get("user_id")
     # other_user = get_object_or_404(User, pk=receiver_id)
 
-    # Assuming 'sender' and 'receiver' are User model instances on your Message model
     chat_messages = Chat.objects.filter(
         Q(sender=request.user, receiver_id=receiver_id)
         | Q(sender_id=receiver_id, receiver=request.user)
