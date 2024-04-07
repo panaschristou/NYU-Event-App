@@ -38,7 +38,7 @@ def chat_with_room(request, receiver_room_slug):
 
     current_room = Room3.objects.get(slug=receiver_room_slug)
 
-    try:        
+    try:
         pass
     except user_rooms.DoesNotExist:
         user_rooms.objects.create(user_detail=current_user, room_joined=current_room)
