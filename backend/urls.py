@@ -89,16 +89,11 @@ urlpatterns = [
     path("recent_searches/", views.base.recent_searches, name="recent_searches"),
     path("chat/", views.chat_handlers.chat_index, name="chat_index"),
     path(
-        "chat/<int:receiver_id>/",
-        views.chat_handlers.chat_with_user,
-        name="chat_with_user",
-    ),
-    path(
-        "chat/<int:receiver_id>/send_message/",
+        "chat/send_message/",
         views.chat_handlers.send_message,
         name="send_message",
     ),
-    path("search_user/", views.chat_handlers.search_users, name="search_users"),
+    path("chat/get_chat/", views.chat_handlers.get_chat, name="get_chat"),
     # group chat
     path("rooms/", views.group_chat_handlers.group_chat_index, name="search_rooms"),
     path(

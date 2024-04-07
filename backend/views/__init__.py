@@ -16,10 +16,8 @@ from .interest_list_handlers import interest_list, add_interest, remove_interest
 from .profile_handlers import profile_edit
 from .chat_handlers import (
     send_message,
-    chat_history,
     chat_index,
-    chat_with_user,
-    search_users,
+    get_chat,
 )
 from .pusher_config import pusher_authentication
 from .review_handlers import (
