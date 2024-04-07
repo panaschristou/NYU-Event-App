@@ -57,6 +57,17 @@ urlpatterns = [
         "users/<str:username>/reviewhistory/<int:review_id>/delete/",
         views.review_handlers.delete_reviewhistory,
         name="delete_reviewhistory",
+
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/reply/",
+        views.review_handlers.reply_to_review,
+        name="reply_to_review",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/display-replies/",
+        views.review_handlers.get_replies_for_review,
+        name="display_replies",
+
     ),
     path("users/<str:username>/", views.base.user_detail, name="user_detail"),
     path("profile-edit/", views.profile_handlers.profile_edit, name="profile_edit"),
@@ -89,16 +100,11 @@ urlpatterns = [
     path("recent_searches/", views.base.recent_searches, name="recent_searches"),
     path("chat/", views.chat_handlers.chat_index, name="chat_index"),
     path(
-        "chat/<int:receiver_id>/",
-        views.chat_handlers.chat_with_user,
-        name="chat_with_user",
-    ),
-    path(
-        "chat/<int:receiver_id>/send_message/",
+        "chat/send_message/",
         views.chat_handlers.send_message,
         name="send_message",
     ),
-    path("search_user/", views.chat_handlers.search_users, name="search_users"),
+    path("chat/get_chat/", views.chat_handlers.get_chat, name="get_chat"),
     # group chat
     path("rooms/", views.group_chat_handlers.group_chat_index, name="search_rooms"),
     path(

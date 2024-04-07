@@ -1,5 +1,5 @@
 branch-defaults:
-  mainenv:
+  fixiing-deployment-error:
     environment: dev-env
     group_suffix: null
 global:

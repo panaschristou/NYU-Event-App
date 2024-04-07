@@ -10,6 +10,7 @@ from .models import (
     BannedUser,
     ChatRoom3,
     Room3,
+    user_rooms,
 )
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
@@ -25,6 +26,7 @@ admin.site.register(Chat)
 admin.site.register(Profile)
 admin.site.register(ChatRoom3)
 admin.site.register(Room3)
+admin.site.register(user_rooms)
 
 
 class SuspendedUserInline(admin.StackedInline):

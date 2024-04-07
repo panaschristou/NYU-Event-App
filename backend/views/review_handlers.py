@@ -1,11 +1,18 @@
+import logging
 from django.http import JsonResponse, HttpResponseServerError
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from backend.models import Event, Review, SuspendedUser
+from backend.models import Event, Review, SuspendedUser, ReplyToReview
 from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Avg
+from django.db.models import F
 from django.core.paginator import Paginator
 from django.shortcuts import render
+
+from backend.huggingface import censorbot
+
+logger = logging.getLogger(__name__)
+
 
 
 @login_required
@@ -22,16 +29,26 @@ def post_review(request, event_id):
         )
     rating = request.POST.get("rating")
     review_text = request.POST.get("review_text")
+    if censorbot.detect_hate_speech(review_text)[0]["label"] == "hate":
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Your review contains hate speech. Please remove it and try again.",
+            }
+        )
     review = Review(event=event, user=user, rating=rating, review_text=review_text)
+
+    review.likes_count = 0
+
     review.save()
 
-    avg_rating_result = Review.objects.filter(event=event).aggregate(Avg("rating"))
-    new_avg_rating = avg_rating_result["rating__avg"]
+    liked_by_users = review.liked_by.all()
 
-    if new_avg_rating is not None:
-        new_avg_rating = round(new_avg_rating, 2)
-        event.avg_rating = new_avg_rating
-        event.save()
+    avg_rating_result = Review.objects.filter(event=event).aggregate(Avg("rating"))
+    new_avg_rating = avg_rating_result["rating__avg"] or 0
+    new_avg_rating = round(new_avg_rating, 2)
+    event.avg_rating = new_avg_rating
+    event.save()
 
     return JsonResponse(
         {
@@ -39,20 +56,17 @@ def post_review(request, event_id):
             "review_id": review.id,
             "new_avg_rating": new_avg_rating,
             "user": {
-                "username": review.user.username,
+                "username": user.username,
                 "profile": {
-                    "avatar": (
-                        review.user.profile.avatar.url
-                        if review.user.profile.avatar
-                        else None
-                    )
+                    "avatar": (user.profile.avatar.url if user.profile.avatar else None)
                 },
             },
             "rating": review.rating,
             "review_text": review.review_text,
             "timestamp": review.timestamp.isoformat(),
             "likes_count": review.likes_count,
-            "liked_by": list(review.liked_by.values_list("username", flat=True)),
+            "liked_by": [user.username for user in liked_by_users],
+            "reply_count": review.reply_count,
         }
     )
 
@@ -98,6 +112,7 @@ def get_reviews_for_event(request, event_id):
                     "liked_by": list(
                         review.liked_by.values_list("username", flat=True)
                     ),
+                    "reply_count": review.reply_count,
                 }
             )
 
@@ -181,3 +196,81 @@ def delete_reviewhistory(request, review_id, username):
         return JsonResponse({"success": True})
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+@require_POST
+def reply_to_review(request, event_id, review_id):
+    user = request.user
+    if SuspendedUser.objects.filter(user=user, is_suspended=True).exists():
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Your account is suspended. You cannot post a reply.",
+            }
+        )
+    review = get_object_or_404(Review, pk=review_id)
+    reply_text = request.POST.get("reply_text")
+
+    if not reply_text:
+        return JsonResponse(
+            {"success": False, "message": "Reply text is required."}, status=400
+        )
+
+    reply = ReplyToReview.objects.create(
+        review=review, fromUser=user, toUser=review.user, reply_text=reply_text
+    )
+    review.reply_count = F("reply_count") + 1
+    review.save()
+    review.refresh_from_db(fields=["reply_count"])
+
+    return JsonResponse(
+        {
+            "success": True,
+            "reply_id": reply.id,
+            "reply_text": reply.reply_text,
+            "from_user": {
+                "username": reply.fromUser.username,
+                "profile": {
+                    "avatar": (
+                        reply.fromUser.profile.avatar.url
+                        if reply.fromUser.profile.avatar
+                        else None
+                    )
+                },
+            },
+            "to_user": review.user.username,
+            "timestamp": reply.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            "reply_count": review.reply_count,
+        }
+    )
+
+
+def get_replies_for_review(request, event_id, review_id):
+    try:
+        replies = ReplyToReview.objects.filter(review__id=review_id).order_by(
+            "-timestamp"
+        )
+        replies_data = []
+        for reply in replies:
+            replies_data.append(
+                {
+                    "id": reply.id,
+                    "from_user": {
+                        "username": reply.fromUser.username,
+                        "profile": {
+                            "avatar": (
+                                reply.fromUser.profile.avatar.url
+                                if reply.fromUser.profile.avatar
+                                else None
+                            )
+                        },
+                    },
+                    "to_user": reply.toUser.username,
+                    "reply_text": reply.reply_text,
+                    "timestamp": reply.timestamp.isoformat(),
+                }
+            )
+        return JsonResponse({"replies": replies_data})
+
+    except Exception as e:
+        print(e)
+        return HttpResponseServerError("Server Error: {}".format(e))
