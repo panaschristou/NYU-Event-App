@@ -162,6 +162,16 @@ def get_user_reviews(request, username):
                     "location": review.event.location,
                     "id": review.event.id,
                 },
+                "user": {
+                    "username": review.user.username,
+                    "profile": {
+                        "avatar": (
+                            review.user.profile.avatar.url
+                            if review.user.profile.avatar
+                            else "/backend/static/backend/img/generic_user_image.png"
+                        )
+                    },
+                },
                 "rating": review.rating,
                 "review_text": review.review_text,
                 "timestamp": review.timestamp.isoformat(),

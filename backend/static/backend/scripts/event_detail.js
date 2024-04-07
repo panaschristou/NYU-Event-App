@@ -449,9 +449,6 @@ function addReviewToPage(review) {
 
         showTemporaryMessage("You have successfully deleted the review.", "alert-success");
         setTimeout(function() {
-          setTimeout(function() {
-            window.location.reload();
-          }, 2000);
         }, 2000);
       })
       .catch(error => {

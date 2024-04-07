@@ -53,6 +53,17 @@ function addReviewToPage(review) {
   const avatarWrapper = document.createElement('div');
   avatarWrapper.className = 'avatar-wrapper';
   
+  const avatar = document.createElement('img');
+  avatar.className = 'user-avatar';
+  avatar.src = review.user.profile.avatar;
+  avatarWrapper.appendChild(avatar);
+
+  const username = document.createElement('h5');
+  username.className = 'review-username';
+  console.log(review.user.username);
+  username.textContent = review.user.username;
+  reviewBox.appendChild(username);
+
   const event = document.createElement('h5');
   event.className = 'review-event';
   event.textContent = review.event.title;
@@ -145,9 +156,6 @@ function deletereview(reviewId) {
     }
     showTemporaryMessage("You have successfully deleted review.", "alert-success");
     setTimeout(function() {
-      setTimeout(function() {
-        window.location.reload();
-      }, 2000);
     }, 2000);
   })
   .catch(error => {

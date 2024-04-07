@@ -13,6 +13,29 @@ body {
   background-color: #77499e;
 }
 
+.avatar-wrapper {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-top: -20px;
+  margin-left: 30px;
+}
+
+.user-avatar {
+  width: 50%;
+  height: 50%;
+  object-fit: cover;
+}
+
+.review-username {
+  position: absolute;
+  margin-left:20px; 
+  margin-top: 8px;
+  font-size: 18px;
+}
+
 .header-brand {
   font-size: 1.5rem;
 }
@@ -37,7 +60,7 @@ body {
 
 
 .review-event {
-  font-size: 14px; 
+  font-size: 12px; 
 }
 
 .hidden {
@@ -151,18 +174,6 @@ body {
   background-color: #fffbf5;
 }
 
-.user-avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.review-username {
-  position: absolute;
-  margin-left: 85px; 
-  margin-top: 8px;
-  font-size: 18px;
-}
 
 .review-content {
   margin-top: 55px;
