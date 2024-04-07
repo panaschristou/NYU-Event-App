@@ -9,7 +9,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("backend", "0014_room3_chatroom3"),
+        ("backend", "0015_merge_20240406_1301"),
+        # ("backend", ""),
     ]
 
     operations = [
