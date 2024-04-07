@@ -26,7 +26,6 @@ from io import BytesIO
 from PIL import Image
 
 from backend.views.group_chat_handlers import group_chat_index
-from django.contrib.auth.models import AnonymousUser, User
 
 
 class EventViewsTestCase(TestCase):
