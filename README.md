@@ -27,4 +27,6 @@ Important: Pip freeze into installed_dependencies.txt, and leave requirements.tx
 # AWS
 
 dev environment:
+
 https://us-east-1.console.aws.amazon.com/elasticbeanstalk/home?region=us-east-1#/environment/dashboard?environmentId=e-hqiczmtmh5
+
