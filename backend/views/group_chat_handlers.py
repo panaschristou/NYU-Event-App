@@ -14,10 +14,9 @@ def group_chat_index(request):
     rooms = Room3.objects.all
 
     current_user = request.user
-    
+
     user_room_objects = user_rooms.objects.filter(user_detail=current_user)
     print("rooms = ", user_room_objects)
-    
 
     return render(request, "group_chat_index.html", {"rooms": user_room_objects})
 
