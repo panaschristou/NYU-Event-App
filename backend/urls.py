@@ -78,11 +78,6 @@ urlpatterns = [
     ),
     path("recent_searches/", views.base.recent_searches, name="recent_searches"),
     path("chat/", views.chat_handlers.chat_index, name="chat_index"),
-    # path(
-    #     "chat/<int:receiver_id>/",
-    #     views.chat_handlers.chat_with_user,
-    #     name="chat_with_user",
-    # ),
     path(
         "chat/send_message/",
         views.chat_handlers.send_message,

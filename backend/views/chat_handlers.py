@@ -28,23 +28,6 @@ def chat_index(request):
     }
     return render(request, 'chat_index.html', context)
 
-# @login_required
-# def chat_with_user(request, receiver_id):
-#     chat_messages = Chat.objects.filter(
-#         Q(sender=request.user, receiver_id=receiver_id)
-#         | Q(sender_id=receiver_id, receiver=request.user)
-#     ).order_by("timestamp")
-
-#     return render(
-#         request,
-#         "chat_with_user.html",
-#         {
-#             "user_id": request.user.id,
-#             "receiver_id": receiver_id,
-#             "chat_messages": chat_messages,
-#         },
-#     )
-
 
 @login_required
 @require_POST
@@ -81,17 +64,6 @@ def get_chat_channel_name(user_id1, user_id2):
     if user_id1 > user_id2:
         user_id1, user_id2 = user_id2, user_id1
     return f"private-chat-{user_id1}-{user_id2}"
-
-
-@login_required
-def chat_history(request, receiver_id):
-    messages = Chat.objects.filter(
-        sender=request.user, receiver=receiver_id
-    ) | Chat.objects.filter(sender=receiver_id, receiver=request.user)
-    messages = messages.order_by("timestamp").values(
-        "sender", "recipient", "message", "timestamp"
-    )
-    return JsonResponse(list(messages), safe=False)
 
 
 @login_required
