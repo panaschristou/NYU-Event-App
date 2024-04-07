@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 
+
 @login_required
 def chat_index(request):
     current_user = request.user
@@ -21,28 +22,27 @@ def chat_index(request):
 
     # Prepare a dictionary with user data to pass to the template
     user_data = {user.id: user for user in users_with_chats}
-    
+
     context = {
-        'users_with_data': user_data,
-        'current_user_id': current_user.id,  # Pass the current user's ID to the context
+        "users_with_data": user_data,
+        "current_user_id": current_user.id,  # Pass the current user's ID to the context
     }
-    return render(request, 'chat_index.html', context)
+    return render(request, "chat_index.html", context)
 
 
 @login_required
 @require_POST
 def send_message(request):
     sender = request.user
-    receiver_id = request.POST.get('receiver_id')
+    receiver_id = request.POST.get("receiver_id")
     message = request.POST.get("message")
     receiver = User.objects.get(id=receiver_id)
     # save the message to the database
     receiver_id = int(receiver_id)
-    avatar_url = None
-    if sender.profile.avatar:  # Assuming `avatar` is the ImageField on the user's profile
-        avatar_url = sender.profile.avatar
 
-    chat_message = Chat.objects.create(sender=sender, receiver=receiver, message=message)
+    chat_message = Chat.objects.create(
+        sender=sender, receiver=receiver, message=message
+    )
 
     # Trigger a Pusher event
     channel_name = get_chat_channel_name(request.user.id, receiver_id)
@@ -68,15 +68,14 @@ def get_chat_channel_name(user_id1, user_id2):
 
 @login_required
 def get_chat(request):
-    receiver_id = request.GET.get('user_id')
+    receiver_id = request.GET.get("user_id")
     # other_user = get_object_or_404(User, pk=receiver_id)
-    
+
     # Assuming 'sender' and 'receiver' are User model instances on your Message model
     chat_messages = Chat.objects.filter(
         Q(sender=request.user, receiver_id=receiver_id)
         | Q(sender_id=receiver_id, receiver=request.user)
     ).order_by("timestamp")
-
 
     return render(
         request,
@@ -87,5 +86,3 @@ def get_chat(request):
             "chat_messages": chat_messages,
         },
     )
-
-    

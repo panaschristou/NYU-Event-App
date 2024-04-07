@@ -529,7 +529,7 @@ class Chat_1to1_Tests(TestCase):
         self.user2 = User.objects.create_user(
             username="user2", password="user2password"
         )
-        self.client.login(username='user1', password='user1password')
+        self.client.login(username="user1", password="user1password")
 
     def test_chat_index_view(self):
         # Ensure user is logged in
@@ -541,21 +541,23 @@ class Chat_1to1_Tests(TestCase):
         # Check if the correct template was used
         self.assertTemplateUsed(response, "chat_index.html")
 
-
     def test_get_chat_view(self):
         Chat.objects.create(sender=self.user1, receiver=self.user2, message="Hello!")
-        
-        response = self.client.get(reverse('get_chat'), {'user_id': self.user2.id})
+
+        response = self.client.get(reverse("get_chat"), {"user_id": self.user2.id})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Hello!")
 
     def test_send_message_view(self):
-        response = self.client.post(reverse('send_message'), {'receiver_id': self.user2.id, 'message': 'Hello!'})
+        response = self.client.post(
+            reverse("send_message"), {"receiver_id": self.user2.id, "message": "Hello!"}
+        )
         self.assertEqual(response.status_code, 200)
-        
+
         messages = Chat.objects.filter(sender=self.user1, receiver=self.user2)
         self.assertEqual(messages.count(), 1)
         self.assertEqual(messages[0].message, "Hello!")
+
 
 class PusherAuthenticationTestCase(TestCase):
     def setUp(self):
