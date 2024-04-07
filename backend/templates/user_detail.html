@@ -1,4 +1,5 @@
 {% load static %}
+{% load filters %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -8,7 +9,7 @@
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
-    <link
+<link
       href="{% static 'backend/css/base_style.css' %}"
       rel="stylesheet"
     />
@@ -16,38 +17,39 @@
       href="{% static 'backend/css/user_detail_style.css' %}"
       rel="stylesheet"
     />
-  </head>
-  <body>
-    {% include "components/navbar.html" %} 
-    <div class="user-detail py-5">
-      <div class="container container-transparent">
-        <div class="row">
-          <div class="col-lg-8 mx-auto text-center">
-            {% if user.profile.avatar %}
-            <img class="user-avatar" src="/media/{{ detail_user.profile.avatar }}"/>
-            {% else %}
-            <img class="user-avatar" src="{% static 'backend/img/generic_user_image.png' %}"/>
-            {% endif %}
-            {% if user.username == detail_user.username %}
-            <a class="edit-btn" href="{% url 'profile_edit' %}">Edit</a>
-            {% else %}
-            <a class="edit-btn" href="{% url 'chat_index' %}?user_id={{ detail_user.id }}">Chat</a>
-            {% endif %}
-            <!-- Centered user details -->
-            <h1>{{ detail_user.username }}</h1>
-            <p>Email: {{ detail_user.email }}</p>
-            <p>First Name: {{ detail_user.first_name }}</p>
-            <p>Last Name: {{ detail_user.last_name }}</p>
-            <p>Personal Description:</p>
-            <p>{{ detail_user.profile.description }}</p>
-            <!-- Add more user details as needed -->
-          </div>
+</head>
+<body>
+  {% include "components/navbar.html" %} 
+  <div class="user-detail py-5">
+    <div class="container container-transparent">
+      <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+          {% if user.profile.avatar %}
+          <img class="user-avatar" src="/media/{{ detail_user.profile.avatar }}"/>
+          {% else %}
+          <img class="user-avatar" src="{% static 'backend/img/generic_user_image.png' %}"/>
+          {% endif %}
+          {% if user.username == detail_user.username %}
+          <a class="edit-btn" href="{% url 'profile_edit' %}">Edit</a>
+          {% else %}
+          <a class="edit-btn" href="{% url 'chat_index' %}?user_id={{ detail_user.id }}">Chat</a>
+          {% endif %}
+          <!-- Centered user details -->
+          <h1>{{ detail_user.username }}</h1>
+          <p>Email: {{ detail_user.email }}</p>
+          <p>First Name: {{ detail_user.first_name }}</p>
+          <p>Last Name: {{ detail_user.last_name }}</p>
+          <p>Personal Description:</p>
+          {% if user.username == detail_user.username %}
+          <a href="{% url 'reviewhistory' username=user.username %}" class="btn btn-primary">Review History</a>
+          {% endif %}
         </div>
       </div>
     </div>
+  </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  </body>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 </html>

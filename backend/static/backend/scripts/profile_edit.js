@@ -15,3 +15,4 @@ $(".delete_account")[0].addEventListener("click", () => {
       console.error("Error:", error);
     });
 });
+
