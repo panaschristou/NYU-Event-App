@@ -124,3 +124,14 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
+#chat-header {
+  background-color: #f7f7f7;
+  color: rgb(10, 3, 3);
+  padding: 10px;
+  text-align: left;
+}
+
+#receiver-name {
+  margin: 0;
+}

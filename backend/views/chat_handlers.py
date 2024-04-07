@@ -70,7 +70,7 @@ def get_chat_channel_name(user_id1, user_id2):
 def get_chat(request):
     receiver_id = request.GET.get("user_id")
     # other_user = get_object_or_404(User, pk=receiver_id)
-
+    receiver_name = User.objects.get(id=receiver_id).username
     chat_messages = Chat.objects.filter(
         Q(sender=request.user, receiver_id=receiver_id)
         | Q(sender_id=receiver_id, receiver=request.user)
@@ -83,5 +83,6 @@ def get_chat(request):
             "user_id": request.user.id,
             "receiver_id": receiver_id,
             "chat_messages": chat_messages,
+            "receiver_name": receiver_name,
         },
     )
