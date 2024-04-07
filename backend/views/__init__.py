@@ -19,7 +19,6 @@ from .chat_handlers import (
     send_message,
     chat_history,
     chat_index,
-    chat_with_user,
-    search_users,
+    get_chat,
 )
 from .pusher_config import pusher_authentication

@@ -1,55 +1,130 @@
-<!-- {% for user in users %}
-  <p>
-    {{ user.username }} - <a href="{% url 'chat_with_user' user.id %}">Chat</a>
-  </p>
-{% endfor %} -->
-
 {% load static %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+<link href="{% static 'backend/css/index_style.css' %}" rel="stylesheet" />
 <!-- Custom CSS -->
 <link href="{% static 'backend/css/chatindex_style.css' %}" rel="stylesheet">
+{% include "components/navbar.html" %}
 
+<div class="chat-container">
   <div class="chat-sidebar">
-    {% for user in users %}
-      <a href="{% url 'chat_with_user' user.id %}" class="chat-user-link">
-        <div class="chat-user">
-          <div class="user-avatar-placeholder"></div>
-          <div class="user-name">{{ user.username }}</div>
-        </div>
-      </a>
+    {% for user_id, user in users_with_data.items %}
+    <a>
+    <div onclick="loadChatWindow('{{ user_id }}');" class="chat-user-link">
+      <!-- <div class="user-avatar-placeholder"></div> -->
+      <img src="/media/{{ user.profile.avatar }}" alt="" class="user-avatar-placeholder">
+      <div class="user-name">{{ user.username }}</div>
+    </div>
+    </a>
     {% endfor %}
   </div>
-  
-<!-- Search form -->
-    <form id="search-form">
-        <input type="text" id="search-input" placeholder="Search username..." required>
-        <button type="submit">Search</button>
-    </form>
 
-<!-- Chat list -->
-    <div id="chat-list">
-        <!-- Existing chat list code -->
-        {% for user in users %}
-        <p>
-            {{ user.username }} - <a href="{% url 'chat_with_user' user.id %}">Chat</a>
-        </p>
-        {% endfor %}
-    </div>
+  <div id="chat-window">
+    <!-- Chat messages will be loaded here -->
+  </div>
+
+</div>
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script> 
-$(document).ready(function() {
-    $('#search-form').submit(function(e) {
+<script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+
+<script>
+const CURRENT_USER_ID = '{{ current_user_id }}'; 
+var pusher = new Pusher('e44f77643020ff731b4f', {
+      cluster: 'mt1'
+    });
+
+// Add this inside a script tag in chat_index.html
+function loadChatWindow(userId) {
+  $.ajax({
+    url: 'get_chat/', // URL to the Django view that returns the chat
+    type: 'GET',
+    data: { 'user_id': userId },
+    success: function(response) {
+      // Assuming 'response' is the HTML content of your chat with the user
+      $('#chat-window').html(response); // Update the chat area with the new HTML
+      bindPusherEvents(userId); // Call a function to re-bind Pusher events as needed
+      // Reinitialize the chat form to attach the AJAX submit event handler
+      setupChatForm(userId);
+    },
+    error: function(xhr, status, error) {
+      console.error("Error fetching chat: ", error);
+    }
+  });
+}
+
+function bindPusherEvents(receiverId) {
+  // Unbind any previous bindings to avoid duplicates
+  pusher.unbind_all();
+
+  // Bind to a 'new-message' event within the chat channel
+  var channelName = getChatChannelName(CURRENT_USER_ID, receiverId); 
+  var channel = pusher.subscribe(channelName);
+  channel.bind('new-message', function(data) {
+    addMessageToChat(data);
+      });
+}
+
+function addMessageToChat(data) {
+    const username = data.sender_name;
+    const messageText = data.message;
+    const timestamp = data.timestamp; 
+    const isMe = username === '{{ request.user.username }}';
+    const messageClass = isMe ? 'sent' : 'received';
+
+    // Create the message element
+    var messageElement = $(`
+        <div class="message ${messageClass}">
+            <img src="/media/profile_images/${data.sender_name}.png" alt="" class="avatar">
+            <div class="message-content">
+                <div class="message-header">
+                    <span class="username">${username}</span>
+                    <span class="timestamp">${timestamp}</span>
+                </div>
+                <p class="message-body">${messageText}</p>
+            </div>
+        </div>
+    `);
+
+    // Append the message element to the chat window
+    $('#chat-messages').append(messageElement);
+
+    // Scroll to the bottom of the chat window
+    $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
+}
+
+function getChatChannelName(userId1, userId2) {
+    return `private-chat-${Math.min(userId1, userId2)}-${Math.max(userId1, userId2)}`;
+  }
+
+function setupChatForm(receiverId) {
+    $("#sendBtn").on('click', function(e) {
         e.preventDefault();
-        var query = $('#search-input').val();
+        const message = $("#message-input").val();
+
         $.ajax({
-            url: '/user/search_user/', 
-            type: 'GET',
-            data: {'query': query},
-            success: function(data) {
-                
-                $('#chat-list').html(data);
+            type: 'POST',
+            url: 'send_message/',  // The endpoint in Django app urls.py
+            data: {
+                'receiver_id': receiverId,  // Set dynamically when loading the chat window
+                'message': message,
+                'csrfmiddlewaretoken': getCSRFToken()  // Handle CSRF token
+            },
+            success: function(response) {
+                console.log('Message sent successfully!');
+                $("#message-input").val('');  // Clear the input field
+            },
+            error: function() {
+                alert('There was an error sending your message.');
             }
         });
     });
-});
+}
+
+// Utility function to get the CSRF token
+function getCSRFToken() {
+    return document.cookie.split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        .split('=')[1];
+}
 </script>
