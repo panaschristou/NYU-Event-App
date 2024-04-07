@@ -31,7 +31,6 @@ def search_rooms(request):
 
 @login_required
 def chat_with_room(request, receiver_room_slug):
-
     room = get_object_or_404(Room3, slug=receiver_room_slug)
 
     current_user = request.user

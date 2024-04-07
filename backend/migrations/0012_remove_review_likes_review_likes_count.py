@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("backend", "0011_remove_review_likes_review_likes"),
     ]

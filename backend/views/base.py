@@ -380,7 +380,6 @@ def logout_user(request):
 
 
 def import_rooms(request):
-
     event_titles = Event.objects.values_list("title", flat=True)
 
     pattern = r"[^a-zA-Z0-9\s]"

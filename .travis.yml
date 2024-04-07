@@ -8,7 +8,7 @@ env:
 
 install:
   - pip install --upgrade setuptools
-  - pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu118
+  - pip install -r installed_dependencies.txt --extra-index-url https://download.pytorch.org/whl/cpu
 
 services:
   - postgresql
@@ -20,6 +20,7 @@ before_script:
   - psql -c "ALTER ROLE nyu_event SET default_transaction_isolation TO 'read committed';" -U postgres
   - psql -c "ALTER ROLE nyu_event SET timezone TO 'UTC';" -U postgres
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE nyu_event TO nyu_event;" -U postgres
+  - psql -c 'DROP DATABASE IF EXISTS "test_nyu_event";' -U postgres
 
 script:
   - black --check .
@@ -38,7 +39,7 @@ deploy:
     secret_access_key: $AWS_SECRET_ACCESS_KEY
     region: "us-east-1"
     app: "postgres"
-    env: "postgres-dev2"
+    env: "dev-env"
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
     skip_cleanup: true
     on:
