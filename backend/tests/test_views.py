@@ -485,7 +485,7 @@ class EventViewsTestCase(TestCase):
         self.assertFalse(Review.objects.filter(id=review_id).exists())
 
     def test_get_user_reviews(self):
-        url = reverse("get_user_reviews", kwargs={"username": self.user.username})
+        url = reverse("reviewhistory", kwargs={"username": self.user.username})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "review_history.html")
