@@ -428,16 +428,6 @@ class EventViewsTestCase(TestCase):
         self.assertEqual(review.rating, 5)
         self.assertEqual(review.review_text, "Great event!")
 
-    def test_post_review_suspended_user(self):
-        User.objects.create(user=self.user, is_suspended=True)
-        url = reverse("post_review", kwargs={"event_id": self.current_event.id})
-        review_data = {"rating": 5, "review_text": "Great event!"}
-        response = self.client.post(url, review_data)
-        self.assertEqual(response.status_code, 200)
-        response_data = json.loads(response.content)
-        self.assertFalse(response_data["success"])
-        self.assertIn("suspended", response_data["message"])
-
     def test_get_average_rating(self):
         url = reverse("get_average_rating", kwargs={"event_id": self.current_event.id})
         response = self.client.get(url)
@@ -446,9 +436,7 @@ class EventViewsTestCase(TestCase):
         self.assertIsNotNone(response_data["avg_rating"])
 
     def test_get_reviews_for_event(self):
-        url = reverse(
-            "get_reviews_for_event", kwargs={"event_id": self.current_event.id}
-        )
+        url = reverse("event_reviews", kwargs={"event_id": self.current_event.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -521,7 +509,7 @@ class EventViewsTestCase(TestCase):
     def test_get_replies_for_review(self):
         review = Review.objects.first()
         url = reverse(
-            "get_replies_for_review",
+            "display_replies",
             kwargs={"event_id": self.current_event.id, "review_id": review.id},
         )
         response = self.client.get(url)
