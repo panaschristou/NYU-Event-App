@@ -321,6 +321,7 @@ body {
   bottom: 20px; /* Adjust as needed */
   left: 90%;
   transform: translateX(-50%);
+}
 
 .reply-modal {
   margin-top: 0px;
