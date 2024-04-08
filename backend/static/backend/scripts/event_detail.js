@@ -563,7 +563,7 @@ function addReviewToPage(review) {
 
     buttonContainer.appendChild(replyLikeButton);
 
-    if (currentUsername === reply.user.username) {
+    if (currentUsername === reply.from_user.username) {
       const replyDeleteButton = document.createElement('button');
       replyDeleteButton.className = 'reply-delete-button';
       replyDeleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
