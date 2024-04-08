@@ -1,6 +1,14 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from backend.models import Event, User, UserEvent, SearchHistory, Review, Chat
+from backend.models import (
+    Event,
+    User,
+    UserEvent,
+    SearchHistory,
+    Review,
+    Chat,
+    ReplyToReview,
+)
 from django.core import mail
 from django.contrib.messages import get_messages
 from django.contrib.auth.tokens import default_token_generator
@@ -22,6 +30,11 @@ class EventViewsTestCase(TestCase):
         self.user = User.objects.create_user(
             username="testuser@nyu.edu", password="12345Password!"
         )
+
+        another_user = User.objects.create_user(
+            username="anotheruser@nyu.edu", password="password123"
+        )
+        self.another_user = another_user
 
         # Create an event that is in the past
         self.past_event = Event.objects.create(
@@ -60,7 +73,7 @@ class EventViewsTestCase(TestCase):
             avg_rating=0,
         )
 
-        # Add reviews to create different average ratings and review counts
+        # Create reviews for the events
         Review.objects.create(
             event=self.current_event, user=self.user, rating=5, review_text="Great!"
         )
@@ -76,6 +89,21 @@ class EventViewsTestCase(TestCase):
         )
         Review.objects.create(
             event=self.upcoming_event, user=self.user, rating=3, review_text="Not bad."
+        )
+
+        # Create some ReplyToReview objects
+        ReplyToReview.objects.create(
+            review=Review.objects.first(),
+            fromUser=self.user,
+            toUser=self.another_user,
+            reply_text="Thanks for your feedback!",
+        )
+
+        ReplyToReview.objects.create(
+            review=Review.objects.last(),
+            fromUser=self.another_user,
+            toUser=self.user,
+            reply_text="I appreciate your review!",
         )
 
         # add current_event and upcoming_event to user interest list
@@ -399,6 +427,105 @@ class EventViewsTestCase(TestCase):
         self.assertEqual(review.event, self.current_event)
         self.assertEqual(review.rating, 5)
         self.assertEqual(review.review_text, "Great event!")
+
+    def test_post_review_suspended_user(self):
+        User.objects.create(user=self.user, is_suspended=True)
+        url = reverse("post_review", kwargs={"event_id": self.current_event.id})
+        review_data = {"rating": 5, "review_text": "Great event!"}
+        response = self.client.post(url, review_data)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertFalse(response_data["success"])
+        self.assertIn("suspended", response_data["message"])
+
+    def test_get_average_rating(self):
+        url = reverse("get_average_rating", kwargs={"event_id": self.current_event.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertIsNotNone(response_data["avg_rating"])
+
+    def test_get_reviews_for_event(self):
+        url = reverse(
+            "get_reviews_for_event", kwargs={"event_id": self.current_event.id}
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(len(response_data["reviews"]) > 0)
+        self.assertTrue(response_data["has_next"] is not None)
+
+    def test_like_and_unlike_review(self):
+        # Like
+        url_like = reverse(
+            "like_review",
+            kwargs={
+                "event_id": self.current_event.id,
+                "review_id": Review.objects.first().id,
+            },
+        )
+        response = self.client.post(url_like)
+        self.assertEqual(response.status_code, 200)
+        like_data = json.loads(response.content)
+        self.assertTrue(like_data["success"])
+        self.assertEqual(like_data["likes_count"], 1)
+
+        # Unlike
+        url_unlike = reverse(
+            "unlike_review",
+            kwargs={
+                "event_id": self.current_event.id,
+                "review_id": Review.objects.first().id,
+            },
+        )
+        response = self.client.post(url_unlike)
+        self.assertEqual(response.status_code, 200)
+        unlike_data = json.loads(response.content)
+        self.assertTrue(unlike_data["success"])
+        self.assertEqual(unlike_data["likes_count"], 0)
+
+    def test_delete_review(self):
+        review_id = Review.objects.first().id
+        url = reverse(
+            "delete_review",
+            kwargs={"event_id": self.current_event.id, "review_id": review_id},
+        )
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(response_data["success"])
+        self.assertFalse(Review.objects.filter(id=review_id).exists())
+
+    def test_get_user_reviews(self):
+        url = reverse("get_user_reviews", kwargs={"username": self.user.username})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "review_history.html")
+        self.assertIn("reviews", response.context)
+
+    def test_reply_to_review(self):
+        url = reverse(
+            "reply_to_review",
+            kwargs={
+                "event_id": self.current_event.id,
+                "review_id": Review.objects.first().id,
+            },
+        )
+        reply_data = {"reply_text": "Thank you for your review!"}
+        response = self.client.post(url, reply_data)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(response_data["success"])
+        self.assertIsNotNone(response_data["reply_id"])
+
+    def test_get_replies_for_review(self):
+        review = Review.objects.first()
+        url = reverse(
+            "get_replies_for_review",
+            kwargs={"event_id": self.current_event.id, "review_id": review.id},
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
 
 class ProfileTestCase(TestCase):
