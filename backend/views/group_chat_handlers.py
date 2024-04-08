@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from backend.models import Chat, ChatRoom3
 from backend.views.pusher_config import pusher_client
 from django.contrib.auth.models import User
-from ..models import Room3
+from ..models import Room3, user_rooms
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Q
 from django.views.decorators.http import require_POST
@@ -11,10 +11,13 @@ from django.views.decorators.http import require_POST
 
 @login_required
 def group_chat_index(request):
-    # Assuming we want to chat with all other users for simplicity
-    rooms = Room3.objects.all  # Exclude the current user
-    return render(request, "group_chat_index.html", {"rooms": rooms})
-    # return render(request, "chat_index.html", {"users": users})
+
+    current_user = request.user
+
+    user_room_objects = user_rooms.objects.filter(user_detail=current_user)
+    print("rooms = ", user_room_objects)
+
+    return render(request, "group_chat_index.html", {"rooms": user_room_objects})
 
 
 def search_rooms(request):
@@ -29,6 +32,15 @@ def search_rooms(request):
 @login_required
 def chat_with_room(request, receiver_room_slug):
     room = get_object_or_404(Room3, slug=receiver_room_slug)
+
+    current_user = request.user
+
+    current_room = Room3.objects.get(slug=receiver_room_slug)
+
+    try:
+        user_rooms.objects.get(user_detail=current_user, room_joined=current_room)
+    except user_rooms.DoesNotExist:
+        user_rooms.objects.create(user_detail=current_user, room_joined=current_room)
 
     chat_messages = ChatRoom3.objects.filter(
         # Q(sender_ChatRoom=request.user, receiver_room_slug=receiver_room_slug)

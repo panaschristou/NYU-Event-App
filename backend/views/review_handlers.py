@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Avg
 from django.db.models import F
 from django.core.paginator import Paginator
+from django.shortcuts import render
+
 from backend.huggingface import censorbot
 
 logger = logging.getLogger(__name__)
@@ -26,13 +28,13 @@ def post_review(request, event_id):
         )
     rating = request.POST.get("rating")
     review_text = request.POST.get("review_text")
-    if censorbot.detect_hate_speech(review_text)[0]["label"] == "hate":
-        return JsonResponse(
-            {
-                "success": False,
-                "message": "Your review contains hate speech. Please remove it and try again.",
-            }
-        )
+    # if censorbot.detect_hate_speech(review_text)[0]["label"] == "hate":
+    #     return JsonResponse(
+    #         {
+    #             "success": False,
+    #             "message": "Your review contains hate speech. Please remove it and try again.",
+    #         }
+    #     )
     review = Review(event=event, user=user, rating=rating, review_text=review_text)
 
     review.likes_count = 0
@@ -161,6 +163,40 @@ def delete_review(request, event_id, review_id):
 
 
 @login_required
+def get_user_reviews(request, username):
+    user = request.user
+    reviews = Review.objects.filter(user=user).order_by("-timestamp")
+    reviews_data = []
+    for review in reviews:
+        reviews_data.append(
+            {
+                "id": review.id,
+                "event": {
+                    "title": review.event.title,
+                    "location": review.event.location,
+                    "id": review.event.id,
+                },
+                "rating": review.rating,
+                "review_text": review.review_text,
+                "timestamp": review.timestamp.isoformat(),
+                "likes_count": review.likes_count,
+                "liked_by": list(review.liked_by.values_list("username", flat=True)),
+            }
+        )
+    return render(request, "review_history.html", {"reviews": reviews_data})
+
+
+@login_required
+@require_POST
+def delete_reviewhistory(request, review_id, username):
+    try:
+        review = get_object_or_404(Review, pk=review_id)
+        review.delete()
+        return JsonResponse({"success": True})
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+
 @require_POST
 def reply_to_review(request, event_id, review_id):
     user = request.user

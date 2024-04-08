@@ -100,6 +100,15 @@ class ChatRoom3(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
+class user_rooms(models.Model):
+    user_detail = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="user_detail"
+    )
+    room_joined = models.ForeignKey(
+        Room3, on_delete=models.CASCADE, related_name="room_joined"
+    )
+
+
 # Search History Model
 class SearchHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

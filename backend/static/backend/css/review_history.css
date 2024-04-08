@@ -13,6 +13,29 @@ body {
   background-color: #77499e;
 }
 
+.avatar-wrapper {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-top: -20px;
+  margin-left: 30px;
+}
+
+.user-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.review-username {
+  position: absolute;
+  margin-left:20px; 
+  margin-top: 8px;
+  font-size: 18px;
+}
+
 .header-brand {
   font-size: 1.5rem;
 }
@@ -22,10 +45,6 @@ body {
   text-decoration: none;
 }
 
-.event-detail {
-  color: rgb(68, 66, 66);
-  padding-top: 50px;
-}
 
 .reviews {
   color: rgb(68, 66, 66);
@@ -39,48 +58,12 @@ body {
   max-width: 800px;
 }
 
-.event-detail .container {
-  padding-top: 10px;
-  padding-bottom: 50px;
-}
 
-.event-detail img {
-  max-width: 30%;
-  height: auto;
-  border-radius: 15px;
-  margin-bottom: 1rem;
-}
-
-.event-info p {
-  text-align: left;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.5;
-}
-
-.heart-button-container {
-  top: 0;
-  right: 0;
-  padding: 30px;
-}
-
-.heart-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.heart-button:focus {
-  outline: none;
-}
-
-.heart-button svg {
-  fill: #77499e;
-  transition: fill 0.3s ease; /* Smooth transition for color change */
-}
-
-.heart-button:hover svg {
-  fill: #77499e;
+.review-event {
+  font-size: 16px;
+  position: absolute;
+  margin-left: 20px; 
+  margin-top: 8px;
 }
 
 .hidden {
@@ -147,34 +130,6 @@ body {
   display: none;
 }
 
-.star-rating {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: center;
-}
-
-.star-rating label {
-  font-size: 30px;
-  color: #ccc;
-  padding: 5px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.star-rating input:not(:checked) ~ label:hover,
-.star-rating input:not(:checked) ~ label:hover ~ label {
-  color: #f90;
-}
-
-.star-rating input:checked ~ label {
-  color: #f90;
-}
-
-.star-rating input#star5:checked ~ label {
-  color: #f90;
-  text-shadow: 0 0 5px rgb(184, 112, 58);
-}
-
 .review-text {
   width: 60%; 
   height: 200px; 
@@ -212,7 +167,7 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,.5);
 }
 
-.review-box{
+.review-box {
   border: 1px solid #ccc;
   padding: 15px;
   padding-left: 0;
@@ -222,51 +177,15 @@ body {
   background-color: #fffbf5;
 }
 
-.reply-box {
-  border: 1px solid #ccc;
-  padding: 15px;
-  padding-left: 0;
-  margin: 20px;
-  position: relative;
-  border-radius: 10px;
-  background-color: #fffbf5;
-}
 
-.avatar-wrapper {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin-top: 5px;
-  margin-left: 0px;
-}
-
-.user-avatar,
-.reply-user-avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.review-username,
-.reply-username {
-  position: absolute;
-  margin-left: 85px; 
-  margin-top: 8px;
-  font-size: 18px;
-}
-
-.review-content,
-.reply-text {
+.review-content {
   margin-top: 55px;
   overflow: hidden;
   text-align: left;
   margin-left: 35px;
 }
 
-.review-date,
-.reply-date {
+.review-date {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -277,8 +196,7 @@ body {
   color: #c0c0c0;
 }
 
-.review-button-container,
-.reply-button-container {
+.review-button-container {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -287,9 +205,7 @@ body {
 
 .like-button,
 .reply-button,
-.delete-button,
-.reply-like-button,
-.reply-delete-button {
+.delete-button {
   background: none;
   border: none;
   cursor: pointer;
@@ -297,15 +213,13 @@ body {
 }
 
 .like-button svg,
-.reply-button svg, 
-.reply-like-button svg {
+.reply-button svg {
   fill: #77499e; 
   width: 18px; 
   height: 18px;
 }
 
-.delete-button svg,
-.reply-delete-button svg {
+.delete-button svg {
   fill: #ff0000; 
   width: 18px; 
   height: 18px;
@@ -314,52 +228,4 @@ body {
 .reply-button
 .like-button {
   margin-left: 3px;
-}
-
-.bottom-center1 {
-  position: fixed;
-  bottom: 20px; /* Adjust as needed */
-  left: 90%;
-  transform: translateX(-50%);
-
-.reply-modal {
-  margin-top: 0px;
-}
-
-.reply-container {
-  display: flex; 
-  align-items: center;
-  gap: 10px; 
-}
-
-.reply-text {
-  flex-grow: 1; 
-  margin-left: 35px;
-
-  height: 60px; 
-  border-radius: 5px;
-  padding: 5px;
-}
-
-.reply-post-button {
-  height: 40px;
-  cursor: pointer; 
-  margin: auto 10px 5px auto; 
-  background-color: #77499e;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 5px 15px;
-  width: 70px; 
-}
-
-.bottom-center {
-  position: absolute;
-  bottom: 20px; /* Adjust as needed */
-  left: 80%;
-  transform: translateX(-50%);
-}
-
-.center-button {
-  text-align: center;
 }

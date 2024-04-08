@@ -1,4 +1,10 @@
+.chat-container {
+  display: flex;
+  height: 100vh;
+}
+
 .chat-sidebar {
+  position: relative; /* Relative positioning to contain the absolute search form */
   width: 250px;
   background-color: #f7f7f7;
   height: 100vh;
@@ -30,18 +36,102 @@
   font-size: 16px;
 }
 
-#search-form {
-  position: absolute; /* Or use 'fixed' depending on your layout needs */
-  top: 20px; /* Adjust as needed */
-  right: 10px; /* Adjust as needed */
-  z-index: 100; /* To ensure it's above other elements */
+#chat-window {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 80px); /* Adjust the height accordingly */
+  width:  calc(100% - 250px); /* Adjust the width accordingly */
 }
 
-#search-input {
-  padding: 5px;
-  margin-right: 20px;
-  width: 550px; /* Increase the width as needed */
-  font-size: 16px; /* Adjust font size as needed */
+/* This will make the message area take all available space */
+#chat-messages {
+  overflow-y: auto;
+  flex-grow: 1; /* Takes up all available space except for the input area */
+}
+
+#chat-messages .message {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 10px;
+}
+
+#chat-messages .message .avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #57b9be;
+  border-radius: 20px;
+  margin-right: 10px;
+}
+
+#chat-messages .message .message-content {
+  max-width: 100%;
+  background-color: #dcf8c6;
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+}
+
+#chat-messages .message.received .message-content {
+  background-color: #fff;
+  align-self: flex-start;
+}
+
+#chat-messages .message .message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+#chat-messages .message .message-header .username {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+#chat-messages .message .message-header .timestamp {
+  color: #999;
+  font-size: 0.85em;
 }
 
 
+.message-input-area {
+  width: calc(100% - 280px);
+  height: 60px;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: 7px;
+  background: #f4f0f0;
+  box-shadow: 0 -1px 1px rgba(0,0,0,0.15);
+  border-radius: 10px;
+}
+
+#message-input {
+  flex-grow: 1;
+  margin-right: 10px; /* Adjust as needed */
+  padding: 10px; /* Increased padding inside the input */
+  font-size: 16px; /* Larger font size */
+  border: 1px solid #ccc; /* Optional border */
+  border-radius: 6px; /* Rounded corners for the input field */
+}
+
+#sendBtn {
+  background-color: #57b9be;
+  color: rgb(19, 20, 39);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#chat-header {
+  background-color: #f7f7f7;
+  color: rgb(10, 3, 3);
+  padding: 10px;
+  text-align: left;
+}
+
+#receiver-name {
+  margin: 0;
+}
