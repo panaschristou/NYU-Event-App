@@ -207,42 +207,7 @@
         },
       });
     </script>
-
-    <script>
-      $(document).ready(function () {
-        $("#post-review").click(function (event) {
-          event.preventDefault(); // Prevent the form from submitting normally
-          var rating = $('input[name="rating"]:checked').val();
-          var reviewText = $("#review-text").val();
-          var formData = {
-            rating: rating,
-            review_text: reviewText,
-          };
-
-          $.ajax({
-            type: "POST",
-            url: "{% url 'post_review' event.id %}",
-            data: formData,
-            success: function (response) {
-              if (!response.success) {
-                // Display the error message to the user
-                alert(response.message);
-              } else {
-                // Proceed with posting the review
-                console.log("Review posted successfully");
-                // Close the modal and refresh the page or update the reviews section
-              }
-            },
-            error: function (xhr, status, error) {
-              // Handle any other errors
-              console.error("An error occurred: " + error);
-            },
-          });
-        });
-      });
-    </script>
   </body>
-</html>
 
 <div id="myModal" class="modal">
   <div class="modal-content">
