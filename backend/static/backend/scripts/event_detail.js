@@ -3,6 +3,40 @@ const notInterestBtn = document.getElementById("remove-interest");
 const csrftoken = $('meta[name="csrf-token"]').attr("content");
 
 
+let re = []; 
+
+const sortButton = document.getElementById('sort');
+sortButton.addEventListener('click', function() {
+  removeAllChildNodes();
+  if (this.textContent === "Sort by time") {
+    this.textContent = "Sort by likes";
+    re.sort(function(a, b) {
+     return new Date(a.timestamp) - new Date(b.timestamp);
+    });
+    console.log(re);
+    re.forEach((review) => {
+      addReviewToPage(review);
+  });
+} else {
+    this.textContent = "Sort by time";
+    re.sort(function(a, b) {
+        return a.likes_count - b.likes_count;
+    });
+    re.forEach((review) => {
+      addReviewToPage(review);
+  });
+}
+});
+
+
+function removeAllChildNodes() {
+  const reviewsContainer = document.getElementById("reviews-container");
+  while (reviewsContainer.firstChild) {
+    reviewsContainer.removeChild(reviewsContainer.firstChild);
+  }
+}
+
+
 interestBtn.addEventListener("click", function () {
   fetch("add-interest/", {
     method: "POST",
@@ -106,6 +140,7 @@ postButton.addEventListener("click", function () {
         updateAverageRating(eventId);
         resetReviewForm();
         addReviewToPage(data);
+        re.push(data);
       } else {
         showTemporaryMessage(data.message, "alert-danger");
       }
@@ -207,8 +242,9 @@ function loadReviews(eventId) {
       return response.json();
     })
     .then((data) => {
+      re = data.reviews;  
       data.reviews.forEach((review) => {
-        addReviewToPage(review);
+          addReviewToPage(review);
       });
 
       if (!data.has_next) {

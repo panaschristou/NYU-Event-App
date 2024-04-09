@@ -364,3 +364,17 @@ body {
 .center-button {
   text-align: center;
 }
+
+
+.sort-button {
+  cursor: pointer; 
+  background-color: #77499e;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 5px;
+  width: 100px; 
+  margin-right: -300px; 
+  margin-top: -20px; 
+  overflow: hidden; 
+}
