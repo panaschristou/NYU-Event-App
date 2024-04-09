@@ -106,6 +106,7 @@ postButton.addEventListener("click", function () {
         updateAverageRating(eventId);
         resetReviewForm();
         addReviewToPage(data);
+        window.location.reload();
       } else {
         showTemporaryMessage(data.message, "alert-danger");
       }
@@ -229,12 +230,11 @@ function addReviewToPage(review) {
   reviewBox.className = "review-box";
   const avatarWrapper = document.createElement("div");
   avatarWrapper.className = "avatar-wrapper";
-  console.log(review);
+
   const avatar = document.createElement("img");
   avatar.className = "user-avatar";
   avatar.src =
-    review.user.profile.avatar ||
-    "/backend/static/backend/img/generic_user_image.png";
+    review.user.profile.avatar || defaultAvatarSrc;
   avatarWrapper.appendChild(avatar);
 
   reviewBox.appendChild(avatarWrapper);
@@ -256,7 +256,7 @@ function addReviewToPage(review) {
     text.textContent = review.review_text;
   } else {
     text.textContent = "This user did not leave any review text";
-    text.classList.add("lighter-text"); // Use this class to style placeholder text differently
+    text.classList.add("lighter-text"); // Style placeholder text differently
   }
   content.appendChild(text);
 
@@ -467,7 +467,7 @@ function addReviewToPage(review) {
         if (data.success) {
           console.log(data);
           showTemporaryMessage("Thank you for your reply!", "alert-success");
-          replyModal.style.display = "none";
+          // replyModal.style.display = "none";
           replyText.value = "";
           replyCount++;
           replyCountSpan.textContent = replyCount.toString();
@@ -524,8 +524,7 @@ function addReviewToPage(review) {
     const avatar = document.createElement("img");
     avatar.className = "reply-user-avatar";
     avatar.src =
-      reply.from_user.profile.avatar ||
-      "/backend/static/backend/img/generic_user_image.png";
+      reply.from_user.profile.avatar || defaultAvatarSrc;
     avatarWrapper.appendChild(avatar);
     replyBox.appendChild(avatarWrapper);
 
@@ -644,11 +643,7 @@ function addReviewToPage(review) {
             "You have successfully deleted the review.",
             "alert-success"
           );
-          setTimeout(function () {
-            setTimeout(function () {
-              window.location.reload();
-            }, 1000);
-          }, 1000);
+          window.location.reload();
         })
         .catch((error) => {
           console.error("Error:", error);
