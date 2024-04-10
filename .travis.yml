@@ -1,7 +1,7 @@
 dist: jammy
 language: python
 python:
-  - "3.8" # Use the development version of Python 3.8
+  - "3.8" 
 
 env:
   - DJANGO_SETTINGS_MODULE="nyu_event.settings"
@@ -50,7 +50,7 @@ deploy:
     secret_access_key: $AWS_SECRET_ACCESS_KEY
     region: "us-east-1"
     app: "postgres"
-    env: "main"
+    env: "prod-env"
     bucket_name: "elasticbeanstalk-us-east-1-891377257918"
     on:
       branch: master

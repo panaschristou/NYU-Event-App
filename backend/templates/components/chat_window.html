@@ -1,0 +1,30 @@
+<!-- This is components/chat_window.html -->
+<div id="chat-header">
+  <!-- Dynamically set the receiver's name using a template variable -->
+  <h2 id="receiver-name">{{ receiver_name }}</h2>
+</div>
+
+<!-- Chat message display area -->
+
+<div id="chat-messages">
+    {% for message in chat_messages %}
+      <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+        <img src="/media/{{ message.sender.profile.avatar}}" alt="" class="user-avatar-placeholder">
+        <div class="message-content">
+          <div class="message-header">
+            <span class="username">{{ message.sender.username }}</span>
+            <span class="timestamp">{{ message.timestamp }}</span>
+          </div>
+          <p class="message-body">{{ message.message }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+<div class="message-input-area">
+  <input type="text" id="message-input" placeholder="Type message here..." required>
+  <button type="submit" id ="sendBtn">Send</button>
+</div>
+
+
+

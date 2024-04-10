@@ -1,15 +1,23 @@
 from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
 from backend.models import (
+    (
     Event,
+   
     User,
+   
     UserEvent,
+   
     SearchHistory,
+   
     Review,
+   
     Chat,
     Room3,
     ChatRoom3,
     user_rooms,
+),
+    ReplyToReview,
 )
 from django.core import mail
 from django.contrib.messages import get_messages
@@ -34,6 +42,11 @@ class EventViewsTestCase(TestCase):
         self.user = User.objects.create_user(
             username="testuser@nyu.edu", password="12345Password!"
         )
+
+        another_user = User.objects.create_user(
+            username="anotheruser@nyu.edu", password="password123"
+        )
+        self.another_user = another_user
 
         # Create an event that is in the past
         self.past_event = Event.objects.create(
@@ -72,7 +85,7 @@ class EventViewsTestCase(TestCase):
             avg_rating=0,
         )
 
-        # Add reviews to create different average ratings and review counts
+        # Create reviews for the events
         Review.objects.create(
             event=self.current_event, user=self.user, rating=5, review_text="Great!"
         )
@@ -88,6 +101,21 @@ class EventViewsTestCase(TestCase):
         )
         Review.objects.create(
             event=self.upcoming_event, user=self.user, rating=3, review_text="Not bad."
+        )
+
+        # Create some ReplyToReview objects
+        ReplyToReview.objects.create(
+            review=Review.objects.first(),
+            fromUser=self.user,
+            toUser=self.another_user,
+            reply_text="Thanks for your feedback!",
+        )
+
+        ReplyToReview.objects.create(
+            review=Review.objects.last(),
+            fromUser=self.another_user,
+            toUser=self.user,
+            reply_text="I appreciate your review!",
         )
 
         # add current_event and upcoming_event to user interest list
@@ -412,6 +440,93 @@ class EventViewsTestCase(TestCase):
         self.assertEqual(review.rating, 5)
         self.assertEqual(review.review_text, "Great event!")
 
+    def test_get_average_rating(self):
+        url = reverse("get_average_rating", kwargs={"event_id": self.current_event.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertIsNotNone(response_data["avg_rating"])
+
+    def test_get_reviews_for_event(self):
+        url = reverse("event_reviews", kwargs={"event_id": self.current_event.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(len(response_data["reviews"]) > 0)
+        self.assertTrue(response_data["has_next"] is not None)
+
+    def test_like_and_unlike_review(self):
+        # Like
+        url_like = reverse(
+            "like_review",
+            kwargs={
+                "event_id": self.current_event.id,
+                "review_id": Review.objects.first().id,
+            },
+        )
+        response = self.client.post(url_like)
+        self.assertEqual(response.status_code, 200)
+        like_data = json.loads(response.content)
+        self.assertTrue(like_data["success"])
+        self.assertEqual(like_data["likes_count"], 1)
+
+        # Unlike
+        url_unlike = reverse(
+            "unlike_review",
+            kwargs={
+                "event_id": self.current_event.id,
+                "review_id": Review.objects.first().id,
+            },
+        )
+        response = self.client.post(url_unlike)
+        self.assertEqual(response.status_code, 200)
+        unlike_data = json.loads(response.content)
+        self.assertTrue(unlike_data["success"])
+        self.assertEqual(unlike_data["likes_count"], 0)
+
+    def test_delete_review(self):
+        review_id = Review.objects.first().id
+        url = reverse(
+            "delete_review",
+            kwargs={"event_id": self.current_event.id, "review_id": review_id},
+        )
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(response_data["success"])
+        self.assertFalse(Review.objects.filter(id=review_id).exists())
+
+    def test_get_user_reviews(self):
+        url = reverse("reviewhistory", kwargs={"username": self.user.username})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "review_history.html")
+        self.assertIn("reviews", response.context)
+
+    def test_reply_to_review(self):
+        url = reverse(
+            "reply_to_review",
+            kwargs={
+                "event_id": self.current_event.id,
+                "review_id": Review.objects.first().id,
+            },
+        )
+        reply_data = {"reply_text": "Thank you for your review!"}
+        response = self.client.post(url, reply_data)
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertTrue(response_data["success"])
+        self.assertIsNotNone(response_data["reply_id"])
+
+    def test_get_replies_for_review(self):
+        review = Review.objects.first()
+        url = reverse(
+            "display_replies",
+            kwargs={"event_id": self.current_event.id, "review_id": review.id},
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
 
 class ProfileTestCase(TestCase):
     def setUp(self):
@@ -541,10 +656,7 @@ class Chat_1to1_Tests(TestCase):
         self.user2 = User.objects.create_user(
             username="user2", password="user2password"
         )
-        # Create a chat message from user1 to user2
-        self.chat = Chat.objects.create(
-            sender=self.user1, receiver=self.user2, message="Hello"
-        )
+        self.client.login(username="user1", password="user1password")
 
     def test_chat_index_view(self):
         # Ensure user is logged in
@@ -555,36 +667,23 @@ class Chat_1to1_Tests(TestCase):
         self.assertEqual(response.status_code, 200)
         # Check if the correct template was used
         self.assertTemplateUsed(response, "chat_index.html")
-        # Check if the response contains the users
-        self.assertContains(response, "user2")
 
-    def test_chat_with_user_view(self):
-        # Ensure user is logged in
-        self.client.login(username="user1", password="user1password")
-        # Get response from chat with user view
-        response = self.client.get(reverse("chat_with_user", args=[self.user2.id]))
-        # Check if the view returns a 200 status code
+    def test_get_chat_view(self):
+        Chat.objects.create(sender=self.user1, receiver=self.user2, message="Hello!")
+
+        response = self.client.get(reverse("get_chat"), {"user_id": self.user2.id})
         self.assertEqual(response.status_code, 200)
-        # Check if the correct template was used
-        self.assertTemplateUsed(response, "chat_with_user.html")
-        # Check if the response contains the messages
-        self.assertContains(response, "Hello")
+        self.assertContains(response, "Hello!")
 
     def test_send_message_view(self):
-        # Ensure user is logged in
-        self.client.login(username="user1", password="user1password")
-        # Send a POST request to send message view
         response = self.client.post(
-            reverse("send_message", args=[self.user2.id]), {"message": "Hi there!"}
+            reverse("send_message"), {"receiver_id": self.user2.id, "message": "Hello!"}
         )
-        # Check if the response is a JSON response with status
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"status": "Message sent successfully."})
-        # Check if the message was created
-        new_message = Chat.objects.get(
-            sender=self.user1, receiver=self.user2, message="Hi there!"
-        )
-        self.assertIsNotNone(new_message)
+
+        messages = Chat.objects.filter(sender=self.user1, receiver=self.user2)
+        self.assertEqual(messages.count(), 1)
+        self.assertEqual(messages[0].message, "Hello!")
 
 
 class GroupChatHandlersTestCase(TestCase):
