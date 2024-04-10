@@ -1,23 +1,16 @@
 from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
 from backend.models import (
-    (
     Event,
-   
     User,
-   
     UserEvent,
-   
     SearchHistory,
-   
     Review,
-   
     Chat,
+    ReplyToReview,
     Room3,
     ChatRoom3,
     user_rooms,
-),
-    ReplyToReview,
 )
 from django.core import mail
 from django.contrib.messages import get_messages
