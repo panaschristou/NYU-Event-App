@@ -26,7 +26,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from django.db.models import Avg, Count, Q, Value
+from django.db.models import Avg, Count, Q, Value, FloatField
 from django.db.models.functions import Coalesce
 
 EVENT_CATEGORIES = [
