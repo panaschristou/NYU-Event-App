@@ -37,6 +37,29 @@
         </form>
     </div>
 
+    <div class="container">
+        <form method="get">
+          <input type="hidden" name="search_events" value="{{ request.GET.search_events }}"/>
+          <div class="row">
+              <div class="col-md-6"> 
+                  <select class="custom-select" id="filter" name="availability" onchange="this.form.submit()">
+                      <option value="All" {% if request.GET.availability == 'All' %}selected{% endif %}>All Availability</option>
+                      <option value="Past" {% if request.GET.availability == 'Past' %}selected{% endif %}>Past</option>
+                      <option value="Current" {% if request.GET.availability == 'Current' %}selected{% endif %}>Current</option>
+                      <option value="Upcoming" {% if request.GET.availability == 'Upcoming' %}selected{% endif %}>Upcoming</option>
+                  </select>
+              </div>
+              <div class="col-md-6">
+                <select class="custom-select" id="sort" name="sort_by" onchange="this.form.submit()">
+                  <option value="" {% if not request.GET.sort_by %}selected{% endif %}>Sorted by</option>
+                  <option value="Average Rating" {% if request.GET.sort_by == 'Average Rating' %}selected{% endif %}>Average Rating</option>
+                  <option value="Popularity" {% if request.GET.sort_by == 'Popularity' %}selected{% endif %}>Popularity</option>
+                </select>
+              </div>
+          </div>
+        </form>  
+    </div>
+
     <div class="category-container mt-1 mb-5">
         <div class="btn-group" role="group" aria-label="Basic example">
             {% for category in categories %}

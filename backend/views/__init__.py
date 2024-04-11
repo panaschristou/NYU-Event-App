@@ -1,5 +1,4 @@
 from .base import (
-    index,
     user_detail,
     event_detail,
     search_results,

@@ -123,13 +123,14 @@ body {
     border-color: #77499e; 
   }
   
+  .btn-outline-dark.active,
   .btn-outline-dark:hover,
   .btn-outline-dark:focus {
-    color: #fff; 
-    background-color: #77499e; 
-    border-color: #77499e;
-  }
-
+      color: #fff !important;
+      background-color: #77499e !important;
+      border-color: #77499e !important;
+  }  
+  
   .users-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
