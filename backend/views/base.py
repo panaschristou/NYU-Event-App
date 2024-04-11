@@ -1,6 +1,5 @@
 import re
 from django.conf import settings
-from django.forms import FloatField
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
