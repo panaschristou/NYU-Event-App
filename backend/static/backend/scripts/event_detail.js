@@ -106,7 +106,9 @@ postButton.addEventListener("click", function () {
         updateAverageRating(eventId);
         resetReviewForm();
         addReviewToPage(data);
-        window.location.reload();
+        setTimeout(function() {
+          window.location.reload();
+      }, 1000);
       } else {
         showTemporaryMessage(data.message, "alert-danger");
       }
@@ -609,18 +611,48 @@ function addReviewToPage(review) {
     deleteButton.addEventListener("click", function () {
       index = review.id;
       modal.style.display = "block";
+      
+      modal.innerHTML = '';
+ 
+      const modalContent = document.createElement("div");
+      modalContent.className = "modal-content";
+      modal.appendChild(modalContent);
+    
+      const modalHeader = document.createElement("div");
+      modalHeader.className = "modal-header";
+      modalHeader.innerHTML = '<h5 class="modal-title">Confirm Delete</h5>';
+      modalContent.appendChild(modalHeader);
+    
+      const modalBody = document.createElement("div");
+      modalBody.className = "modal-body";
+      modalBody.innerText = "Are you sure you want to delete this review?";
+      modalContent.appendChild(modalBody);
+    
+      const modalFooter = document.createElement("div");
+      modalFooter.className = "modal-footer";
+      modalContent.appendChild(modalFooter);
+    
+      const closeButton = document.createElement("button");
+      closeButton.type = "button";
+      closeButton.className = "btn btn-secondary";
+      closeButton.innerText = "Cancel";
+      closeButton.addEventListener("click", function () {
+        index = null;
+        modal.style.display = "none";
+      });
+      modalFooter.appendChild(closeButton);
+    
+      const confirmDeleteButton = document.createElement("button");
+      confirmDeleteButton.type = "button";
+      confirmDeleteButton.className = "btn btn-danger delete_account";
+      confirmDeleteButton.innerText = "Yes";
+      confirmDeleteButton.addEventListener("click", function () {
+        deletereview(index);
+        modal.style.display = "none";
+      });
+      modalFooter.appendChild(confirmDeleteButton);
     });
-
-    closeButton.addEventListener("click", function () {
-      index = null;
-      modal.style.display = "none";
-    });
-
-    cancelDeleteButton.addEventListener("click", function () {
-      index = null;
-      modal.style.display = "none";
-    });
-
+    
     function deletereview(reviewId) {
       let url = `display-reviews/${reviewId}/delete/`;
       fetch(url, {

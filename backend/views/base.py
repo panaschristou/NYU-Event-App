@@ -109,11 +109,11 @@ def search_results(request):
     availability_filter = request.GET.get("availability", "All")
     now = timezone.now()
 
-    events = (
-        Event.objects.filter(title__icontains=search_query)
-        if search_query
-        else Event.objects.none()
-    )
+    if search_query:
+        events = Event.objects.filter(title__icontains=search_query)
+    else:
+        events = Event.objects.all()
+        
     users = User.objects.none()
 
     if search_query:
