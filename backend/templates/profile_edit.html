@@ -11,6 +11,11 @@
     />
 
     <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css"
+      rel="stylesheet"
+    />
+
+    <link
       href="{% static 'backend/css/base_style.css' %}"
       rel="stylesheet"
     />
@@ -36,15 +41,20 @@
           {% csrf_token %}
           <label for="avatar">Avatar: </label>
           <br />
-          {{ profile_form.avatar|addclass:'form-control-file' }}
+          <input type="file" name="avatar" accept="image/*" id="avatar-input" class="form-control-file">
+          <div id="image-box">
+            <img id="image-cropper" width="400px" src="/media/{{ user.profile.avatar }}" />
+          </div>
           <label for="first_name">First Name: </label>
           {{ user_form.first_name|addclass:'form-control'}}
           <label for="last_name">Last Name: </label>
           {{ user_form.last_name|addclass:'form-control'}}
           <label for="description">Personal Description: </label>
           {{ profile_form.description|addclass:'form-control'}}
-          {{user_form.errors}}
-          {{profile_form.errors}}
+          <div class="text-danger">
+            {{user_form.errors}}
+            {{profile_form.errors}}
+          </div>
           <button type="submit" class="btn btn-primary profile-form-submit">Save My Changes</button>
         </form>
         <a href="{% url 'reset_password' %}" class="text-danger btn btn-link">Change My Password</a>
@@ -74,6 +84,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <script src="{% static 'backend/scripts/profile_edit.js' %}"></script>
   </body>
 </html>
