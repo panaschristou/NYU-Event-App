@@ -105,10 +105,10 @@ else:
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
             "NAME": "nyu_event",
-            "USER": "nyu_event",
+            "USER": "postgres",
             "PASSWORD": "complexpassword123",
             "HOST": "localhost",
-            "PORT": "5433",
+            "PORT": "5432",
         }
     }
 
