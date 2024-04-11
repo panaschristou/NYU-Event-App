@@ -310,6 +310,9 @@ def unlike_reply(request, event_id, review_id, reply_id):
 @require_POST
 def delete_reply(request, event_id, review_id, reply_id):
     try:
+        review = get_object_or_404(Review, pk=review_id)
+        review.reply_count =review.reply_count-1
+        review.save()
         replies = ReplyToReview.objects.filter(review__id=review_id)
         reply = get_object_or_404(replies, pk=reply_id)
         reply.delete()

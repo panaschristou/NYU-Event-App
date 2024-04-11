@@ -730,6 +730,8 @@ function addReviewToPage(review) {
               "You have successfully deleted the reply.",
               "alert-success"
             );
+            replyCount--
+            replyCountSpan.textContent = replyCount.toString();
             setTimeout(function () {
               setTimeout(function () {
                 window.location.reload();
