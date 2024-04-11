@@ -113,7 +113,7 @@ def search_results(request):
         events = Event.objects.filter(title__icontains=search_query)
     else:
         events = Event.objects.all()
-        
+
     users = User.objects.none()
 
     if search_query:
