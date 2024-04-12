@@ -489,7 +489,9 @@ function addReviewToPage(review) {
           replyText.value = "";
           replyCount++;
           replyCountSpan.textContent = replyCount.toString();
-          addRepliesToPage(data, replyModal);
+          console.log(data);
+          addRepliesToPage(data, replyModal,reviewId);
+
         } else {
           showTemporaryMessage(data.message, "alert-danger");
         }
@@ -578,14 +580,13 @@ function addReviewToPage(review) {
 
 
     let likeCount = reply.likes_count;
-    console.log(reply);
     const likeCountSpan = document.createElement("span");
     likeCountSpan.className = "like-count";
     likeCountSpan.textContent = likeCount.toString();
     buttonContainer.appendChild(likeCountSpan);
 
     let isLiked;
-    if (reply.liked_by.includes(currentUsername)) {
+    if (reply && reply.liked_by && reply.liked_by.includes(currentUsername)) {
       isLiked = true;
     } else {
       isLiked = false;
@@ -606,7 +607,6 @@ function addReviewToPage(review) {
     document.body.appendChild(buttonContainer);
 
     function updateAllReviewsLikesCount(likeCount, Id, isLiked) {
-      console.log(Id);
       fetch(`display-reviews/${reviewId}/display-replies/`, {
         method: "GET",
         headers: {
@@ -622,8 +622,6 @@ function addReviewToPage(review) {
           return response.json();
         })
         .then((data) => {
-          const replies = data.replies;
-          console.log(replies);
           let url;
           if (isLiked) {
             url = `display-reviews/${reviewId}/display-replies/${Id}/like/`;
@@ -862,7 +860,6 @@ function removeAllChildNodes() {
     reviewsContainer.removeChild(reviewsContainer.firstChild);
   }
 }
-console.log(re);
 function toggleButtonVisibility(sortButton) {
   if (re.length > 0) {
       sortButton.style.visibility = 'visible';
