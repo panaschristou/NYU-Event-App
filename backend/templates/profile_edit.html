@@ -37,17 +37,17 @@
         {% endif %}
         <h1>{{ user.username }}</h1>
         <p>Email: {{ user.email }}</p>
+        <div class="col-lg-8">
+          <label for="avatar">Avatar: </label>
+          <br />
+          <input type="file" name="avatar" accept="image/*" id="avatar-input">
+          <div id="image-box">
+          </div>
+          <button id="avatar-clear" class="btn btn-primary hidden">Clear</button>
+          <button id="avatar-save" class="btn btn-primary hidden">Save</button>
+        </div>
         <form class="col-lg-8 profile-form-edit" action="{% url 'profile_edit' %}" method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          <div>
-            <label for="avatar">Avatar: </label>
-            <br />
-            <input type="file" name="avatar" accept="image/*" id="avatar-input">
-            <input type="hidden" name="cropped_image_data" id="cropped-image-data" class="form-control-file">
-            <div id="image-box" style="width: 350px;">
-            </div>
-            <button id="avatar-clear" class="hidden">Clear</button>
-          </div>
           <label for="first_name">First Name: </label>
           {{ user_form.first_name|addclass:'form-control'}}
           <label for="last_name">Last Name: </label>
