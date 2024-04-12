@@ -105,7 +105,6 @@ urlpatterns = [
         name="send_message",
     ),
     path("chat/get_chat/", views.chat_handlers.get_chat, name="get_chat"),
-
     # group chat
     path("rooms/", views.group_chat_handlers.group_chat_index, name="search_rooms"),
     path(

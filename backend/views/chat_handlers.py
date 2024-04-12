@@ -54,11 +54,13 @@ def send_message(request):
             "sender_id": request.user.id,
             "sender_name": request.user.username,  # Add the sender's username
             "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
-            "avatar_url": request.user.profile.avatar.url if request.user.profile.avatar else None,
+            "avatar_url": request.user.profile.avatar.url
+            if request.user.profile.avatar
+            else None,
         },
     )
     # Trigger a notification event to the receiver's notification channel
-    notification_channel_name = f'private-notifications-{receiver_id}'
+    notification_channel_name = f"private-notifications-{receiver_id}"
     pusher_client.trigger(
         notification_channel_name,
         "new-message-notification",
@@ -66,8 +68,8 @@ def send_message(request):
             "sender_id": request.user.id,
             "sender_name": request.user.username,
             "message": message,
-            "timestamp": chat_message.timestamp.strftime("%b %d, %Y, %I:%M %p")
-        }
+            "timestamp": chat_message.timestamp.strftime("%b %d, %Y, %I:%M %p"),
+        },
     )
     return JsonResponse({"status": "Message sent successfully."})
 
@@ -99,4 +101,3 @@ def get_chat(request):
             "receiver_name": receiver_name,
         },
     )
-
