@@ -83,12 +83,8 @@ body {
   fill: #77499e;
 }
 
-.hidden {
-  display: none;
-}
-
 .btn-outline-dark {
-  color: #77499e; 
+  color: #77499e;
   border-color: #77499e;
   background-color: #efefe9;
   border-radius: 5px;
@@ -96,31 +92,30 @@ body {
 
 .btn-outline-dark:hover,
 .btn-outline-dark:focus {
-  color: #fff; 
-  background-color: #77499e; 
+  color: #fff;
+  background-color: #77499e;
   border-color: transparent;
 }
 
 .modal {
-  position: fixed; 
-  z-index: 1; 
+  position: fixed;
+  z-index: 1;
   left: 0;
   top: 0;
-  width: 100%; 
-  height: 100%; 
-  overflow: auto; 
-  background-color: rgb(0,0,0); 
-  background-color: rgba(0,0,0,0.4); 
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
 }
-
 
 .modal-content {
   background-color: #fffbf5;
-  margin: 20% auto; 
+  margin: 20% auto;
   padding: 40px;
   border: 1px solid #888;
   border-radius: 15px;
-  width: 60%; 
+  width: 60%;
   display: flex;
   text-align: center;
   justify-content: center;
@@ -131,7 +126,7 @@ body {
   position: absolute;
   top: 10px; /* Align to the top */
   left: 10px; /* Align to the left */
-  color: red; 
+  color: red;
   font-size: 2rem;
   border: none;
   background: none;
@@ -139,11 +134,11 @@ body {
 }
 
 .close svg {
-  width: 1em; 
+  width: 1em;
   height: 1em;
 }
 
-.modal-content .star-rating input{
+.modal-content .star-rating input {
   display: none;
 }
 
@@ -176,28 +171,28 @@ body {
 }
 
 .review-text {
-  width: 60%; 
-  height: 200px; 
-  margin: 2% auto; 
-  display: block; 
+  width: 60%;
+  height: 200px;
+  margin: 2% auto;
+  display: block;
 }
 
 .post-btn {
-  display: block; 
-  margin: 10px auto; 
+  display: block;
+  margin: 10px auto;
   background-color: #77499e;
   color: white;
   border: none;
   border-radius: 10px;
   padding: 10px 10px;
   cursor: pointer;
-  width: 100px; 
+  width: 100px;
 }
 
 .post-btn:hover,
 .post-btn:focus {
-  color: #fff; 
-  background-color: black; 
+  color: #fff;
+  background-color: black;
   border-color: transparent;
 }
 
@@ -206,13 +201,13 @@ body {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000; 
+  z-index: 1000;
   padding: 10px;
   border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0,0,0,.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.review-box{
+.review-box {
   border: 1px solid #ccc;
   padding: 15px;
   padding-left: 0;
@@ -252,7 +247,7 @@ body {
 .review-username,
 .reply-username {
   position: absolute;
-  margin-left: 85px; 
+  margin-left: 85px;
   margin-top: 8px;
   font-size: 18px;
 }
@@ -297,22 +292,21 @@ body {
 }
 
 .like-button svg,
-.reply-button svg, 
+.reply-button svg,
 .reply-like-button svg {
-  fill: #77499e; 
-  width: 18px; 
+  fill: #77499e;
+  width: 18px;
   height: 18px;
 }
 
 .delete-button svg,
 .reply-delete-button svg {
-  fill: #ff0000; 
-  width: 18px; 
+  fill: #ff0000;
+  width: 18px;
   height: 18px;
 }
 
-.reply-button
-.like-button {
+.reply-button .like-button {
   margin-left: 3px;
 }
 
@@ -328,30 +322,30 @@ body {
 }
 
 .reply-container {
-  display: flex; 
+  display: flex;
   align-items: center;
-  gap: 10px; 
+  gap: 10px;
 }
 
 .reply-text {
-  flex-grow: 1; 
+  flex-grow: 1;
   margin-left: 35px;
 
-  height: 60px; 
+  height: 60px;
   border-radius: 5px;
   padding: 5px;
 }
 
 .reply-post-button {
   height: 40px;
-  cursor: pointer; 
-  margin: auto 10px 5px auto; 
+  cursor: pointer;
+  margin: auto 10px 5px auto;
   background-color: #77499e;
   color: white;
   border: none;
   border-radius: 10px;
   padding: 5px 15px;
-  width: 70px; 
+  width: 70px;
 }
 
 .bottom-center {
@@ -364,7 +358,6 @@ body {
 .center-button {
   text-align: center;
 }
-
 
 .sort-button {
   cursor: pointer; 
@@ -406,3 +399,4 @@ body {
   width: 18px; 
   height: 18px;
 }
+

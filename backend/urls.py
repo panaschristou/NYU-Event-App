@@ -85,6 +85,11 @@ urlpatterns = [
     ),
     path("users/<str:username>/", views.base.user_detail, name="user_detail"),
     path("profile-edit/", views.profile_handlers.profile_edit, name="profile_edit"),
+    path(
+        "profile-edit/avatar",
+        views.profile_handlers.upload_avatar,
+        name="profile_edit_avatar",
+    ),
     path("search/", views.base.search_results, name="search_results"),
     path("search_history/", views.base.search_history, name="search_history"),
     path(
