@@ -63,7 +63,6 @@ function loadChatWindow(userId) {
 }
 
 function bindPusherEvents(receiverId) {
-  // Unbind any previous bindings to avoid duplicates
   // pusher.unbind_all();
   pusher.unsubscribe(oldChannelName);
   // Bind to a 'new-message' event within the chat channel
@@ -73,9 +72,7 @@ function bindPusherEvents(receiverId) {
   channel.bind('new-message', function(data) {
     addMessageToChat(data);
   });
-
 }
-
 
 function addMessageToChat(data) {
     const username = data.sender_name;
@@ -87,7 +84,7 @@ function addMessageToChat(data) {
     // Create the message element
     var messageElement = $(`
         <div class="message ${messageClass}">
-            <img src="/media/profile_images/${data.sender_name}.png" alt="" class="avatar">
+            <img src="${data.avatar_url}" alt="" class="avatar">
             <div class="message-content">
                 <div class="message-header">
                     <span class="username">${username}</span>
@@ -107,7 +104,7 @@ function addMessageToChat(data) {
 
 function getChatChannelName(userId1, userId2) {
     return `private-chat-${Math.min(userId1, userId2)}-${Math.max(userId1, userId2)}`;
-  }
+}
 
 function setupChatForm(receiverId) {
     $("#sendBtn").on('click', function(e) {
