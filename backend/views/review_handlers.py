@@ -278,21 +278,27 @@ def get_replies_for_review(request, event_id, review_id):
 
 @login_required
 @require_POST
-def report_review(request, review_id):
-    # Parse JSON data from request body
-    data = json.loads(request.body)
-    review = get_object_or_404(Review, pk=review_id)
-    
-    # Extract title and description from the JSON data
-    title = data.get("title")
-    description = data.get("description")
+def report_review(request, review_id, event_id=None):
+    try:
+        # Parse JSON data from request body
+        print(review_id)
+        
+        data = json.loads(request.body)
+        print(request.body)
+        review = get_object_or_404(Review, pk=review_id)
+        
+        # Extract title and description from the JSON data
+        title = data.get("title")
+        description = data.get("description")
 
-    # Create a new report
-    Report.objects.create(
-        title=title,
-        description=description,
-        review=review,
-        reported_by=request.user,
-        reported_user=review.user
-    )
-    return JsonResponse({"success": True, "message": "Report submitted successfully."})
+        # Create a new report
+        Report.objects.create(
+            title=title,
+            description=description,
+            review=review,
+            reported_by=request.user,
+            reported_user=review.user
+        )
+        return JsonResponse({"success": True, "message": "Report submitted successfully."})
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)})

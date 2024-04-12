@@ -334,8 +334,10 @@ function addReviewToPage(review) {
       reviewId: reviewId  // Make sure your backend knows which review is being reported
     });
     console.log(reportData)
-  
-    fetch(`/review/${reviewId}/report/`, {
+    const url = 'display-reviews/${reviewId}/report/';  // Make sure this matches the exact pattern expected by Django
+    console.log("URL being requested:", url);
+
+    fetch(`display-reviews/${reviewId}/report/`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
@@ -343,11 +345,13 @@ function addReviewToPage(review) {
     },
     body: JSON.stringify({
         title: title,
-        description: description
+        description: description,
+        review_id : reviewId
     })
 })
 .then(response => {
     if (!response.ok) {
+        console.log(response)
         throw new Error('Network response was not ok: ' + response.statusText);
     }
     return response.json();

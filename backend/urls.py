@@ -117,5 +117,5 @@ urlpatterns = [
         views.group_chat_handlers.send_message,
         name="send_message",
     ),
-    path('review/<int:review_id>/report/', views.review_handlers.report_review, name='report_review'),
+    path('events/<int:event_id>/display-reviews/<int:review_id>/report/', views.review_handlers.report_review, name='report_review'),
 ]
