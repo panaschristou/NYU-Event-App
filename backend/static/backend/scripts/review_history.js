@@ -145,6 +145,7 @@ function deletereview(reviewId) {
     }
     showTemporaryMessage("You have successfully deleted review.", "alert-success");
     setTimeout(function() {
+      window.location.reload();
     }, 2000);
   })
   .catch(error => {

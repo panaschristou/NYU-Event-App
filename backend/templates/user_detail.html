@@ -40,6 +40,7 @@
           <p>First Name: {{ detail_user.first_name }}</p>
           <p>Last Name: {{ detail_user.last_name }}</p>
           <p>Personal Description:</p>
+          <p>{{ detail_user.profile.description }}</p>
           {% if user.username == detail_user.username %}
           <a href="{% url 'reviewhistory' username=user.username %}" class="btn btn-primary">Review History</a>
           {% endif %}
