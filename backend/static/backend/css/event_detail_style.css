@@ -379,3 +379,30 @@ body {
   overflow: hidden; 
   visibility: hidden;
 }
+
+.report-button {
+  background: none;
+  border: none;
+  margin-top: -300px; 
+  margin-left: 200px; 
+}
+
+.report-button svg {
+  fill: #ff0000; 
+  width: 18px; 
+  height: 18px;
+}
+
+
+.report-reply {
+  background: none;
+  border: none;
+  margin-top: -300px; 
+  margin-left: 200px; 
+}
+
+.report-reply svg {
+  fill: #ff0000; 
+  width: 18px; 
+  height: 18px;
+}
