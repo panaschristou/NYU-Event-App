@@ -39,11 +39,14 @@
         <p>Email: {{ user.email }}</p>
         <form class="col-lg-8 profile-form-edit" action="{% url 'profile_edit' %}" method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          <label for="avatar">Avatar: </label>
-          <br />
-          <input type="file" name="avatar" accept="image/*" id="avatar-input" class="form-control-file">
-          <div id="image-box">
-            <img id="image-cropper" width="400px" src="/media/{{ user.profile.avatar }}" />
+          <div>
+            <label for="avatar">Avatar: </label>
+            <br />
+            <input type="file" name="avatar" accept="image/*" id="avatar-input">
+            <input type="hidden" name="cropped_image_data" id="cropped-image-data" class="form-control-file">
+            <div id="image-box" style="width: 350px;">
+            </div>
+            <button id="avatar-clear" class="hidden">Clear</button>
           </div>
           <label for="first_name">First Name: </label>
           {{ user_form.first_name|addclass:'form-control'}}
