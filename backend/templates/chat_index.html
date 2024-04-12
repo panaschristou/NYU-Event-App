@@ -73,13 +73,6 @@ function bindPusherEvents(receiverId) {
   channel.bind('new-message', function(data) {
     addMessageToChat(data);
   });
-  
-  // var notificationChannel = pusher.subscribe('private-notifications-' + CURRENT_USER_ID);
-  // notificationChannel.bind('new-message-notification', function(data) {
-  //   if (data.sender_id != CURRENT_USER_ID && data.sender_id != receiverId) {
-  //     addNotificationIcon(data.sender_id);
-  //   }
-  // });
 
 }
 
