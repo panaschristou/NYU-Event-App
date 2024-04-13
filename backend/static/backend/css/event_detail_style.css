@@ -358,3 +358,45 @@ body {
 .center-button {
   text-align: center;
 }
+
+.sort-button {
+  cursor: pointer; 
+  background-color: #77499e;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 5px;
+  width: 100px; 
+  margin-right: -300px; 
+  margin-top: -20px; 
+  overflow: hidden; 
+  visibility: hidden;
+}
+
+.report-button {
+  background: none;
+  border: none;
+  margin-top: -300px; 
+  margin-left: 200px; 
+}
+
+.report-button svg {
+  fill: #ff0000; 
+  width: 18px; 
+  height: 18px;
+}
+
+
+.report-reply {
+  background: none;
+  border: none;
+  margin-top: -300px; 
+  margin-left: 200px; 
+}
+
+.report-reply svg {
+  fill: #ff0000; 
+  width: 18px; 
+  height: 18px;
+}
+
