@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
 from backend.models import (
@@ -25,8 +26,17 @@ from unittest.mock import mock_open, patch
 from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
 from PIL import Image
+from unittest.mock import Mock
+from django.shortcuts import redirect
 
-from backend.views.group_chat_handlers import group_chat_index
+
+from backend.views.group_chat_handlers import (
+    chat_with_room,
+    exit_group_chat,
+    get_chat_channel_name,
+    get_group_chat,
+    send_message,
+)
 
 
 class EventViewsTestCase(TestCase):
@@ -681,49 +691,86 @@ class Chat_1to1_Tests(TestCase):
 
 class GroupChatHandlersTestCase(TestCase):
     def setUp(self):
-        self.client = Client()
+        self.factory = RequestFactory()
         self.user = User.objects.create_user(
             username="testuser", password="testpassword"
         )
-        self.room = Room3.objects.create(name="Test Room", slug="test-room")
+        self.client.login(username="testuser", password="testpassword")
+        self.room_slug = "test-room"
+        # self.room_id = 1
+        self.room = Room3.objects.create(slug=self.room_slug)
         self.user_room = user_rooms.objects.create(
-            user_detail=self.user, room_joined=self.room
+            user_detail=self.user, room_joined=self.room  # Use the created Room3 object
+        )
+        # self.user_room = user_rooms.objects.create(
+        #     user_detail=self.user, room_joined_id=self.room_id
+        # )
+
+    def test_chat_with_room_view(self):
+
+        request = self.factory.get(
+            reverse("chat_with_room", kwargs={"receiver_room_slug": self.room_slug})
+        )
+        request.user = self.user
+
+        response = chat_with_room(request, receiver_room_slug=self.room_slug)
+
+        # Assert that the view returns a redirect response
+        self.assertIsInstance(response, HttpResponseRedirect)
+
+        # Assert that the response redirects to the correct URL
+        self.assertEqual(response.url, reverse("chat_index"))
+
+    def test_get_group_chat_view(self):
+
+        # Create a test chat message
+        chat_message = ChatRoom3.objects.create(
+            sender_ChatRoom=self.user,
+            receiver_room_slug=self.room_slug,
+            message="Test message",
         )
 
-    def test_group_chat_index(self):
-        self.client.force_login(self.user)
-        response = self.client.get(reverse("search_rooms"))
+    @patch(
+        "backend.views.pusher_config.pusher_client.trigger"
+    )  # Mocking pusher_client.trigger method
+    def test_send_message_view(self, mock_trigger):
+        # Prepare mock request data
+        request = self.factory.post(
+            reverse("send_message"),
+            {"room_slug": self.room_slug, "message": "Test message"},
+        )
+        request.user = self.user
+
+        # Call the view function
+        response = send_message(request)
+
+        # Assert the response status code and content
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "group_chat_index.html")
+        self.assertEqual(response.content, b'{"status": "Message sent successfully."}')
 
-    # def test_search_rooms(self):
-    #     response = self.client.get(reverse('search_rooms') + '?query=test')
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'partials/user_search_results.html')
+        # Assert that the ChatRoom3 object is created with the correct data
+        chat_message = ChatRoom3.objects.get(
+            sender_ChatRoom=self.user, receiver_room_slug=self.room_slug
+        )
+        self.assertEqual(chat_message.message, "Test message")
 
-    def test_chat_with_room(self):
-        self.client.force_login(self.user)
+        # Assert that pusher_client.trigger is called with the correct arguments
+        mock_trigger.assert_called_once_with(
+            get_chat_channel_name(self.user.id, self.room.slug),
+            "new-message",
+            {
+                "message": "Test message",
+                "sender_id": self.user.id,
+                "sender_name": self.user.username,
+                "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
+            },
+        )
+
         response = self.client.get(
-            reverse("chat_with_room", kwargs={"receiver_room_slug": "test-room"})
+            reverse("search_rooms2"), {"room_slug": self.room_slug}
         )
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "group_chat_with_user.html")
-
-    def test_send_message(self):
-        self.client.force_login(self.user)
-        response = self.client.post(
-            reverse("send_message", kwargs={"receiver_room_slug": "test-room"}),
-            {"message": "Test message"},
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            ChatRoom3.objects.filter(
-                sender_ChatRoom=self.user,
-                receiver_room_slug="test-room",
-                message="Test message",
-            ).count(),
-            1,
-        )
+        self.assertContains(response, "Test message")
 
 
 class PusherAuthenticationTestCase(TestCase):

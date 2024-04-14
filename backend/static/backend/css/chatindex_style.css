@@ -135,3 +135,11 @@
 #receiver-name {
   margin: 0;
 }
+
+.event_icon {
+  width: 40px;
+  height: 40px;
+  background-color: #57b9be;
+  border-radius: 20px;
+  margin-right: 10px;
+}

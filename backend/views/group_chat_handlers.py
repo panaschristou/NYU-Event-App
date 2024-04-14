@@ -7,17 +7,7 @@ from ..models import Room3, user_rooms
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Q
 from django.views.decorators.http import require_POST
-
-
-@login_required
-def group_chat_index(request):
-
-    current_user = request.user
-
-    user_room_objects = user_rooms.objects.filter(user_detail=current_user)
-    print("rooms = ", user_room_objects)
-
-    return render(request, "group_chat_index.html", {"rooms": user_room_objects})
+from django.urls import reverse
 
 
 def search_rooms(request):
@@ -31,6 +21,7 @@ def search_rooms(request):
 
 @login_required
 def chat_with_room(request, receiver_room_slug):
+
     room = get_object_or_404(Room3, slug=receiver_room_slug)
 
     current_user = request.user
@@ -48,26 +39,44 @@ def chat_with_room(request, receiver_room_slug):
         # | Q(sender_id=receiver_room_slug, receiver=request.user)
     ).order_by("timestamp")
 
+    return redirect(reverse("chat_index"))
+
+
+@login_required
+def get_group_chat(request):
+    room_slug = request.GET.get("room_slug")
+
+    room = get_object_or_404(Room3, slug=room_slug)
+
+    chat_messages = ChatRoom3.objects.filter(Q(receiver_room_slug=room_slug)).order_by(
+        "timestamp"
+    )
+
+    for message in chat_messages:
+        print("Sender:", message.sender_ChatRoom)
+        print("Receiver Room Slug:", message.receiver_room_slug)
+        print("Timestamp:", message.timestamp)
+
     return render(
         request,
-        "group_chat_with_user.html",
+        "components/chat_window.html",
         {
             "user_id": request.user.id,
             "room": room,
             "chat_messages": chat_messages,
+            "group_chat": 1,
         },
     )
 
 
 @login_required
 @require_POST
-def send_message(request, receiver_room_slug):
+def send_message(request, receiver_room_slug=None):
     sender = request.user
-    # receiver = request.POST.get('receiver_id')
+    receiver_room_slug = request.POST.get("room_slug")
     message = request.POST.get("message")
     receiver_room = Room3.objects.get(slug=receiver_room_slug)
-    # save the message to the database
-    ChatRoom3.objects.create(
+    chat_message = ChatRoom3.objects.create(
         sender_ChatRoom=sender, receiver_room_slug=receiver_room.slug, message=message
     )
 
@@ -79,14 +88,14 @@ def send_message(request, receiver_room_slug):
         {
             "message": message,
             "sender_id": request.user.id,
-            "sender_name": request.user.username,  # Add the sender's username
+            "sender_name": request.user.username,
+            "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
         },
     )
     return JsonResponse({"status": "Message sent successfully."})
 
 
 def get_chat_channel_name(user_id, receiver_room_slug):
-    # Ensure the lower ID always comes first in the channel name
     return receiver_room_slug
 
 
@@ -96,3 +105,19 @@ def chat_history(request, receiver_room_slug):
         sender=request.user, receiver=receiver_room_slug
     )
     return JsonResponse(list(messages), safe=False)
+
+
+@login_required
+def exit_group_chat(request, room_id):
+
+    current_user = request.user
+
+    user_id = current_user.id
+
+    user_room = get_object_or_404(
+        user_rooms, user_detail_id=user_id, room_joined_id=room_id
+    )
+
+    user_room.delete()
+
+    return redirect(reverse("chat_index"))
