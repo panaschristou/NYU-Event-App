@@ -219,6 +219,7 @@ def reply_to_review(request, event_id, review_id):
     reply = ReplyToReview.objects.create(
         review=review, fromUser=user, toUser=review.user, reply_text=reply_text
     )
+    liked_by_users = reply.liked_by.all()
     review.reply_count = F("reply_count") + 1
     review.save()
     review.refresh_from_db(fields=["reply_count"])
@@ -241,6 +242,8 @@ def reply_to_review(request, event_id, review_id):
             "to_user": review.user.username,
             "timestamp": reply.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             "reply_count": review.reply_count,
+            "likes_count": reply.likes_count,
+            "likes_by": [user.username for user in liked_by_users],
         }
     )
 
@@ -251,6 +254,7 @@ def get_replies_for_review(request, event_id, review_id):
             "-timestamp"
         )
         replies_data = []
+
         for reply in replies:
             replies_data.append(
                 {
@@ -268,6 +272,8 @@ def get_replies_for_review(request, event_id, review_id):
                     "to_user": reply.toUser.username,
                     "reply_text": reply.reply_text,
                     "timestamp": reply.timestamp.isoformat(),
+                    "likes_count": reply.likes_count,
+                    "liked_by": list(reply.liked_by.values_list("username", flat=True)),
                 }
             )
         return JsonResponse({"replies": replies_data})
@@ -275,6 +281,84 @@ def get_replies_for_review(request, event_id, review_id):
     except Exception as e:
         print(e)
         return HttpResponseServerError("Server Error: {}".format(e))
+
+
+@login_required
+@require_POST
+def like_reply(request, event_id, review_id, reply_id):
+    replies = ReplyToReview.objects.filter(review__id=review_id)
+    reply = get_object_or_404(replies, pk=reply_id)
+    user = request.user
+    reply.liked_by.add(user)
+    reply.likes_count += 1
+    reply.save()
+    return JsonResponse({"success": True, "likes_count": reply.likes_count})
+
+
+@login_required
+@require_POST
+def unlike_reply(request, event_id, review_id, reply_id):
+    replies = ReplyToReview.objects.filter(review__id=review_id)
+    reply = get_object_or_404(replies, pk=reply_id)
+    user = request.user
+    reply.liked_by.remove(user)
+    reply.likes_count = max(reply.likes_count - 1, 0)
+    reply.save()
+    return JsonResponse({"success": True, "likes_count": reply.likes_count})
+
+
+@login_required
+@require_POST
+def delete_reply(request, event_id, review_id, reply_id):
+    try:
+        review = get_object_or_404(Review, pk=review_id)
+        review.reply_count = review.reply_count - 1
+        review.save()
+        replies = ReplyToReview.objects.filter(review__id=review_id)
+        reply = get_object_or_404(replies, pk=reply_id)
+        reply.delete()
+        return JsonResponse({"success": True})
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+
+@login_required
+@require_POST
+def like_reply(request, event_id, review_id, reply_id):
+    replies = ReplyToReview.objects.filter(review__id=review_id)
+    reply = get_object_or_404(replies, pk=reply_id)
+    user = request.user
+    reply.liked_by.add(user)
+    reply.likes_count += 1
+    reply.save()
+    return JsonResponse({"success": True, "likes_count": reply.likes_count})
+
+
+@login_required
+@require_POST
+def unlike_reply(request, event_id, review_id, reply_id):
+    replies = ReplyToReview.objects.filter(review__id=review_id)
+    reply = get_object_or_404(replies, pk=reply_id)
+    user = request.user
+    reply.liked_by.remove(user)
+    reply.likes_count = max(reply.likes_count - 1, 0)
+    reply.save()
+    return JsonResponse({"success": True, "likes_count": reply.likes_count})
+
+
+@login_required
+@require_POST
+def delete_reply(request, event_id, review_id, reply_id):
+    try:
+        review = get_object_or_404(Review, pk=review_id)
+        review.reply_count = review.reply_count - 1
+        review.save()
+        replies = ReplyToReview.objects.filter(review__id=review_id)
+        reply = get_object_or_404(replies, pk=reply_id)
+        reply.delete()
+        return JsonResponse({"success": True})
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
 
 @login_required
 @require_POST

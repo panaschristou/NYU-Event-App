@@ -60,6 +60,8 @@ class ReplyToReview(models.Model):
     )
     reply_text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    likes_count = models.IntegerField(default=0)
+    liked_by = models.ManyToManyField(User, related_name="reply_likes", blank=True)
 
     def __str__(self):
         return self.reply_text

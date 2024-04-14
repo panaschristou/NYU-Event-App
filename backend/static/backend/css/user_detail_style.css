@@ -2,9 +2,26 @@
   position: absolute;
   top: 0;
   right: 0;
+  color: #77499e;
+}
+
+.edit-btn:hover {
+  color: #77499e;
 }
 
 .user-avatar {
   width: 90px;
   border-radius: 50%;
+}
+
+.btn-outline-dark {
+  color: #77499e; 
+  border-color: #77499e; 
+}
+
+.btn-outline-dark:hover,
+.btn-outline-dark:focus {
+  color: #fff; 
+  background-color: #77499e; 
+  border-color: #77499e;
 }
