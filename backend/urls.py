@@ -68,8 +68,28 @@ urlpatterns = [
         views.review_handlers.get_replies_for_review,
         name="display_replies",
     ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/display-replies/<int:reply_id>/like/",
+        views.review_handlers.like_reply,
+        name="like_replies",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/display-replies/<int:reply_id>/unlike/",
+        views.review_handlers.unlike_reply,
+        name="unlike_replies",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/display-replies/<int:reply_id>/delete/",
+        views.review_handlers.delete_reply,
+        name="delete_replies",
+    ),
     path("users/<str:username>/", views.base.user_detail, name="user_detail"),
     path("profile-edit/", views.profile_handlers.profile_edit, name="profile_edit"),
+    path(
+        "profile-edit/avatar",
+        views.profile_handlers.upload_avatar,
+        name="profile_edit_avatar",
+    ),
     path("search/", views.base.search_results, name="search_results"),
     path("search_history/", views.base.search_history, name="search_history"),
     path(

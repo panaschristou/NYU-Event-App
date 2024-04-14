@@ -27,3 +27,7 @@ body {
   padding: 1rem;
   background-color: #77499e;
 }
+
+.hidden {
+  display: none;
+}

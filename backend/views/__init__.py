@@ -12,7 +12,7 @@ from .base import (
     delete_user,
 )
 from .interest_list_handlers import interest_list, add_interest, remove_interest
-from .profile_handlers import profile_edit
+from .profile_handlers import profile_edit, upload_avatar
 from .chat_handlers import (
     send_message,
     chat_index,
