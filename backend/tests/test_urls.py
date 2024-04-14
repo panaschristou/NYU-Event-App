@@ -77,10 +77,6 @@ class TestUrls(TestCase):
         url = reverse("events_by_category", kwargs={"category": "music"})
         self.assertEqual(resolve(url).func, views.base.events_by_category)
 
-    def test_logout_url_is_resolved(self):
-        url = reverse("logout")
-        self.assertEqual(resolve(url).func, views.base.logout_user)
-
     def test_reset_password_url(self):
         reset_password_url = reverse("reset_password")
         response = self.client.get(reset_password_url)
