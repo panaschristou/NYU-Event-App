@@ -400,15 +400,6 @@ def login_user(request):
     else:
         return render(request, "authenticate/login.html", {})
 
-
-def logout_user(request):
-    if request.method == "POST":
-        logout(request)
-        messages.success(request, "You have been successfully logged out.")
-        return redirect("login")
-    return render(request, "confirm_logout.html")
-
-
 def import_rooms(request):
     event_titles = Event.objects.values_list("title", flat=True)
 
