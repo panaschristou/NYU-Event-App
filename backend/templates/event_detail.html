@@ -23,6 +23,9 @@
       // Sets a JavaScript variable for the current user's ID
       const currentUsername = "{{ user.username }}";
     </script>
+    <script type="text/javascript">
+      var defaultAvatarSrc = "{% static 'backend/img/generic_user_image.png' %}";
+    </script>
     {% endif %}
   </head>
   <body>

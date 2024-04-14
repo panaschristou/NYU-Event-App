@@ -108,6 +108,9 @@ postButton.addEventListener("click", function () {
         updateAverageRating(eventId);
         resetReviewForm();
         addReviewToPage(data);
+        setTimeout(function() {
+          window.location.reload();
+      }, 1000);
       } else {
         showTemporaryMessage(data.message, "alert-danger");
       }
@@ -232,12 +235,11 @@ function addReviewToPage(review) {
   reviewBox.className = "review-box";
   const avatarWrapper = document.createElement("div");
   avatarWrapper.className = "avatar-wrapper";
-  console.log(review);
+
   const avatar = document.createElement("img");
   avatar.className = "user-avatar";
   avatar.src =
-    review.user.profile.avatar ||
-    "/backend/static/backend/img/generic_user_image.png";
+    review.user.profile.avatar || defaultAvatarSrc;
   avatarWrapper.appendChild(avatar);
 
   reviewBox.appendChild(avatarWrapper);
@@ -259,7 +261,7 @@ function addReviewToPage(review) {
     text.textContent = review.review_text;
   } else {
     text.textContent = "This user did not leave any review text";
-    text.classList.add("lighter-text"); // Use this class to style placeholder text differently
+    text.classList.add("lighter-text"); // Style placeholder text differently
   }
   content.appendChild(text);
 
@@ -280,25 +282,23 @@ function addReviewToPage(review) {
   const reportButton = document.createElement("button");
   reportButton.className = "report-button";
   reportButton.innerHTML = `
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
-  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-  <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
-</svg>`;
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag" viewBox="0 0 16 16">
+  <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21 21 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21 21 0 0 0 14 7.655V1.222z"/>
+  </svg>`;  
   
   reportButton.addEventListener("mouseenter", function () {
       this.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
-      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4m.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/>
-    </svg>`;
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">
+      <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001"/>
+      </svg>`;
   });
   
  
   reportButton.addEventListener("mouseleave", function () {
       this.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
-      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-      <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
-    </svg>`;
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag" viewBox="0 0 16 16">
+      <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21 21 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21 21 0 0 0 14 7.655V1.222z"/>
+      </svg>`;
   });
   buttonContainer.appendChild(reportButton);
   }
@@ -507,7 +507,7 @@ function addReviewToPage(review) {
         if (data.success) {
           console.log(data);
           showTemporaryMessage("Thank you for your reply!", "alert-success");
-          replyModal.style.display = "none";
+          // replyModal.style.display = "none";
           replyText.value = "";
           replyCount++;
           replyCountSpan.textContent = replyCount.toString();
@@ -566,8 +566,7 @@ function addReviewToPage(review) {
     const avatar = document.createElement("img");
     avatar.className = "reply-user-avatar";
     avatar.src =
-      reply.from_user.profile.avatar ||
-      "/backend/static/backend/img/generic_user_image.png";
+      reply.from_user.profile.avatar || defaultAvatarSrc;
     avatarWrapper.appendChild(avatar);
     replyBox.appendChild(avatarWrapper);
 
@@ -601,25 +600,23 @@ function addReviewToPage(review) {
       const reportreply = document.createElement("button");
       reportreply.className = "report-reply";
       reportreply.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
-      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-      <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
-    </svg>`;
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag" viewBox="0 0 16 16">
+      <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21 21 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21 21 0 0 0 14 7.655V1.222z"/>
+      </svg>`;
       
       reportreply.addEventListener("mouseenter", function () {
           this.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle-fill" viewBox="0 0 16 16">
-          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4m.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/>
-        </svg>`;
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">
+          <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001"/>
+          </svg>`;
       });
       
      
       reportreply.addEventListener("mouseleave", function () {
           this.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
-          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-          <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
-        </svg>`;
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag" viewBox="0 0 16 16">
+          <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21 21 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21 21 0 0 0 14 7.655V1.222z"/>
+          </svg>`;
       });
       buttonContainer.appendChild(reportreply);
       }
@@ -834,18 +831,48 @@ function addReviewToPage(review) {
     deleteButton.addEventListener("click", function () {
       index = review.id;
       modal.style.display = "block";
+      
+      modal.innerHTML = '';
+ 
+      const modalContent = document.createElement("div");
+      modalContent.className = "modal-content";
+      modal.appendChild(modalContent);
+    
+      const modalHeader = document.createElement("div");
+      modalHeader.className = "modal-header";
+      modalHeader.innerHTML = '<h5 class="modal-title">Confirm Delete</h5>';
+      modalContent.appendChild(modalHeader);
+    
+      const modalBody = document.createElement("div");
+      modalBody.className = "modal-body";
+      modalBody.innerText = "Are you sure you want to delete this review?";
+      modalContent.appendChild(modalBody);
+    
+      const modalFooter = document.createElement("div");
+      modalFooter.className = "modal-footer";
+      modalContent.appendChild(modalFooter);
+    
+      const closeButton = document.createElement("button");
+      closeButton.type = "button";
+      closeButton.className = "btn btn-secondary";
+      closeButton.innerText = "Cancel";
+      closeButton.addEventListener("click", function () {
+        index = null;
+        modal.style.display = "none";
+      });
+      modalFooter.appendChild(closeButton);
+    
+      const confirmDeleteButton = document.createElement("button");
+      confirmDeleteButton.type = "button";
+      confirmDeleteButton.className = "btn btn-danger delete_account";
+      confirmDeleteButton.innerText = "Yes";
+      confirmDeleteButton.addEventListener("click", function () {
+        deletereview(index);
+        modal.style.display = "none";
+      });
+      modalFooter.appendChild(confirmDeleteButton);
     });
-
-    closeButton.addEventListener("click", function () {
-      index = null;
-      modal.style.display = "none";
-    });
-
-    cancelDeleteButton.addEventListener("click", function () {
-      index = null;
-      modal.style.display = "none";
-    });
-
+    
     function deletereview(reviewId) {
       let url = `display-reviews/${reviewId}/delete/`;
       fetch(url, {
@@ -868,11 +895,7 @@ function addReviewToPage(review) {
             "You have successfully deleted the review.",
             "alert-success"
           );
-          setTimeout(function () {
-            setTimeout(function () {
-              window.location.reload();
-            }, 1000);
-          }, 1000);
+          window.location.reload();
         })
         .catch((error) => {
           console.error("Error:", error);
