@@ -23,13 +23,18 @@
 
 
 <!-- This is components/chat_window.html -->
+
+{% if group_chat == 1 %}
 <div id="chat-header">
   <!-- Dynamically set the receiver's name using a template variable -->
   <h2 id="receiver-name">{{ room.name }}</h2>
 </div>
-
-{% if group_chat == 1 %}
   <a href="{% url 'exit_group_chat' room.id %}" class="exit-chat">Exit Group Chat</a>
+{% else %}
+<div id="chat-header">
+  <!-- Dynamically set the receiver's name using a template variable -->
+  <h2 id="receiver-name">{{ receiver_name }}</h2>
+</div>
 {% endif %}
 
 <!-- Chat message display area -->

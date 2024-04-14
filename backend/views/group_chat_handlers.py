@@ -22,8 +22,6 @@ def search_rooms(request):
 @login_required
 def chat_with_room(request, receiver_room_slug):
 
-    room = get_object_or_404(Room3, slug=receiver_room_slug)
-
     current_user = request.user
 
     current_room = Room3.objects.get(slug=receiver_room_slug)
@@ -33,7 +31,7 @@ def chat_with_room(request, receiver_room_slug):
     except user_rooms.DoesNotExist:
         user_rooms.objects.create(user_detail=current_user, room_joined=current_room)
 
-    chat_messages = ChatRoom3.objects.filter(
+    ChatRoom3.objects.filter(
         # Q(sender_ChatRoom=request.user, receiver_room_slug=receiver_room_slug)
         Q(receiver_room_slug=receiver_room_slug)
         # | Q(sender_id=receiver_room_slug, receiver=request.user)

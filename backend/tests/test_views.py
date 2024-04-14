@@ -721,15 +721,6 @@ class GroupChatHandlersTestCase(TestCase):
         # Assert that the response redirects to the correct URL
         self.assertEqual(response.url, reverse("chat_index"))
 
-    def test_get_group_chat_view(self):
-
-        # Create a test chat message
-        chat_message = ChatRoom3.objects.create(
-            sender_ChatRoom=self.user,
-            receiver_room_slug=self.room_slug,
-            message="Test message",
-        )
-
     @patch(
         "backend.views.pusher_config.pusher_client.trigger"
     )  # Mocking pusher_client.trigger method
@@ -764,6 +755,14 @@ class GroupChatHandlersTestCase(TestCase):
                 "sender_name": self.user.username,
                 "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
             },
+        )
+
+    def test_get_group_chat_view(self):
+        # Create a test chat message
+        chat_message = ChatRoom3.objects.create(
+            sender_ChatRoom=self.user,
+            receiver_room_slug=self.room_slug,
+            message="Test message",
         )
 
         response = self.client.get(
