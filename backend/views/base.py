@@ -400,6 +400,7 @@ def login_user(request):
     else:
         return render(request, "authenticate/login.html", {})
 
+
 def import_rooms(request):
     event_titles = Event.objects.values_list("title", flat=True)
 
