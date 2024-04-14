@@ -759,7 +759,7 @@ class GroupChatHandlersTestCase(TestCase):
 
     def test_get_group_chat_view(self):
         # Create a test chat message
-        chat_message = ChatRoom3.objects.create(
+        ChatRoom3.objects.create(
             sender_ChatRoom=self.user,
             receiver_room_slug=self.room_slug,
             message="Test message",
