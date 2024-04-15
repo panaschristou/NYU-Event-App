@@ -324,53 +324,15 @@ def delete_reply(request, event_id, review_id, reply_id):
 
 @login_required
 @require_POST
-def like_reply(request, event_id, review_id, reply_id):
-    replies = ReplyToReview.objects.filter(review__id=review_id)
-    reply = get_object_or_404(replies, pk=reply_id)
-    user = request.user
-    reply.liked_by.add(user)
-    reply.likes_count += 1
-    reply.save()
-    return JsonResponse({"success": True, "likes_count": reply.likes_count})
-
-
-@login_required
-@require_POST
-def unlike_reply(request, event_id, review_id, reply_id):
-    replies = ReplyToReview.objects.filter(review__id=review_id)
-    reply = get_object_or_404(replies, pk=reply_id)
-    user = request.user
-    reply.liked_by.remove(user)
-    reply.likes_count = max(reply.likes_count - 1, 0)
-    reply.save()
-    return JsonResponse({"success": True, "likes_count": reply.likes_count})
-
-
-@login_required
-@require_POST
-def delete_reply(request, event_id, review_id, reply_id):
-    try:
-        review = get_object_or_404(Review, pk=review_id)
-        review.reply_count = review.reply_count - 1
-        review.save()
-        replies = ReplyToReview.objects.filter(review__id=review_id)
-        reply = get_object_or_404(replies, pk=reply_id)
-        reply.delete()
-        return JsonResponse({"success": True})
-    except Exception as e:
-        return JsonResponse({"success": False, "message": str(e)}, status=500)
-
-@login_required
-@require_POST
 def report_review(request, review_id, event_id=None):
     try:
         # Parse JSON data from request body
         print(review_id)
-        
+
         data = json.loads(request.body)
         print(request.body)
         review = get_object_or_404(Review, pk=review_id)
-        
+
         # Extract title and description from the JSON data
         title = data.get("title")
         description = data.get("description")
@@ -381,8 +343,10 @@ def report_review(request, review_id, event_id=None):
             description=description,
             review=review,
             reported_by=request.user,
-            reported_user=review.user
+            reported_user=review.user,
         )
-        return JsonResponse({"success": True, "message": "Report submitted successfully."})
+        return JsonResponse(
+            {"success": True, "message": "Report submitted successfully."}
+        )
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)})

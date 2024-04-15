@@ -11,7 +11,6 @@ from django.views.decorators.http import require_POST
 
 @login_required
 def group_chat_index(request):
-
     current_user = request.user
 
     user_room_objects = user_rooms.objects.filter(user_detail=current_user)
