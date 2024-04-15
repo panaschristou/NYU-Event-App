@@ -1,8 +1,41 @@
+
+<style>
+  .exit-chat {
+    position: absolute;
+    top: 140px;
+    right: 20px;
+    background-color: #FF0000; /* Red */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 5px;
+  }
+
+  .exit-chat:hover {
+    background-color: #45a049;
+  }
+</style>
+
+
+
 <!-- This is components/chat_window.html -->
+
+{% if group_chat == 1 %}
+<div id="chat-header">
+  <!-- Dynamically set the receiver's name using a template variable -->
+  <h2 id="receiver-name">{{ room.name }}</h2>
+</div>
+  <a href="{% url 'exit_group_chat' room.id %}" class="exit-chat">Exit Group Chat</a>
+{% else %}
 <div id="chat-header">
   <!-- Dynamically set the receiver's name using a template variable -->
   <h2 id="receiver-name">{{ receiver_name }}</h2>
 </div>
+{% endif %}
 
 <!-- Chat message display area -->
 
