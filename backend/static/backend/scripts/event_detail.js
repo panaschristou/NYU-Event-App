@@ -110,7 +110,7 @@ postButton.addEventListener("click", function () {
         addReviewToPage(data);
         setTimeout(function() {
           window.location.reload();
-      }, 1000);
+        }, 1000);
       } else {
         showTemporaryMessage(data.message, "alert-danger");
       }
@@ -511,9 +511,10 @@ function addReviewToPage(review) {
           replyText.value = "";
           replyCount++;
           replyCountSpan.textContent = replyCount.toString();
-          console.log(data);
           addRepliesToPage(data, replyModal,reviewId);
-
+          setTimeout(function() {
+            window.location.reload();
+          }, 1000);
         } else {
           showTemporaryMessage(data.message, "alert-danger");
         }
