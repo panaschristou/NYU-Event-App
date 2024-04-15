@@ -11,6 +11,7 @@ from .models import (
     ChatRoom3,
     Room3,
     user_rooms,
+    Report,
 )
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
@@ -223,5 +224,12 @@ class BanneddUserAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ("title", "reported_by", "created_at", "review")
+    search_fields = ("title", "description")
+    list_filter = ("created_at", "reported_by")
+
+
+admin.site.register(Report, ReportAdmin)
 admin.site.register(BannedUser, BanneddUserAdmin)
 admin.site.register(SuspendedUser, SuspendedUserAdmin)

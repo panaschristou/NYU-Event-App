@@ -278,6 +278,11 @@ function addReviewToPage(review) {
   buttonContainer.style.justifyContent = "flex-end"; // Aligns buttons to the right
   buttonContainer.style.marginTop = "10px";
 
+  document.getElementById('close-modal-button').addEventListener('click', function() {
+    var modal = document.getElementById('report-modal');
+    modal.style.display = 'none';
+});
+
   if (currentUsername != review.user.username){
   const reportButton = document.createElement("button");
   reportButton.className = "report-button";
@@ -291,7 +296,7 @@ function addReviewToPage(review) {
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">
       <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001"/>
       </svg>`;
-  });
+    });
   
  
   reportButton.addEventListener("mouseleave", function () {
@@ -300,8 +305,75 @@ function addReviewToPage(review) {
       <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21 21 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21 21 0 0 0 14 7.655V1.222z"/>
       </svg>`;
   });
+  reportButton.addEventListener("click", function() {
+    openReportModal(review.id);
+    this.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag" viewBox="0 0 16 16">
+      <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21 21 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21 21 0 0 0 14 7.655V1.222z"/>
+      </svg>`;
+  });
   buttonContainer.appendChild(reportButton);
+  
+
+  function openReportModal(reviewId) {
+    const reportModal = document.getElementById('report-modal');
+    const reportForm = document.getElementById('report-form');
+    reportForm.onsubmit = function (e) {
+      e.preventDefault();
+      submitReport(reviewId);
+    };
+    reportModal.style.display = 'block';
   }
+  
+  function submitReport(reviewId) {
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    console.log(reviewId)
+    // Construct the body of the POST request
+    const reportData = JSON.stringify({
+      title: title,
+      description: description,
+      reviewId: reviewId  // Make sure your backend knows which review is being reported
+    });
+    console.log(reportData)
+    const url = 'display-reviews/${reviewId}/report/';  // Make sure this matches the exact pattern expected by Django
+    console.log("URL being requested:", url);
+
+    fetch(`display-reviews/${reviewId}/report/`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
+    },
+    body: JSON.stringify({
+        title: title,
+        description: description,
+        review_id : reviewId
+    })
+})
+.then(response => {
+    if (!response.ok) {
+        console.log(response)
+        throw new Error('Network response was not ok: ' + response.statusText);
+    }
+    return response.json();
+})
+.then(data => {
+    console.log('Report submitted:', data);
+    // handle success
+})
+.catch(error => {
+    console.error('Error submitting report:', error);
+});
+  
+    // Close the modal after submitting the form
+    document.getElementById('report-modal').style.display = 'none';
+    // Optionally reset the form fields
+    document.getElementById('title').value = '';
+    document.getElementById('description').value = '';
+  }
+  }
+
 
   let likeCount = review.likes_count;
   const likeCountSpan = document.createElement("span");
@@ -332,7 +404,7 @@ function addReviewToPage(review) {
   });
 
   buttonContainer.appendChild(likeButton);
-  document.body.appendChild(buttonContainer);
+
 
   function updateAllReviewsLikesCount(likeCount, Id, isLiked) {
     fetch(`display-reviews/`, {
