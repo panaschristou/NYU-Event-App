@@ -51,9 +51,9 @@ def get_group_chat(request):
     )
 
     for message in chat_messages:
-        print("Sender:", message.sender_ChatRoom)
-        print("Receiver Room Slug:", message.receiver_room_slug)
-        print("Timestamp:", message.timestamp)
+        # print("Sender:", message.sender_ChatRoom)
+        # print("Receiver Room Slug:", message.receiver_room_slug)
+        # print("Timestamp:", message.timestamp)
 
     return render(
         request,
@@ -62,6 +62,7 @@ def get_group_chat(request):
             "user_id": request.user.id,
             "room": room,
             "chat_messages": chat_messages,
+            "sender_name": message.sender_ChatRoom,
             "group_chat": 1,
         },
     )
