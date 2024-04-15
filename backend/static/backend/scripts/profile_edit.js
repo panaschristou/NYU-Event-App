@@ -6,6 +6,8 @@ let avatarSave = document.getElementById("avatar-save");
 let formSubmit = $(".profile-form-submit")[0];
 const croppedImageData = document.getElementById("cropped-image-data");
 const avatarMessage = document.getElementById("avatar-message");
+const avatarError = document.getElementById("avatar-error");
+const MB = 1048576;
 
 $(".delete_account")[0].addEventListener("click", () => {
   fetch("/user/delete-account", {
@@ -39,6 +41,9 @@ const switchOffCropperUI = () => {
 avatarInput.addEventListener("change", () => {
   const imgFile = avatarInput.files[0];
   const imgUrl = URL.createObjectURL(imgFile);
+  const fileName = avatarInput.value.replace("C:\\fakepath\\", ""); // This fake path should be the same across OSes
+
+  avatarError.innerHTML = "";
 
   // switch on cropper UI
   imageBox.innerHTML = `<img id="image-cropper" class="hidden" src=${imgUrl} />`;
@@ -56,18 +61,25 @@ avatarInput.addEventListener("change", () => {
   avatarClear.addEventListener("click", (e) => {
     switchOffCropperUI();
     savedCropper = null;
-    avatarMessage.classList.add("hidden");
+    avatarMessage.innerHTML = "";
   });
 
   avatarSave = removeListeners(avatarSave);
   avatarSave.addEventListener("click", (e) => {
-    switchOffCropperUI();
-    savedCropper = cropper;
-    avatarMessage.classList.remove("hidden");
+    cropper.getCroppedCanvas().toBlob((blob) => {
+      if (blob.size >= MB) {
+        avatarError.innerHTML = "Images of more than 1 MB are not supported.";
+        return;
+      }
+      switchOffCropperUI();
+      savedCropper = cropper;
+      avatarMessage.innerHTML = fileName + " has been loaded";
+    });
   });
 
   formSubmit = removeListeners(formSubmit);
   formSubmit.addEventListener("click", (e) => {
+    if (!savedCropper) return;
     savedCropper.getCroppedCanvas().toBlob((blob) => {
       const fd = new FormData();
       fd.append("file", blob);
