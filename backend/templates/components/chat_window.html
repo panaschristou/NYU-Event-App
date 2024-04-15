@@ -45,7 +45,11 @@
         <img src="/media/{{ message.sender.profile.avatar}}" alt="" class="user-avatar-placeholder">
         <div class="message-content">
           <div class="message-header">
+            {% if group_chat == 1 %}
+            <span class="username">{{ message.sender_ChatRoom }}</span>
+            {% else %}
             <span class="username">{{ message.sender.username }}</span>
+            {% endif %}
             <span class="timestamp">{{ message.timestamp }}</span>
           </div>
           <p class="message-body">{{ message.message }}</p>
