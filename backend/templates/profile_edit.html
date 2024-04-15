@@ -40,11 +40,13 @@
         <div class="col-lg-8">
           <label for="avatar">Avatar: </label>
           <br />
-          <input type="file" name="avatar" accept="image/*" id="avatar-input">
+          <input type="file" name="avatar" accept="image/*" id="avatar-input" style="color:transparent;">
+          <div id="avatar-message" class="alert-success" ></div>
           <div id="image-box">
           </div>
           <button id="avatar-clear" class="btn btn-primary hidden">Clear</button>
           <button id="avatar-save" class="btn btn-primary hidden">Save</button>
+          <div class="alert-danger" id="avatar-error"></div>
         </div>
         <form class="col-lg-8 profile-form-edit" action="{% url 'profile_edit' %}" method="post" enctype="multipart/form-data">
           {% csrf_token %}
@@ -54,7 +56,7 @@
           {{ user_form.last_name|addclass:'form-control'}}
           <label for="description">Personal Description: </label>
           {{ profile_form.description|addclass:'form-control'}}
-          <div class="text-danger">
+          <div class="alert-danger">
             {{user_form.errors}}
             {{profile_form.errors}}
           </div>

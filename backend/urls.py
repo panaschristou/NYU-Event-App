@@ -124,16 +124,21 @@ urlpatterns = [
     ),
     path("chat/get_chat/", views.chat_handlers.get_chat, name="get_chat"),
     # group chat
-    path("rooms/", views.group_chat_handlers.group_chat_index, name="search_rooms"),
+    path("chat/rooms/", views.group_chat_handlers.get_group_chat, name="search_rooms2"),
+    path(
+        "chat/send_group_message/",
+        views.group_chat_handlers.send_message,
+        name="send_group_message",
+    ),
     path(
         "chat/<str:receiver_room_slug>/",
         views.group_chat_handlers.chat_with_room,
         name="chat_with_room",
     ),
     path(
-        "chat/<str:receiver_room_slug>/send_message/",
-        views.group_chat_handlers.send_message,
-        name="send_message",
+        "exit_group_chat/<int:room_id>/",
+        views.group_chat_handlers.exit_group_chat,
+        name="exit_group_chat",
     ),
     path(
         "events/<int:event_id>/display-reviews/<int:review_id>/report/",
