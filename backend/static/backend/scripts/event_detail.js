@@ -278,6 +278,11 @@ function addReviewToPage(review) {
   buttonContainer.style.justifyContent = "flex-end"; // Aligns buttons to the right
   buttonContainer.style.marginTop = "10px";
 
+  document.getElementById('close-modal-button').addEventListener('click', function() {
+    var modal = document.getElementById('report-modal');
+    modal.style.display = 'none';
+});
+
   if (currentUsername != review.user.username){
   const reportButton = document.createElement("button");
   reportButton.className = "report-button";
@@ -308,6 +313,7 @@ function addReviewToPage(review) {
       </svg>`;
   });
   buttonContainer.appendChild(reportButton);
+  
 
   function openReportModal(reviewId) {
     const reportModal = document.getElementById('report-modal');
@@ -399,73 +405,6 @@ function addReviewToPage(review) {
 
   buttonContainer.appendChild(likeButton);
 
-  // Report button
-  const reportButton = document.createElement("button");
-  reportButton.className = "report-button";
-  reportButton.innerHTML = 'Report';
-  reportButton.addEventListener("click", function() {
-    openReportModal(review.id);
-  });
-  buttonContainer.appendChild(reportButton);
-  document.body.appendChild(buttonContainer);
-
-  function openReportModal(reviewId) {
-    const reportModal = document.getElementById('report-modal');
-    const reportForm = document.getElementById('report-form');
-    reportForm.onsubmit = function (e) {
-      e.preventDefault();
-      submitReport(reviewId);
-    };
-    reportModal.style.display = 'block';
-  }
-  
-  function submitReport(reviewId) {
-    const title = document.getElementById('title').value;
-    const description = document.getElementById('description').value;
-    console.log(reviewId)
-    // Construct the body of the POST request
-    const reportData = JSON.stringify({
-      title: title,
-      description: description,
-      reviewId: reviewId  // Make sure your backend knows which review is being reported
-    });
-    console.log(reportData)
-    const url = 'display-reviews/${reviewId}/report/';  // Make sure this matches the exact pattern expected by Django
-    console.log("URL being requested:", url);
-
-    fetch(`display-reviews/${reviewId}/report/`, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrftoken
-    },
-    body: JSON.stringify({
-        title: title,
-        description: description,
-        review_id : reviewId
-    })
-})
-.then(response => {
-    if (!response.ok) {
-        console.log(response)
-        throw new Error('Network response was not ok: ' + response.statusText);
-    }
-    return response.json();
-})
-.then(data => {
-    console.log('Report submitted:', data);
-    // handle success
-})
-.catch(error => {
-    console.error('Error submitting report:', error);
-});
-  
-    // Close the modal after submitting the form
-    document.getElementById('report-modal').style.display = 'none';
-    // Optionally reset the form fields
-    document.getElementById('title').value = '';
-    document.getElementById('description').value = '';
-  }
 
   function updateAllReviewsLikesCount(likeCount, Id, isLiked) {
     fetch(`display-reviews/`, {
