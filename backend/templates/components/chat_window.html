@@ -47,7 +47,7 @@
         {% else %}
         <img src="/media/{{ message.sender.profile.avatar}}" alt="" class="user-avatar-placeholder">
         {% endif %}
-        <div class="message-content">
+        <div class="message-content" {% if message.sender_ChatRoom == request.user %}style="background-color: #dcf8c6;"{% endif %}>
           <div class="message-header">
             {% if group_chat == 1 %}
             <span class="username">{{ message.sender_ChatRoom }}</span>
