@@ -57,7 +57,7 @@ def get_group_chat(request):
             "user_id": request.user.id,
             "room": room,
             "chat_messages": chat_messages,
-            "sender_name": message.sender_ChatRoom,
+            # "sender_name": message.sender_ChatRoom,
             "group_chat": 1,
         },
     )
