@@ -38,15 +38,11 @@
         <div id="recent-searches-dropdown" class="recent-searches-dropdown">
           <!-- Recent searches will be appended here -->
        </div>
-        <a href="{% url 'search_history' %}">
-          <button class="btn btn-outline-dark" type="button">Search History</button>
-      </a>
     </form>
   </div>
 
 
   {% if search_type == 'Shows' %}
-
   <div class="container mt-3 mb-5">
     <form method="get">
       <input type="hidden" name="search_events" value="{{ request.GET.search_events }}"/>

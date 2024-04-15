@@ -1,5 +1,6 @@
 # views.py
 import re
+from datetime import timezone
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from backend.models import Chat
@@ -77,7 +78,6 @@ def send_message(request):
     chat_message = Chat.objects.create(
         sender=sender, receiver=receiver, message=message
     )
-
     # Trigger a Pusher event
     channel_name = get_chat_channel_name(request.user.id, receiver_id)
     pusher_client.trigger(
@@ -88,6 +88,21 @@ def send_message(request):
             "sender_id": request.user.id,
             "sender_name": request.user.username,  # Add the sender's username
             "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
+            "avatar_url": request.user.profile.avatar.url
+            if request.user.profile.avatar
+            else None,
+        },
+    )
+    # Trigger a notification event to the receiver's notification channel
+    notification_channel_name = f"private-notifications-{receiver_id}"
+    pusher_client.trigger(
+        notification_channel_name,
+        "new-message-notification",
+        {
+            "sender_id": request.user.id,
+            "sender_name": request.user.username,
+            "message": message,
+            "timestamp": chat_message.timestamp.strftime("%b %d, %Y, %I:%M %p"),
         },
     )
     return JsonResponse({"status": "Message sent successfully."})

@@ -9,7 +9,7 @@
   <div class="chat-sidebar">
     {% for user_id, user in users_with_data.items %}
     <a>
-    <div onclick="loadChatWindow('{{ user_id }}');" class="chat-user-link">
+      <div class="chat-user-link" data-user-id="{{ user_id }}">
       <!-- <div class="user-avatar-placeholder"></div> -->
       <img src="/media/{{ user.profile.avatar }}" alt="" class="user-avatar-placeholder">
       <div class="user-name">{{ user.username }}</div>
@@ -40,9 +40,17 @@
 
 <script>
 const CURRENT_USER_ID = '{{ current_user_id }}'; 
+var oldChannelName = null;
 var pusher = new Pusher('e44f77643020ff731b4f', {
       cluster: 'mt1'
     });    
+
+var notificationChannel = pusher.subscribe('private-notifications-' + CURRENT_USER_ID);
+notificationChannel.bind('new-message-notification', function(data) {
+  if (data.sender_id !== CURRENT_USER_ID) {
+    addNotificationIcon(data.sender_id);
+  }
+});
 
 // Add this inside a script tag in chat_index.html
 function loadChatWindow(userId) {
@@ -51,6 +59,7 @@ function loadChatWindow(userId) {
     type: 'GET',
     data: { 'user_id': userId },
     success: function(response) {
+      clearChatWindow(); // Clear the chat window before loading new messages
       $('#chat-window').html(response); // Update the chat area with the new HTML
       bindPusherEvents(userId); // Call a function to re-bind Pusher events as needed
       // Reinitialize the chat form to attach the AJAX submit event handler
@@ -60,18 +69,19 @@ function loadChatWindow(userId) {
       console.error("Error fetching chat: ", error);
     }
   });
+  clearNotificationIcon(userId);
 }
 
 function bindPusherEvents(receiverId) {
-  // Unbind any previous bindings to avoid duplicates
-  pusher.unbind_all();
-
+  // pusher.unbind_all();
+  pusher.unsubscribe(oldChannelName);
   // Bind to a 'new-message' event within the chat channel
   var channelName = getChatChannelName(CURRENT_USER_ID, receiverId); 
+  oldChannelName = channelName;
   var channel = pusher.subscribe(channelName);
   channel.bind('new-message', function(data) {
     addMessageToChat(data);
-      });
+  });
 }
 
 function addMessageToChat(data) {
@@ -84,7 +94,7 @@ function addMessageToChat(data) {
     // Create the message element
     var messageElement = $(`
         <div class="message ${messageClass}">
-            <img src="/media/profile_images/${data.sender_name}.png" alt="" class="avatar">
+            <img src="${data.avatar_url}" alt="" class="avatar">
             <div class="message-content">
                 <div class="message-header">
                     <span class="username">${username}</span>
@@ -104,7 +114,7 @@ function addMessageToChat(data) {
 
 function getChatChannelName(userId1, userId2) {
     return `private-chat-${Math.min(userId1, userId2)}-${Math.max(userId1, userId2)}`;
-  }
+}
 
 function setupChatForm(receiverId) {
     $("#sendBtn").on('click', function(e) {
@@ -153,6 +163,51 @@ function loadChatWindowFromUrl() {
 $(document).ready(function() {
     loadChatWindowFromUrl();
 });
+
+function addNotificationIcon(senderId) {
+    console.log("Adding notification icon for user: ", senderId); // Check the senderId
+    // var userSidebarEntry = document.querySelector('[data-user-id="' + senderId + '"]');
+    var userSidebarEntry = document.querySelector(`[data-user-id="${senderId}"]`)
+    console.log("Selected user sidebar entry: ", userSidebarEntry); // Check what element is being selected
+
+    if (userSidebarEntry) {
+        userSidebarEntry.classList.add('has-new-message');
+    } else {
+        console.error("No sidebar entry found for user ID: ", senderId);
+    }
+}
+
+
+
+function clearNotificationIcon(senderId) {
+  var userSidebarEntry = document.querySelector('[data-user-id="' + senderId + '"]');
+  if (userSidebarEntry) {
+    // Clear the notification icon
+    userSidebarEntry.classList.remove('has-new-message');
+  }
+}
+
+
+document.querySelectorAll('.chat-user-link').forEach(function(userLink) {
+    // Remove the event listener to avoid duplicates
+    userLink.removeEventListener('click', handleUserLinkClick);
+    // Add the event listener
+    userLink.addEventListener('click', handleUserLinkClick);
+});
+
+function handleUserLinkClick() {
+    var userId = this.dataset.userId;
+    clearNotificationIcon(userId);
+    // Now load the chat window for this user
+    loadChatWindow(userId);
+}
+
+
+
+function clearChatWindow() {
+    $('#chat-window').empty(); // Clear the chat window contents
+}
+
 
 
 // ******************************************************************************************************

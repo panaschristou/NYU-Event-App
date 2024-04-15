@@ -1,5 +1,5 @@
 branch-defaults:
-  fixiing-deployment-error:
+  develop:
     environment: dev-env
     group_suffix: null
 global:

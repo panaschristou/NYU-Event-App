@@ -1,3 +1,13 @@
+#image-cropper {
+  display: block;
+  max-width: 100%;
+}
+
+#image-box {
+  width: 350px;
+  margin-bottom: 10px;
+}
+
 .user-avatar {
   width: 90px;
   border-radius: 50%;

@@ -33,7 +33,7 @@ body {
   }
 
   .btn-link {
-    color: #000000;
+    color: #ffffff;
     background-color: transparent;
     text-decoration: underline;
     padding: .375rem .75rem;
@@ -45,7 +45,7 @@ body {
   }
   
   .btn-link:hover {
-    color: #ffffff; 
+    color: #000000; 
     text-decoration: none; 
     line-height: 1.5;
   }

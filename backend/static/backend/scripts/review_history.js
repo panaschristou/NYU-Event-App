@@ -18,19 +18,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
   clearHistoryButton.addEventListener("click", function() { 
     modal.style.display = 'block';
+    
+    // Clear existing modal content first if necessary
+    modal.innerHTML = '';
+
+    // Create and append the modal content dynamically
+    const modalContent = document.createElement("div");
+    modalContent.className = "modal-content";
+    modal.appendChild(modalContent);
+
+    const modalHeader = document.createElement("div");
+    modalHeader.className = "modal-header";
+    modalHeader.innerHTML = '<h5 class="modal-title">Confirm Delete</h5>';
+    modalContent.appendChild(modalHeader);
+
+    const modalBody = document.createElement("div");
+    modalBody.className = "modal-body";
+    modalBody.innerText = "Are you sure you want to delete all your review history?";
+    modalContent.appendChild(modalBody);
+
+    const modalFooter = document.createElement("div");
+    modalFooter.className = "modal-footer";
+    modalContent.appendChild(modalFooter);
+
+    const closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.className = "btn btn-secondary";
+    closeButton.innerText = "Cancel";
     closeButton.addEventListener("click", function () {
-      modal.style.display = "none";
+        modal.style.display = "none";
     });
-  
-    cancelDeleteButton.addEventListener('click', function() {
-      modal.style.display = 'none';
-    });
+    modalFooter.appendChild(closeButton);
+
+    const confirmDeleteButton = document.createElement("button");
+    confirmDeleteButton.type = "button";
+    confirmDeleteButton.className = "btn btn-danger";
+    confirmDeleteButton.innerText = "Yes, Delete All";
     confirmDeleteButton.addEventListener('click', function() {
       reviews.forEach(review => {
         deletereview(review.id);
       });
       modal.style.display = 'none';
     });
+    modalFooter.appendChild(confirmDeleteButton);
   });
 
 });
@@ -50,15 +80,11 @@ function showTemporaryMessage(message, messageType) {
 function addReviewToPage(review) {
   const reviewBox = document.createElement('div');
   reviewBox.className = 'review-box';
-  const avatarWrapper = document.createElement('div');
-  avatarWrapper.className = 'avatar-wrapper';
   
   const event = document.createElement('h5');
   event.className = 'review-event';
   event.textContent = review.event.title;
   reviewBox.appendChild(event);
-
-  reviewBox.appendChild(avatarWrapper);
 
   const content = document.createElement('div');
   content.className = 'review-content';
@@ -102,25 +128,53 @@ function addReviewToPage(review) {
   const closeButton = document.getElementById("close-m");
   let index;
 
-  deleteButton.addEventListener('click', function() {
-    index=review.id;
-    modal.style.display = 'block';
+  deleteButton.addEventListener("click", function () {
+    index = review.id;
+    modal.style.display = "block";
+    
+    // Clear existing modal content first if necessary
+    modal.innerHTML = '';
+  
+    // Create and append the modal content dynamically
+    const modalContent = document.createElement("div");
+    modalContent.className = "modal-content";
+    modal.appendChild(modalContent);
+  
+    const modalHeader = document.createElement("div");
+    modalHeader.className = "modal-header";
+    modalHeader.innerHTML = '<h5 class="modal-title">Confirm Delete</h5>';
+    modalContent.appendChild(modalHeader);
+  
+    const modalBody = document.createElement("div");
+    modalBody.className = "modal-body";
+    modalBody.innerText = "Are you sure you want to delete your review?";
+    modalContent.appendChild(modalBody);
+  
+    const modalFooter = document.createElement("div");
+    modalFooter.className = "modal-footer";
+    modalContent.appendChild(modalFooter);
+  
+    const closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.className = "btn btn-secondary";
+    closeButton.innerText = "Close";
+    closeButton.addEventListener("click", function () {
+      index = null;
+      modal.style.display = "none";
+    });
+    modalFooter.appendChild(closeButton);
+  
+    const confirmDeleteButton = document.createElement("button");
+    confirmDeleteButton.type = "button";
+    confirmDeleteButton.className = "btn btn-danger delete_account";
+    confirmDeleteButton.innerText = "Yes";
+    confirmDeleteButton.addEventListener("click", function () {
+      deletereview(index);
+      modal.style.display = "none";
+    });
+    modalFooter.appendChild(confirmDeleteButton);
   });
-
-  closeButton.addEventListener("click", function () {
-    index=null;
-    modal.style.display = "none";
-  });
-
-  cancelDeleteButton.addEventListener('click', function() {
-    index=null;
-    modal.style.display = 'none';
-  });
-  confirmDeleteButton.addEventListener('click', function() {
-    deletereview(index);
-    modal.style.display = 'none';
-  });
-
+  
   buttonContainer.appendChild(deleteButton);
 
   reviewBox.appendChild(buttonContainer);
