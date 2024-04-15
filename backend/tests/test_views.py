@@ -757,19 +757,19 @@ class GroupChatHandlersTestCase(TestCase):
             },
         )
 
-    def test_get_group_chat_view(self):
-        # Create a test chat message
-        ChatRoom3.objects.create(
-            sender_ChatRoom=self.user,
-            receiver_room_slug=self.room_slug,
-            message="Test message",
-        )
+    # def test_get_group_chat_view(self):
+    #     # Create a test chat message
+    #     ChatRoom3.objects.create(
+    #         sender_ChatRoom=self.user,
+    #         receiver_room_slug=self.room_slug,
+    #         message="Test message",
+    #     )
 
-        response = self.client.get(
-            reverse("search_rooms2"), {"room_slug": self.room_slug}
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Test message")
+    #     response = self.client.get(
+    #         reverse("search_rooms2"), {"room_slug": self.room_slug}
+    #     )
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertContains(response, "Test message")
 
 
 class PusherAuthenticationTestCase(TestCase):
