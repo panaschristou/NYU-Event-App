@@ -231,6 +231,7 @@ function loadReviews(eventId) {
 }
 
 function addReviewToPage(review) {
+  console.log(review);
   const reviewBox = document.createElement("div");
   reviewBox.className = "review-box";
   const avatarWrapper = document.createElement("div");
@@ -457,6 +458,7 @@ function addReviewToPage(review) {
         }
           })
           .catch((error) => {
+       
             console.error("Error:", error);
           });
       })
@@ -758,6 +760,7 @@ function addReviewToPage(review) {
             credentials: "same-origin",
           })
             .then((response) => {
+              console.log(review);
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
               }
@@ -997,19 +1000,19 @@ sortButton.addEventListener('click', function() {
   if (this.textContent === "Sort by time") {
     this.textContent = "Sort by likes";
     re.sort(function(a, b) {
-     return new Date(a.timestamp) - new Date(b.timestamp);
-    });
-    re.forEach((review) => {
-      addReviewToPage(review);
+      return a.likes_count - b.likes_count;
   });
+  re.forEach((review) => {
+    addReviewToPage(review);
+});
 } else {
     this.textContent = "Sort by time";
-    re.sort(function(a, b) {
-        return a.likes_count - b.likes_count;
-    });
-    re.forEach((review) => {
-      addReviewToPage(review);
-  });
+  re.sort(function(a, b) {
+    return new Date(a.timestamp) - new Date(b.timestamp);
+   });
+   re.forEach((review) => {
+     addReviewToPage(review);
+ });
 }
 });
 

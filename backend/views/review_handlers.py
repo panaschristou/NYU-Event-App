@@ -135,6 +135,10 @@ def get_reviews_for_event(request, event_id):
 def like_review(request, event_id, review_id):
     review = get_object_or_404(Review, pk=review_id)
     user = request.user
+    if review.liked_by.filter(pk=user.pk).exists():
+        return JsonResponse(
+            {"error": "You have already liked this review."}, status=400
+        )
     review.liked_by.add(user)
     review.likes_count += 1
     review.save()
@@ -146,6 +150,8 @@ def like_review(request, event_id, review_id):
 def unlike_review(request, event_id, review_id):
     review = get_object_or_404(Review, pk=review_id)
     user = request.user
+    if not review.liked_by.filter(pk=user.pk).exists():
+        return JsonResponse({"error": "You did not like this review."}, status=400)
     review.liked_by.remove(user)
     review.likes_count = max(review.likes_count - 1, 0)
     review.save()
@@ -289,6 +295,11 @@ def like_reply(request, event_id, review_id, reply_id):
     replies = ReplyToReview.objects.filter(review__id=review_id)
     reply = get_object_or_404(replies, pk=reply_id)
     user = request.user
+    if reply.liked_by.filter(pk=user.pk).exists():
+        return JsonResponse(
+            {"error": "You have already liked this review."}, status=400
+        )
+
     reply.liked_by.add(user)
     reply.likes_count += 1
     reply.save()
@@ -301,6 +312,9 @@ def unlike_reply(request, event_id, review_id, reply_id):
     replies = ReplyToReview.objects.filter(review__id=review_id)
     reply = get_object_or_404(replies, pk=reply_id)
     user = request.user
+    if not reply.liked_by.filter(pk=user.pk).exists():
+        return JsonResponse({"error": "You did not like this review."}, status=400)
+
     reply.liked_by.remove(user)
     reply.likes_count = max(reply.likes_count - 1, 0)
     reply.save()
