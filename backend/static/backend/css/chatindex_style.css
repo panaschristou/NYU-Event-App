@@ -18,6 +18,7 @@
   color: black;
   text-decoration: none;
   position: relative;
+  cursor: pointer; /* This line changes the cursor to a hand icon */
 }
 
 .chat-user {
