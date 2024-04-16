@@ -30,11 +30,7 @@
     {% include "components/navbar.html" %}
     <div class="user-detail py-5">
       <div class="container container-transparent profile-form">
-        {% if user.profile.avatar %}
-        <img class="user-avatar" src="/media/{{ user.profile.avatar }}"/>
-        {% else %}
-        <img class="user-avatar" src="{% static 'backend/img/generic_user_image.png' %}"/>
-        {% endif %}
+        {% include "components/avatar.html" with avatar=user.profile.avatar %}
         <h1>{{ user.username }}</h1>
         <p>Email: {{ user.email }}</p>
         <div class="col-lg-8">

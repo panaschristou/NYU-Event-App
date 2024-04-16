@@ -1,0 +1,13 @@
+{% comment %} 
+  Usage Example:
+  {% include "components/avatar.html" with avatar=user.profile.avatar classNames="class1 class2"%}
+{% endcomment %}
+{% load static %}
+{% if avatar %}
+<img class="user-avatar {{classNames}}" 
+  src="/media/{{ avatar }}"  
+  onerror="this.onerror=null; this.src='{% static 'backend/img/generic_user_image.png' %}'"
+  alt="profile picture"/>
+{% else %}
+<img class="user-avatar {{classNames}}" src="{% static 'backend/img/generic_user_image.png' %}" alt="profile picture"/>
+{% endif %}
