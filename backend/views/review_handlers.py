@@ -85,7 +85,7 @@ def get_reviews_for_event(request, event_id):
         page_number = request.GET.get("page", 1)
         reviews_per_page = 10  # Set how many reviews you want per page
 
-        reviews = Review.objects.filter(event__id=event_id).order_by("-timestamp")
+        reviews = Review.objects.filter(event__id=event_id).order_by("timestamp")
 
         paginator = Paginator(reviews, reviews_per_page)
         page_obj = paginator.get_page(page_number)
