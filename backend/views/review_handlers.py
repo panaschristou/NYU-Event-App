@@ -37,9 +37,7 @@ def post_review(request, event_id):
     #         }
     #     )
     review = Review(event=event, user=user, rating=rating, review_text=review_text)
-
     review.likes_count = 0
-
     review.save()
 
     liked_by_users = review.liked_by.all()

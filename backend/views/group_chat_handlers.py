@@ -84,9 +84,9 @@ def send_message(request, receiver_room_slug=None):
             "sender_id": request.user.id,
             "sender_name": request.user.username,
             "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
-            "avatar_url": request.user.profile.avatar.url
-            if request.user.profile.avatar
-            else None,
+            "avatar_url": (
+                request.user.profile.avatar.url if request.user.profile.avatar else None
+            ),
         },
     )
     return JsonResponse({"status": "Message sent successfully."})
