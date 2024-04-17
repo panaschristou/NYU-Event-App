@@ -183,6 +183,7 @@ document.querySelectorAll('.chat-user-link').forEach(function(userLink) {
     userLink.removeEventListener('click', handleUserLinkClick);
     // Add the event listener
     userLink.addEventListener('click', handleUserLinkClick);
+
 });
 
 function handleUserLinkClick() {
@@ -190,6 +191,9 @@ function handleUserLinkClick() {
     clearNotificationIcon(userId);
     // Now load the chat window for this user
     loadChatWindow(userId);
+    // Remove active class from all user links and add it to the clicked one
+    removeActiveClassFromAllUserLinks();
+    this.classList.add('chat-user-active');
 }
 
 
@@ -198,6 +202,10 @@ function clearChatWindow() {
     $('#chat-window').empty(); // Clear the chat window contents
 }
 
-
+function removeActiveClassFromAllUserLinks() {
+  document.querySelectorAll('.chat-user-link').forEach(function(userLink) {
+    userLink.classList.remove('chat-user-active');
+  });
+}
 
 </script>
