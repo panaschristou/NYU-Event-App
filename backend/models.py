@@ -2,6 +2,7 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
+
 from backend.storage import OverwriteStorage
 
 
@@ -30,9 +31,9 @@ class Event(models.Model):
     open_date = models.DateField(default=datetime.date.today)
     close_date = models.DateField(null=True, blank=True)
     location = models.CharField(max_length=1000)
-    external_link = models.URLField(blank=True)
     image_url = models.URLField(blank=True)
     avg_rating = models.FloatField(null=True, blank=True)
+    external_links = models.JSONField(blank=True, default=list)
 
     def __str__(self):
         return self.title
