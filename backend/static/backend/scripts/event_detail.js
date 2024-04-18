@@ -3,6 +3,7 @@ const notInterestBtn = document.getElementById("remove-interest");
 const csrftoken = $('meta[name="csrf-token"]').attr("content");
 
 
+
 let re = []; 
 
 interestBtn.addEventListener("click", function () {
@@ -854,7 +855,7 @@ function addReviewToPage(review) {
 
     buttonContainer.appendChild(replyLikeButton);
 
-    if (currentUsername === reply.from_user.username) {
+    if (currentUsername === reply.from_user.username || user.isSuperuser) {
       const replyDeleteButton = document.createElement('button');
       replyDeleteButton.className = 'reply-delete-button';
       replyDeleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
@@ -943,7 +944,7 @@ function addReviewToPage(review) {
   buttonContainer.appendChild(replyButton);
 
   //Delete functionality
-  if (currentUsername === review.user.username) {
+  if (currentUsername === review.user.username || user.isSuperuser) {
     const deleteButton = document.createElement("button");
     deleteButton.className = "delete-button";
     deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">

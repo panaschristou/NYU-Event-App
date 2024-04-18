@@ -29,6 +29,13 @@
     {% endif %}
   </head>
   <body>
+    <script type="text/javascript">
+      var user = {
+          username: "{{ request.user.username }}",
+          isSuperuser: {{ request.user.is_superuser|yesno:"true,false" }}
+      };
+  </script>
+
     {% include "components/navbar.html" %}
 
     <div class="event-detail py-5">
