@@ -19,6 +19,8 @@ class Command(BaseCommand):
             events_data = json.load(file)
             for event_data in events_data:
                 try:
+                    if Event.objects.filter(title=event_data["title"]).exists():
+                        continue
                     # Check if close_date is neither None nor an empty string
                     close_date = None
                     if event_data["close_date"] and event_data["close_date"].strip():
