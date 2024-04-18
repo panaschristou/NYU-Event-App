@@ -112,7 +112,8 @@ class EventModelTest(TestCase):
             "St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
         )
         self.assertEqual(
-            external_links=[
+            event.external_links,
+            [
                 {"text": "Official Website", "href": "https://example.com"},
                 {"text": "Tickets", "href": "https://example.com/tickets"},
             ],
