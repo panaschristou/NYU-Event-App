@@ -140,4 +140,9 @@ urlpatterns = [
         views.group_chat_handlers.exit_group_chat,
         name="exit_group_chat",
     ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/report/",
+        views.review_handlers.report_review,
+        name="report_review",
+    ),
 ]
