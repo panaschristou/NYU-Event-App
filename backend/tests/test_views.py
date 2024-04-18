@@ -59,7 +59,10 @@ class EventViewsTestCase(TestCase):
             open_date=datetime.date(2022, 1, 1),
             close_date=datetime.date(2022, 1, 31),
             location="Past Location",
-            external_link="http://www.example.com/past",
+            external_links = [
+                {"text": "Official Website", "href": "https://example.com/past"},
+                {"text": "Tickets", "href": "https://example.com/tickets/past"}
+            ],
             image_url="https://www.example.com/image_past.jpg",
             avg_rating=0,
         )
@@ -72,7 +75,10 @@ class EventViewsTestCase(TestCase):
             open_date=today - datetime.timedelta(days=10),
             close_date=today + datetime.timedelta(days=10),
             location="Current Location",
-            external_link="http://www.example.com/current",
+            external_links = [
+                {"text": "Official Website", "href": "https://example.com/current"},
+                {"text": "Tickets", "href": "https://example.com/tickets/current"}
+            ],
             image_url="https://www.example.com/image_current.jpg",
             avg_rating=0,
         )
@@ -84,7 +90,10 @@ class EventViewsTestCase(TestCase):
             open_date=datetime.date.today() + datetime.timedelta(days=30),
             close_date=datetime.date.today() + datetime.timedelta(days=60),
             location="Upcoming Location",
-            external_link="http://www.example.com/upcoming",
+            external_links = [
+                {"text": "Official Website", "href": "https://example.com/upcoming"},
+                {"text": "Tickets", "href": "https://example.com/tickets/upcoming"}
+            ],
             image_url="https://www.example.com/image_upcoming.jpg",
             avg_rating=0,
         )

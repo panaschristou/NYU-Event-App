@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('backend', '0018_rename_external_links_event_external_link'),
+        ("backend", "0018_rename_external_links_event_external_link"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='event',
-            name='external_link',
+            model_name="event",
+            name="external_link",
             field=models.URLField(blank=True),
         ),
     ]

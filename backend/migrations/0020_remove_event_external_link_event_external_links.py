@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('backend', '0019_alter_event_external_link'),
+        ("backend", "0019_alter_event_external_link"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='event',
-            name='external_link',
+            model_name="event",
+            name="external_link",
         ),
         migrations.AddField(
-            model_name='event',
-            name='external_links',
+            model_name="event",
+            name="external_links",
             field=models.JSONField(blank=True, default=list),
         ),
     ]
