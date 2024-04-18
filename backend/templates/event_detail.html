@@ -178,11 +178,13 @@
               <div class="external-links">
                 <strong>External Links:</strong>
                 {% for link in event.external_links %}
-                  <p><a href="{{ link.href }}" target="_blank">{{ link.text }}</a></p>
+                  {% if link.href %}
+                    <p><a href="{{ link.href }}" target="_blank">{{ link.text }}</a></p>
+                  {% endif %}
                 {% empty %}
                   <p>No external link available.</p>
                 {% endfor %}
-              </div>
+              </div>              
             </div>
           </div>
         </div>
