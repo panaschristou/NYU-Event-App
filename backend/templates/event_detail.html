@@ -172,10 +172,19 @@
               <p><strong>Description:</strong> {{ event.description }}</p>
               <p>
                 <strong>Average Rating:</strong>
-                <span id="average-rating"
-                  >{{ event.avg_rating| default:"Not rated yet" }}</span
-                >
+                <span id="average-rating">{{ event.avg_rating|default:"Not rated yet" }}</span>
               </p>
+              <!-- External Links -->
+              <div class="external-links">
+                <strong>External Links:</strong>
+                {% for link in event.external_links %}
+                  {% if link.href %}
+                    <p><a href="{{ link.href }}" target="_blank">{{ link.text }}</a></p>
+                  {% endif %}
+                {% empty %}
+                  <p>No external link available.</p>
+                {% endfor %}
+              </div>              
             </div>
           </div>
         </div>

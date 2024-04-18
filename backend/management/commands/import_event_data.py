@@ -43,11 +43,7 @@ class Command(BaseCommand):
                         event_data["description"] if "description" in event_data else ""
                     )
 
-                    external_link = (
-                        event_data.get("external_links")[0].get("href")
-                        if event_data.get("external_links")
-                        else ""
-                    )
+                    external_links = event_data.get("external_links", [])
 
                     event = Event.objects.create(
                         title=event_data["title"],
@@ -56,7 +52,7 @@ class Command(BaseCommand):
                         open_date=parser.parse(event_data["open_date"]).date(),
                         close_date=close_date,
                         location=location,
-                        external_link=external_link,
+                        external_links=external_links,
                         image_url=event_data["image_url"],
                         avg_rating=avg_rating,
                     )
