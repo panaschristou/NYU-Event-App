@@ -48,6 +48,8 @@ class Review(models.Model):
     likes_count = models.IntegerField(default=0)
     liked_by = models.ManyToManyField(User, related_name="liked_reviews", blank=True)
     reply_count = models.IntegerField(default=0)
+    is_reported = models.BooleanField(default=False)
+    report_timeout = models.DateTimeField(null=True, blank=True)
 
 
 class ReplyToReview(models.Model):
@@ -62,6 +64,8 @@ class ReplyToReview(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     likes_count = models.IntegerField(default=0)
     liked_by = models.ManyToManyField(User, related_name="reply_likes", blank=True)
+    is_reported = models.BooleanField(default=False)
+    report_timeout = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.reply_text

@@ -11,6 +11,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 
 from backend.huggingface import censorbot
+from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -345,6 +346,18 @@ def report_review(request, review_id, event_id=None):
             reported_by=request.user,
             reported_user=review.user,
         )
+        review.is_reported = True
+
+        now = datetime.now()
+        print(now)
+
+        # Add a day to the current date and time
+        timeout = now + timedelta(days=1)
+        print(timeout)
+        # Convert the datetime object to a timestamp
+        review.report_timeout = timeout
+        print(review.report_timeout)
+
         return JsonResponse(
             {"success": True, "message": "Report submitted successfully."}
         )
@@ -376,6 +389,16 @@ def reply_report(request, review_id,reply_id, event_id=None):
             reported_by=request.user,
             reported_user=review.user,
         )
+        reply.is_reported = True
+        # Get the current date and time
+        now = datetime.now()
+
+        # Add a day to the current date and time
+        timeout = now + timedelta(days=1)
+
+        # Convert the datetime object to a timestamp
+        reply.report_timeout = timeout.timestamp()
+
         return JsonResponse(
             {"success": True, "message": "Report submitted successfully."}
         )
