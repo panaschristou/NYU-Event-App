@@ -145,4 +145,9 @@ urlpatterns = [
         views.review_handlers.report_review,
         name="report_review",
     ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/display-replies/<int:reply_id>/report/",
+        views.review_handlers.reply_report,
+        name="report_reply",
+    ),
 ]

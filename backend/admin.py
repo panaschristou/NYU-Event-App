@@ -12,6 +12,7 @@ from .models import (
     Room3,
     user_rooms,
     Report,
+    ReportReply,
 )
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
@@ -229,7 +230,12 @@ class ReportAdmin(admin.ModelAdmin):
     search_fields = ("title", "description")
     list_filter = ("created_at", "reported_by")
 
+class ReportReplyAdmin(admin.ModelAdmin):
+    list_display = ("title", "reported_by", "created_at", "review","reply")
+    search_fields = ("title", "description")
+    list_filter = ("created_at", "reported_by")
 
+admin.site.register(ReportReply, ReportReplyAdmin)
 admin.site.register(Report, ReportAdmin)
 admin.site.register(BannedUser, BanneddUserAdmin)
 admin.site.register(SuspendedUser, SuspendedUserAdmin)
