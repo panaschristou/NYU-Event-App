@@ -18,7 +18,7 @@
   color: black;
   text-decoration: none;
   position: relative;
-  cursor: pointer;
+  cursor: pointer; /* This line changes the cursor to a hand icon */
 }
 
 .chat-user {
@@ -156,4 +156,8 @@
   top: 50%;
   right: 10px; 
   transform: translate(-50%, -50%); /* this will center it vertically */
+}
+
+.chat-user-active {
+  background-color: #d2cad5; 
 }
