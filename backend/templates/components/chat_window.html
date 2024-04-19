@@ -43,9 +43,9 @@
     {% for message in chat_messages %}
       <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
         {% if group_chat == 1 %}
-        <img src="{{ message.sender_ChatRoom.profile.avatar.url }}" alt="" class="user-avatar-placeholder">
+        {% include "components/avatar.html" with avatar=message.sender_ChatRoom.profile.avatar classNames="user-avatar-placeholder" %}
         {% else %}
-        <img src="/media/{{ message.sender.profile.avatar}}" alt="" class="user-avatar-placeholder">
+        {% include "components/avatar.html" with avatar=message.sender.profile.avatar classNames="user-avatar-placeholder" %}
         {% endif %}
         <div class="message-content" {% if message.sender_ChatRoom == request.user %}style="background-color: #dcf8c6;"{% endif %}>
           <div class="message-header">

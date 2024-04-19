@@ -10,8 +10,7 @@
     {% for user_id, user in users_with_data.items %}
     <a>
       <div class="chat-user-link" data-user-id="{{ user_id }}">
-      <!-- <div class="user-avatar-placeholder"></div> -->
-      <img src="/media/{{ user.profile.avatar }}" alt="" class="user-avatar-placeholder">
+      {% include "components/avatar.html" with avatar=user.profile.avatar classNames="user-avatar-placeholder"%}
       <div class="user-name">{{ user.username }}</div>
     </div>
     </a>
@@ -41,6 +40,7 @@
 <script>
 const CURRENT_USER_ID = '{{ current_user_id }}'; 
 var oldChannelName = null;
+var oldGroupChannelName = null;
 var pusher = new Pusher('e44f77643020ff731b4f', {
       cluster: 'mt1'
     });    
@@ -90,11 +90,18 @@ function addMessageToChat(data) {
     const timestamp = data.timestamp; 
     const isMe = username === '{{ request.user.username }}';
     const messageClass = isMe ? 'sent' : 'received';
-
+    
+    const defaultImagePath = '{% static "backend/img/generic_user_image.png" %}';
+    const avatarHTML = data.avatar_url
+      ? `<img class="user-avatar avatar"" 
+      src=${data.avatar_url}  
+      onerror="this.onerror=null; this.src=${defaultImagePath}"
+      alt="profile picture"/>`
+      : `<img class="user-avatar avatar" src=${defaultImagePath} alt="profile picture"/>`;    
     // Create the message element
     var messageElement = $(`
         <div class="message ${messageClass}">
-            <img src="${data.avatar_url}" alt="" class="avatar">
+          ${avatarHTML}
             <div class="message-content">
                 <div class="message-header">
                     <span class="username">${username}</span>
@@ -267,10 +274,13 @@ function getCSRFToken_group() {
 
 function bindPusherEvents_group(receiver_room_slug) {  
   // Unbind any previous bindings to avoid duplicates
-  pusher.unbind_all();
+  // pusher.unbind_all();
+
+  pusher.unsubscribe(oldGroupChannelName);
 
   // Bind to a 'new-message' event within the chat channel
   var channelName = getGroupChatChannelName(CURRENT_USER_ID, receiver_room_slug); 
+  oldGroupChannelName = channelName
   var channel = pusher.subscribe(channelName);
 
   channel.bind('new-message', function(data) {    

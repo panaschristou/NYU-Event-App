@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from backend.models import Chat, ChatRoom3
@@ -83,10 +84,12 @@ def send_message(request, receiver_room_slug=None):
             "message": message,
             "sender_id": request.user.id,
             "sender_name": request.user.username,
-            "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
-            "avatar_url": (
-                request.user.profile.avatar.url if request.user.profile.avatar else None
+            "timestamp": (chat_message.timestamp - timedelta(hours=4)).strftime(
+                "%B %d, %Y, %I:%M %p"
             ),
+            "avatar_url": request.user.profile.avatar.url
+            if request.user.profile.avatar
+            else None,
         },
     )
     return JsonResponse({"status": "Message sent successfully."})
