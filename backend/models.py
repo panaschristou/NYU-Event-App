@@ -122,8 +122,6 @@ class SearchHistory(models.Model):
 class SuspendedUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     reason = models.TextField()
-    suspended_at = models.DateTimeField(auto_now_add=True)
-    unsuspended_at = models.DateTimeField(null=True, blank=True)
     is_suspended = models.BooleanField(default=False)
 
     def __str__(self):
@@ -138,13 +136,33 @@ class SuspendedUser(models.Model):
 class BannedUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     reason = models.TextField()
-    banned_at = models.DateTimeField(auto_now_add=True)
-    unban_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.user.username
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.user.is_active = False
+            self.user.save()
+        super().save(*args, **kwargs)
 
     def unban_user(self):
         self.user.is_active = True
         self.user.save()
         self.delete()
+
+
+class Report(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="reports")
+    reported_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reported_by"
+    )
+    reported_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reported_users"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Report {self.title} by {self.reported_by.username}"

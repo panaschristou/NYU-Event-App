@@ -10,12 +10,21 @@
     {% for user_id, user in users_with_data.items %}
     <a>
       <div class="chat-user-link" data-user-id="{{ user_id }}">
-      <!-- <div class="user-avatar-placeholder"></div> -->
-      <img src="/media/{{ user.profile.avatar }}" alt="" class="user-avatar-placeholder">
+      {% include "components/avatar.html" with avatar=user.profile.avatar classNames="user-avatar-placeholder"%}
       <div class="user-name">{{ user.username }}</div>
     </div>
     </a>
     {% endfor %}
+    {% for event_name,img_url,room_slug in event_data %}
+    <a>
+      <div onclick="loadGroupChatWindow('{{ room_slug }}');" class="chat-user-link">
+        <!-- <div class="user-avatar-placeholder"></div> -->
+        <img src="{{ img_url }}" alt="Event Image" class="event_icon">
+        <div class="user-name">{{ event_name }}</div>
+      </div>
+    </a>
+    {% endfor %}
+
   </div>
 
   <div id="chat-window">
@@ -31,9 +40,10 @@
 <script>
 const CURRENT_USER_ID = '{{ current_user_id }}'; 
 var oldChannelName = null;
+var oldGroupChannelName = null;
 var pusher = new Pusher('e44f77643020ff731b4f', {
       cluster: 'mt1'
-    });
+    });    
 
 var notificationChannel = pusher.subscribe('private-notifications-' + CURRENT_USER_ID);
 notificationChannel.bind('new-message-notification', function(data) {
@@ -83,11 +93,18 @@ function addMessageToChat(data) {
     const timestamp = data.timestamp; 
     const isMe = username === '{{ request.user.username }}';
     const messageClass = isMe ? 'sent' : 'received';
-
+    
+    const defaultImagePath = '{% static "backend/img/generic_user_image.png" %}';
+    const avatarHTML = data.avatar_url
+      ? `<img class="user-avatar avatar"" 
+      src=${data.avatar_url}  
+      onerror="this.onerror=null; this.src=${defaultImagePath}"
+      alt="profile picture"/>`
+      : `<img class="user-avatar avatar" src=${defaultImagePath} alt="profile picture"/>`;    
     // Create the message element
     var messageElement = $(`
         <div class="message ${messageClass}">
-            <img src="${data.avatar_url}" alt="" class="avatar">
+          ${avatarHTML}
             <div class="message-content">
                 <div class="message-header">
                     <span class="username">${username}</span>
@@ -210,5 +227,81 @@ function removeActiveClassFromAllUserLinks() {
     userLink.classList.remove('chat-user-active');
   });
 }
+
+// ******************************************************************************************************
+// Group chat
+function loadGroupChatWindow(room_slug) {
+  console.log('test: loadGroupChatWindow')
+  $.ajax({
+    url: 'rooms/', // URL to the Django view that returns the chat
+    type: 'GET',
+    data: { 'room_slug': room_slug },
+    success: function(response) {
+      console.log('test: loadGroupChatWindow-success')
+      $('#chat-window').html(response); // Update the chat area with the new HTML
+      bindPusherEvents_group(room_slug); // Call a function to re-bind Pusher events as needed
+      // Reinitialize the chat form to attach the AJAX submit event handler
+      setupGroupChatForm(room_slug);
+    },
+    error: function(xhr, status, error) {
+      console.error("Error fetching chat: ", error);
+    }
+  });
+}
+// receiverId
+function setupGroupChatForm(room_slug) {
+  $("#sendBtn").on('click', function(e) {
+      e.preventDefault();
+      const message = $("#message-input").val();
+
+      console.log('test: setupGroupChatForm')
+
+      $.ajax({
+          type: 'POST',
+          url: 'send_group_message/',  // The endpoint in Django app urls.py
+          data: {
+              'room_slug': room_slug,  // Set dynamically when loading the chat window
+              'message': message,
+              'csrfmiddlewaretoken': getCSRFToken_group()  // Handle CSRF token
+          },
+          success: function(response) {
+              console.log('Message sent successfully!');
+              $("#message-input").val('');  // Clear the input field
+          },
+          error: function() {
+              console.log()
+              alert('There was an error sending your message.');
+          }
+      });
+  });
+}
+
+
+function getCSRFToken_group() {
+  return document.cookie.split('; ')
+      .find(row => row.startsWith('csrftoken='))
+      .split('=')[1];
+}
+
+function bindPusherEvents_group(receiver_room_slug) {  
+  // Unbind any previous bindings to avoid duplicates
+  // pusher.unbind_all();
+
+  pusher.unsubscribe(oldGroupChannelName);
+
+  // Bind to a 'new-message' event within the chat channel
+  var channelName = getGroupChatChannelName(CURRENT_USER_ID, receiver_room_slug); 
+  oldGroupChannelName = channelName
+  var channel = pusher.subscribe(channelName);
+
+  channel.bind('new-message', function(data) {    
+    addMessageToChat(data);
+      });
+}
+
+function getGroupChatChannelName(userId, receiver_room_slug) {
+  return receiver_room_slug
+}
+
 
 </script>

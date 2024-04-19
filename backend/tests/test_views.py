@@ -1,4 +1,5 @@
-from django.test import TestCase, Client
+from django.http import HttpResponseRedirect
+from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
 from backend.models import (
     Event,
@@ -8,6 +9,10 @@ from backend.models import (
     Review,
     Chat,
     ReplyToReview,
+    Report,
+    Room3,
+    ChatRoom3,
+    user_rooms,
 )
 from django.core import mail
 from django.contrib.messages import get_messages
@@ -22,6 +27,17 @@ from unittest.mock import mock_open, patch
 from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
 from PIL import Image
+from unittest.mock import Mock
+from django.shortcuts import redirect
+
+
+from backend.views.group_chat_handlers import (
+    chat_with_room,
+    exit_group_chat,
+    get_chat_channel_name,
+    get_group_chat,
+    send_message,
+)
 
 
 class EventViewsTestCase(TestCase):
@@ -674,6 +690,92 @@ class Chat_1to1_Tests(TestCase):
         self.assertEqual(messages[0].message, "Hello!")
 
 
+class GroupChatHandlersTestCase(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.client.login(username="testuser", password="testpassword")
+        self.room_slug = "test-room"
+        # self.room_id = 1
+        self.room = Room3.objects.create(slug=self.room_slug)
+        self.user_room = user_rooms.objects.create(
+            user_detail=self.user, room_joined=self.room  # Use the created Room3 object
+        )
+        # self.user_room = user_rooms.objects.create(
+        #     user_detail=self.user, room_joined_id=self.room_id
+        # )
+
+    def test_chat_with_room_view(self):
+
+        request = self.factory.get(
+            reverse("chat_with_room", kwargs={"receiver_room_slug": self.room_slug})
+        )
+        request.user = self.user
+
+        response = chat_with_room(request, receiver_room_slug=self.room_slug)
+
+        # Assert that the view returns a redirect response
+        self.assertIsInstance(response, HttpResponseRedirect)
+
+        # Assert that the response redirects to the correct URL
+        self.assertEqual(response.url, reverse("chat_index"))
+
+    @patch(
+        "backend.views.pusher_config.pusher_client.trigger"
+    )  # Mocking pusher_client.trigger method
+    def test_send_message_view(self, mock_trigger):
+        # Prepare mock request data
+        request = self.factory.post(
+            reverse("send_message"),
+            {"room_slug": self.room_slug, "message": "Test message"},
+        )
+        request.user = self.user
+
+        # Call the view function
+        response = send_message(request)
+
+        # Assert the response status code and content
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b'{"status": "Message sent successfully."}')
+
+        # Assert that the ChatRoom3 object is created with the correct data
+        chat_message = ChatRoom3.objects.get(
+            sender_ChatRoom=self.user, receiver_room_slug=self.room_slug
+        )
+        self.assertEqual(chat_message.message, "Test message")
+
+        # Assert that pusher_client.trigger is called with the correct arguments
+        mock_trigger.assert_called_once_with(
+            get_chat_channel_name(self.user.id, self.room.slug),
+            "new-message",
+            {
+                "message": "Test message",
+                "sender_id": self.user.id,
+                "sender_name": self.user.username,
+                "timestamp": (
+                    chat_message.timestamp - datetime.timedelta(hours=4)
+                ).strftime("%B %d, %Y, %I:%M %p"),
+                "avatar_url": None,
+            },
+        )
+
+    # def test_get_group_chat_view(self):
+    #     # Create a test chat message
+    #     ChatRoom3.objects.create(
+    #         sender_ChatRoom=self.user,
+    #         receiver_room_slug=self.room_slug,
+    #         message="Test message",
+    #     )
+
+    #     response = self.client.get(
+    #         reverse("search_rooms2"), {"room_slug": self.room_slug}
+    #     )
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertContains(response, "Test message")
+
+
 class PusherAuthenticationTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="user", password="pass")
@@ -687,3 +789,67 @@ class PusherAuthenticationTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTrue("auth" in response.json())
+
+
+class ReportReviewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="user", password="testpass")
+        self.other_user = User.objects.create_user(
+            username="other_user", password="testpass"
+        )
+
+        # Create an Event object first if your Review model depends on it
+        self.event = Event.objects.create(title="Event Name")
+
+        # Now create Review, ensuring all FK constraints are satisfied
+        self.review = Review.objects.create(
+            review_text="Sample review",
+            rating=5,
+            user=self.other_user,
+            event=self.event,
+        )
+
+        self.client = Client()
+        self.client.login(username="user", password="testpass")
+        self.url = reverse(
+            "report_review",
+            kwargs={"review_id": self.review.id, "event_id": self.event.id},
+        )
+
+    def test_report_review_success(self):
+        # Data to post
+        data = {
+            "title": "Inappropriate Content",
+            "description": "This review contains inappropriate content.",
+        }
+        response = self.client.post(self.url, data, content_type="application/json")
+
+        # Check the response
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {"success": True, "message": "Report submitted successfully."},
+        )
+
+        # Check if the report was created
+        self.assertTrue(
+            Report.objects.filter(
+                title=data["title"], description=data["description"], review=self.review
+            ).exists()
+        )
+
+    def test_report_review_requires_post(self):
+        # Test GET request which should fail
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 405)  # Method Not Allowed
+
+    def test_report_review_without_login(self):
+        # Log out the current user
+        self.client.logout()
+
+        # Try to post a report without authentication
+        data = {"title": "Spam", "description": "This is spam."}
+        response = self.client.post(self.url, data, content_type="application/json")
+
+        # Check that redirection to login page occurs
+        self.assertEqual(response.status_code, 302)  # Redirects to login page

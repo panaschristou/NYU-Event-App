@@ -24,11 +24,7 @@
     <div class="container container-transparent">
       <div class="row">
         <div class="col-lg-8 mx-auto text-center">
-          {% if user.profile.avatar %}
-          <img class="user-avatar" src="/media/{{ detail_user.profile.avatar }}"/>
-          {% else %}
-          <img class="user-avatar" src="{% static 'backend/img/generic_user_image.png' %}"/>
-          {% endif %}
+          {% include "components/avatar.html" with avatar=detail_user.profile.avatar %}
           {% if user.username == detail_user.username %}
           <a class="edit-btn" href="{% url 'profile_edit' %}">Edit</a>
           {% else %}
