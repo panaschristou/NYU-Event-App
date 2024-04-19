@@ -54,6 +54,9 @@ function loadChatWindow(userId) {
       bindPusherEvents(userId); // Call a function to re-bind Pusher events as needed
       // Reinitialize the chat form to attach the AJAX submit event handler
       setupChatForm(userId);
+      // Scroll to the bottom of the chat window
+      var chatMessages = document.getElementById('chat-messages');
+      chatMessages.scrollTop = chatMessages.scrollHeight;
     },
     error: function(xhr, status, error) {
       console.error("Error fetching chat: ", error);
