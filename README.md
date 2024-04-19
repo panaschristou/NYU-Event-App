@@ -16,7 +16,11 @@ main:
 
 # How to start
 
+In windows/mac:
 `pip install -r installed_dependencies.txt`
+
+In Linux:
+`pip install -r installed_dependencies.txt --extra-index-url https://download.pytorch.org/whl/cpu`
 
 Important: Pip freeze into installed_dependencies.txt, and leave requirements.txt empty
 
@@ -25,3 +29,4 @@ Important: Pip freeze into installed_dependencies.txt, and leave requirements.tx
 dev environment:
 
 https://us-east-1.console.aws.amazon.com/elasticbeanstalk/home?region=us-east-1#/environment/dashboard?environmentId=e-hqiczmtmh5
+

@@ -59,10 +59,7 @@ class EventViewsTestCase(TestCase):
             open_date=datetime.date(2022, 1, 1),
             close_date=datetime.date(2022, 1, 31),
             location="Past Location",
-            external_links=[
-                {"text": "Official Website", "href": "https://example.com/past"},
-                {"text": "Tickets", "href": "https://example.com/tickets/past"},
-            ],
+            external_link="http://www.example.com/past",
             image_url="https://www.example.com/image_past.jpg",
             avg_rating=0,
         )
@@ -75,10 +72,7 @@ class EventViewsTestCase(TestCase):
             open_date=today - datetime.timedelta(days=10),
             close_date=today + datetime.timedelta(days=10),
             location="Current Location",
-            external_links=[
-                {"text": "Official Website", "href": "https://example.com/current"},
-                {"text": "Tickets", "href": "https://example.com/tickets/current"},
-            ],
+            external_link="http://www.example.com/current",
             image_url="https://www.example.com/image_current.jpg",
             avg_rating=0,
         )
@@ -90,10 +84,7 @@ class EventViewsTestCase(TestCase):
             open_date=datetime.date.today() + datetime.timedelta(days=30),
             close_date=datetime.date.today() + datetime.timedelta(days=60),
             location="Upcoming Location",
-            external_links=[
-                {"text": "Official Website", "href": "https://example.com/upcoming"},
-                {"text": "Tickets", "href": "https://example.com/tickets/upcoming"},
-            ],
+            external_link="http://www.example.com/upcoming",
             image_url="https://www.example.com/image_upcoming.jpg",
             avg_rating=0,
         )
@@ -763,7 +754,9 @@ class GroupChatHandlersTestCase(TestCase):
                 "message": "Test message",
                 "sender_id": self.user.id,
                 "sender_name": self.user.username,
-                "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
+                "timestamp": (
+                    chat_message.timestamp - datetime.timedelta(hours=4)
+                ).strftime("%B %d, %Y, %I:%M %p"),
                 "avatar_url": None,
             },
         )

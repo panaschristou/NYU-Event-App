@@ -58,10 +58,7 @@ class UserEventModelTest(TestCase):
             open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
-            external_links=[
-                {"text": "Official Website", "href": "https://example.com"},
-                {"text": "Tickets", "href": "https://example.com/tickets"},
-            ],
+            external_link="http://www.broadway.org/shows/details/spamalot,812",
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
             avg_rating=0,  # Assuming initial avg_rating
         )
@@ -89,10 +86,7 @@ class EventModelTest(TestCase):
             open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
-            external_links=[
-                {"text": "Official Website", "href": "https://example.com"},
-                {"text": "Tickets", "href": "https://example.com/tickets"},
-            ],
+            external_link="http://www.broadway.org/shows/details/spamalot,812",
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
             avg_rating=0,  # Assuming initial avg_rating
         )
@@ -112,11 +106,7 @@ class EventModelTest(TestCase):
             "St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
         )
         self.assertEqual(
-            event.external_links,
-            [
-                {"text": "Official Website", "href": "https://example.com"},
-                {"text": "Tickets", "href": "https://example.com/tickets"},
-            ],
+            event.external_link, "http://www.broadway.org/shows/details/spamalot,812"
         )
         self.assertEqual(
             event.image_url, "https://www.broadway.org/logos/shows/spamalot-2023.jpg"
@@ -134,10 +124,7 @@ class ReviewModelTest(TestCase):
             open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
-            external_links=[
-                {"text": "Official Website", "href": "https://example.com"},
-                {"text": "Tickets", "href": "https://example.com/tickets"},
-            ],
+            external_link="http://www.broadway.org/shows/details/spamalot,812",
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
             avg_rating=0,
         )
@@ -183,10 +170,7 @@ class ReplyToReviewModelTest(TestCase):
             open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
-            external_links=[
-                {"text": "Official Website", "href": "https://example.com"},
-                {"text": "Tickets", "href": "https://example.com/tickets"},
-            ],
+            external_link="http://www.broadway.org/shows/details/spamalot,812",
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
             avg_rating=0,
         )
