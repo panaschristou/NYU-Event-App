@@ -763,7 +763,9 @@ class GroupChatHandlersTestCase(TestCase):
                 "message": "Test message",
                 "sender_id": self.user.id,
                 "sender_name": self.user.username,
-                "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
+                "timestamp": (
+                    chat_message.timestamp - datetime.timedelta(hours=4)
+                ).strftime("%B %d, %Y, %I:%M %p"),
                 "avatar_url": None,
             },
         )
