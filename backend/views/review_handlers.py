@@ -334,6 +334,13 @@ def report_review(request, review_id, event_id=None):
         print(request.body)
         review = get_object_or_404(Review, pk=review_id)
 
+        # Check if the review has already been reported by this user
+        if Report.objects.filter(review=review, reported_by=request.user).exists():
+            return JsonResponse({
+                "success": False,
+                "message": "You have already reported this review."
+            })
+
         # Extract title and description from the JSON data
         title = data.get("title")
         description = data.get("description")
@@ -347,26 +354,19 @@ def report_review(request, review_id, event_id=None):
             reported_user=review.user,
         )
         review.is_reported = True
-
-        now = datetime.now()
-        print(now)
-
-        # Add a day to the current date and time
-        timeout = now + timedelta(days=1)
-        print(timeout)
-        # Convert the datetime object to a timestamp
-        review.report_timeout = timeout
-        print(review.report_timeout)
+        review.save()
 
         return JsonResponse(
             {"success": True, "message": "Report submitted successfully."}
         )
     except Exception as e:
+        # Log the error for better debugging
+        print(f"Error reporting review: {e}")
         return JsonResponse({"success": False, "message": str(e)})
 
 @login_required
 @require_POST
-def reply_report(request, review_id,reply_id, event_id=None):
+def reply_report(request, review_id, reply_id, event_id=None):
     try:
         # Parse JSON data from request body
         print(review_id)
@@ -375,6 +375,14 @@ def reply_report(request, review_id,reply_id, event_id=None):
         print(request.body)
         review = get_object_or_404(Review, pk=review_id)
         reply = get_object_or_404(ReplyToReview, pk=reply_id)
+        print(reply)
+
+        # Check if the reply has already been reported by this user
+        if ReportReply.objects.filter(reply=reply, reported_by=request.user).exists():
+            return JsonResponse({
+                "success": False,
+                "message": "You have already reported this reply."
+            })
 
         # Extract title and description from the JSON data
         title = data.get("title")
@@ -385,22 +393,17 @@ def reply_report(request, review_id,reply_id, event_id=None):
             title=title,
             description=description,
             review=review,
-            reply = reply,
+            reply=reply,
             reported_by=request.user,
-            reported_user=review.user,
+            reported_user=reply.user,  # assuming reply.user is the one who made the reply
         )
         reply.is_reported = True
-        # Get the current date and time
-        now = datetime.now()
-
-        # Add a day to the current date and time
-        timeout = now + timedelta(days=1)
-
-        # Convert the datetime object to a timestamp
-        reply.report_timeout = timeout.timestamp()
+        reply.save()
 
         return JsonResponse(
             {"success": True, "message": "Report submitted successfully."}
         )
     except Exception as e:
+        # Log the error for better debugging
+        print(f"Error reporting reply: {e}")
         return JsonResponse({"success": False, "message": str(e)})
