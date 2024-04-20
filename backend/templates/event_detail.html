@@ -172,10 +172,19 @@
               <p><strong>Description:</strong> {{ event.description }}</p>
               <p>
                 <strong>Average Rating:</strong>
-                <span id="average-rating"
-                  >{{ event.avg_rating| default:"Not rated yet" }}</span
-                >
+                <span id="average-rating">{{ event.avg_rating|default:"Not rated yet" }}</span>
               </p>
+              <!-- External Links -->
+              <div class="external-links">
+                <strong>External Links:</strong>
+                {% for link in event.external_links %}
+                  {% if link.href %}
+                    <p><a href="{{ link.href }}" target="_blank">{{ link.text }}</a></p>
+                  {% endif %}
+                {% empty %}
+                  <p>No external link available.</p>
+                {% endfor %}
+              </div>              
             </div>
           </div>
         </div>
@@ -183,7 +192,7 @@
           <div class="row">
             <div class="col-lg-8 mx-auto text-center">
               <h2>Reviews</h2>
-              <button id="sort" class="sort-button">Sort by time</button>
+              <button id="sort" class="sort-button">Sort by likes</button>
               <div id="reviews-container">
                 <!-- Insert reviews here -->
               </div>        
@@ -235,12 +244,11 @@
         />
       </svg>
     </button>
-    <p>Are you sure you want to delete this ?</p>
+    <p>Are you sure you want to delete this review?</p>
     <button id="confirmDeleteButton">Yes, Delete</button>
     <button id="cancelDeleteButton">Cancel</button>
   </div>
 </div>
-
 
 
 
@@ -266,7 +274,6 @@
     <button id="cancelDeletereply">Cancel</button>
   </div>
 </div>
-
 
 <div id="report-modal" class="modal" style="display: none;">
   <div class="modal-dialog">
