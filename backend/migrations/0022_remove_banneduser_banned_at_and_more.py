@@ -6,24 +6,24 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('backend', '0021_merge_20240418_1612'),
+        ("backend", "0021_merge_20240418_1612"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='banneduser',
-            name='banned_at',
+            model_name="banneduser",
+            name="banned_at",
         ),
         migrations.RemoveField(
-            model_name='banneduser',
-            name='unban_at',
+            model_name="banneduser",
+            name="unban_at",
         ),
         migrations.RemoveField(
-            model_name='suspendeduser',
-            name='suspended_at',
+            model_name="suspendeduser",
+            name="suspended_at",
         ),
         migrations.RemoveField(
-            model_name='suspendeduser',
-            name='unsuspended_at',
+            model_name="suspendeduser",
+            name="unsuspended_at",
         ),
     ]
