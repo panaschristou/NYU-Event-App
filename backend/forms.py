@@ -24,8 +24,14 @@ class UserRegistrationForm(UserCreationForm):
         email = self.cleaned_data.get("email")
         if not email.endswith("@nyu.edu"):
             raise forms.ValidationError("Email must be from NYU domain (@nyu.edu)")
+        
+        if get_user_model().objects.filter(email=email).exists():
+            raise forms.ValidationError("This email is already registered.")
+        
         return email
-
+        
+        
+        
     def save(self, commit=True):
         user = super(UserRegistrationForm, self).save(commit=False)
         user.email = self.cleaned_data["email"]

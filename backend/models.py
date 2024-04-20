@@ -123,8 +123,6 @@ class SearchHistory(models.Model):
 class SuspendedUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     reason = models.TextField()
-    suspended_at = models.DateTimeField(auto_now_add=True)
-    unsuspended_at = models.DateTimeField(null=True, blank=True)
     is_suspended = models.BooleanField(default=False)
 
     def __str__(self):
@@ -139,12 +137,19 @@ class SuspendedUser(models.Model):
 class BannedUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     reason = models.TextField()
-    banned_at = models.DateTimeField(auto_now_add=True)
-    unban_at = models.DateTimeField(null=True, blank=True)
-
+ 
+    
     def __str__(self):
         return self.user.username
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.user.is_active = False
+            self.user.save()
+        super().save(*args, **kwargs)
+    
+    
+    
     def unban_user(self):
         self.user.is_active = True
         self.user.save()
