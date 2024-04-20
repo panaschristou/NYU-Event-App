@@ -293,7 +293,7 @@ class BannedUserModelTest(TestCase):
         self.assertEqual(banned_user.user, self.user)
         self.assertEqual(banned_user.reason, "Test reason")
         self.assertFalse(self.user.is_active)
-        
+
     def test_unban_user(self):
         self.banned_user.unban_user()
         with self.assertRaises(BannedUser.DoesNotExist):

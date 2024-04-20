@@ -69,4 +69,3 @@ def send_notification(sender, instance, **kwargs):
     email_subject = "Account Notification"
     email_body = f"Dear {instance.user.username},\n\nYour account has been unsuspended \n\nSincerely,\nThe Admin Team"
     send_mail(email_subject, email_body, "from@example.com", [user.email])
-    
