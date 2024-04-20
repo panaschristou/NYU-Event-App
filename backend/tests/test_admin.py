@@ -94,12 +94,14 @@ class TestSuspendedUserAdmin(TestCase):
             "get_username",
             "get_email",
             "reason",
+            "suspended_at",
+            "unsuspended_at",
             "is_suspended",
         ]
         self.assertEqual(self.suspended_user_admin.list_display, expected_fields)
 
     def test_filters(self):
-        expected_filters = ["is_suspended"]
+        expected_filters = ["suspended_at", "unsuspended_at", "is_suspended"]
         self.assertEqual(self.suspended_user_admin.list_filter, expected_filters)
 
     def test_username(self):
@@ -127,8 +129,14 @@ class TestBannedUserAdmin(TestCase):
             "get_username",
             "get_email",
             "reason",
+            "banned_at",
+            "unban_at",
         ]
         self.assertEqual(self.banned_user_admin.list_display, expected_fields)
+
+    def test_filters(self):
+        expected_filters = ["banned_at", "unban_at"]
+        self.assertEqual(self.banned_user_admin.list_filter, expected_filters)
 
     def test_username(self):
         user = User.objects.create(username="test_user", email="ty@nyu.edu")

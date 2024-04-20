@@ -34,12 +34,14 @@ class SuspendedUserInline(admin.StackedInline):
     model = SuspendedUser
     can_delete = False
     verbose_name_plural = "Suspended Users"
+    readonly_fields = ["suspended_at"]
 
 
 class BannedUserInline(admin.StackedInline):
     model = BannedUser
     can_delete = False
     verbose_name_plural = "Banned Users"
+    readonly_fields = ["banned_at"]
 
 
 def send_notification_email(user, subject, message):
@@ -65,7 +67,7 @@ class UserAdmin(BaseUserAdmin):
                 user.save()
                 # Send an email notification
                 subject = "Your Account Has Been Banned"
-                message = f"Dear {user.username},\n\nYour account has been banned \n\nIf you believe this is an error, please contact support.\n\nSincerely,\nThe Admin Team"
+                message = "Your account has been banned. If you believe this is a mistake, please contact support."
                 send_notification_email(user, subject, message)
                 self.message_user(
                     request, f"User {user.username} has been banned successfully."
@@ -110,7 +112,7 @@ class UserAdmin(BaseUserAdmin):
             if created:
                 # Send an email notification
                 subject = "Your Account Has Been Suspended"
-                message = f"Dear {user.username},\n\nYour account has been suspend \n\nIf you believe this is an error, please contact support.\n\nSincerely,\nThe Admin Team"
+                message = "Your account has been suspended. If you believe this is a mistake, please contact support."
                 send_notification_email(user, subject, message)
                 self.message_user(
                     request, f"User {user.username} has been suspended successfully."
@@ -172,9 +174,11 @@ class SuspendedUserAdmin(admin.ModelAdmin):
         "get_username",
         "get_email",
         "reason",
+        "suspended_at",
+        "unsuspended_at",
         "is_suspended",
     ]
-    list_filter = ["is_suspended"]
+    list_filter = ["suspended_at", "unsuspended_at", "is_suspended"]
 
     def get_username(self, obj):
         return obj.user.username
@@ -198,7 +202,10 @@ class BanneddUserAdmin(admin.ModelAdmin):
         "get_username",
         "get_email",
         "reason",
+        "banned_at",
+        "unban_at",
     ]
+    list_filter = ["banned_at", "unban_at"]
 
     def get_username(self, obj):
         return obj.user.username

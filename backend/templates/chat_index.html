@@ -40,7 +40,6 @@
 <script>
 const CURRENT_USER_ID = '{{ current_user_id }}'; 
 var oldChannelName = null;
-var oldGroupChannelName = null;
 var pusher = new Pusher('e44f77643020ff731b4f', {
       cluster: 'mt1'
     });    
@@ -64,9 +63,6 @@ function loadChatWindow(userId) {
       bindPusherEvents(userId); // Call a function to re-bind Pusher events as needed
       // Reinitialize the chat form to attach the AJAX submit event handler
       setupChatForm(userId);
-      // Scroll to the bottom of the chat window
-      var chatMessages = document.getElementById('chat-messages');
-      chatMessages.scrollTop = chatMessages.scrollHeight;
     },
     error: function(xhr, status, error) {
       console.error("Error fetching chat: ", error);
@@ -203,7 +199,6 @@ document.querySelectorAll('.chat-user-link').forEach(function(userLink) {
     userLink.removeEventListener('click', handleUserLinkClick);
     // Add the event listener
     userLink.addEventListener('click', handleUserLinkClick);
-
 });
 
 function handleUserLinkClick() {
@@ -211,9 +206,6 @@ function handleUserLinkClick() {
     clearNotificationIcon(userId);
     // Now load the chat window for this user
     loadChatWindow(userId);
-    // Remove active class from all user links and add it to the clicked one
-    removeActiveClassFromAllUserLinks();
-    this.classList.add('chat-user-active');
 }
 
 
@@ -222,11 +214,7 @@ function clearChatWindow() {
     $('#chat-window').empty(); // Clear the chat window contents
 }
 
-function removeActiveClassFromAllUserLinks() {
-  document.querySelectorAll('.chat-user-link').forEach(function(userLink) {
-    userLink.classList.remove('chat-user-active');
-  });
-}
+
 
 // ******************************************************************************************************
 // Group chat
@@ -285,13 +273,10 @@ function getCSRFToken_group() {
 
 function bindPusherEvents_group(receiver_room_slug) {  
   // Unbind any previous bindings to avoid duplicates
-  // pusher.unbind_all();
-
-  pusher.unsubscribe(oldGroupChannelName);
+  pusher.unbind_all();
 
   // Bind to a 'new-message' event within the chat channel
   var channelName = getGroupChatChannelName(CURRENT_USER_ID, receiver_room_slug); 
-  oldGroupChannelName = channelName
   var channel = pusher.subscribe(channelName);
 
   channel.bind('new-message', function(data) {    
