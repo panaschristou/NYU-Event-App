@@ -232,6 +232,7 @@ function loadReviews(eventId) {
 }
 
 function addReviewToPage(review) {
+  console.log(review);
   const reviewBox = document.createElement("div");
   reviewBox.className = "review-box";
   const avatarWrapper = document.createElement("div");
@@ -469,6 +470,7 @@ function addReviewToPage(review) {
         }
           })
           .catch((error) => {
+       
             console.error("Error:", error);
           });
       })
@@ -789,7 +791,6 @@ function addReviewToPage(review) {
     const replyLikeButton = document.createElement("button");
     replyLikeButton.className = "reply-like-button";
 
-
     let likeCount = reply.likes_count;
     const likeCountSpan = document.createElement("span");
     likeCountSpan.className = "like-count";
@@ -850,6 +851,7 @@ function addReviewToPage(review) {
             credentials: "same-origin",
           })
             .then((response) => {
+              console.log(review);
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
               }
@@ -900,25 +902,54 @@ function addReviewToPage(review) {
 
       const modal = document.getElementById("deleteModal");
       const confirmDeletereply = document.getElementById("confirmDeletereply");
-      const cancelDeletereply = document.getElementById("cancelDeletereply");
-      const closeButtonreply = document.getElementById("close-m");
+
       let index;
-  
       replyDeleteButton.addEventListener("click", function () {
         index = reply.id;
         modal.style.display = "block";
+        
+        modal.innerHTML = '';
+   
+        const modalContent = document.createElement("div");
+        modalContent.className = "modal-content";
+        modal.appendChild(modalContent);
+      
+        const modalHeader = document.createElement("div");
+        modalHeader.className = "modal-header";
+        modalHeader.innerHTML = '<h5 class="modal-title">Confirm Delete</h5>';
+        modalContent.appendChild(modalHeader);
+      
+        const modalBody = document.createElement("div");
+        modalBody.className = "modal-body";
+        modalBody.innerText = "Are you sure you want to delete this reply?";
+        modalContent.appendChild(modalBody);
+      
+        const modalFooter = document.createElement("div");
+        modalFooter.className = "modal-footer";
+        modalContent.appendChild(modalFooter);
+      
+        const closeButton = document.createElement("button");
+        closeButton.type = "button";
+        closeButton.className = "btn btn-secondary";
+        closeButton.innerText = "Cancel";
+        closeButton.addEventListener("click", function () {
+          index = null;
+          modal.style.display = "none";
+        });
+        modalFooter.appendChild(closeButton);
+      
+        const confirmDeleteButton = document.createElement("button");
+        confirmDeleteButton.type = "button";
+        confirmDeleteButton.className = "btn btn-danger delete_account";
+        confirmDeleteButton.innerText = "Yes";
+        confirmDeleteButton.addEventListener("click", function () {
+          deletereply(index);
+          modal.style.display = "none";
+        });
+        modalFooter.appendChild(confirmDeleteButton);
       });
   
-      closeButtonreply.addEventListener("click", function () {
-        index = null;
-        modal.style.display = "none";
-      });
-  
-      cancelDeletereply.addEventListener("click", function () {
-        index = null;
-        modal.style.display = "none";
-      });
-  
+
       function deletereply(replyId) {
         let url = `display-reviews/${reviewId}/display-replies/${replyId}/delete/`
           fetch(url, {
@@ -1089,19 +1120,19 @@ sortButton.addEventListener('click', function() {
   if (this.textContent === "Sort by time") {
     this.textContent = "Sort by likes";
     re.sort(function(a, b) {
-     return new Date(a.timestamp) - new Date(b.timestamp);
-    });
-    re.forEach((review) => {
-      addReviewToPage(review);
+      return a.likes_count - b.likes_count;
   });
+  re.forEach((review) => {
+    addReviewToPage(review);
+});
 } else {
     this.textContent = "Sort by time";
-    re.sort(function(a, b) {
-        return a.likes_count - b.likes_count;
-    });
-    re.forEach((review) => {
-      addReviewToPage(review);
-  });
+  re.sort(function(a, b) {
+    return new Date(a.timestamp) - new Date(b.timestamp);
+   });
+   re.forEach((review) => {
+     addReviewToPage(review);
+ });
 }
 });
 
