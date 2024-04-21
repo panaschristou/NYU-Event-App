@@ -709,7 +709,6 @@ class GroupChatHandlersTestCase(TestCase):
         # )
 
     def test_chat_with_room_view(self):
-
         request = self.factory.get(
             reverse("chat_with_room", kwargs={"receiver_room_slug": self.room_slug})
         )
@@ -853,6 +852,7 @@ class ReportReviewTests(TestCase):
         # Check that redirection to login page occurs
         self.assertEqual(response.status_code, 302)  # Redirects to login page
 
+
 class ReportReplyTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="user", password="testpass")
@@ -883,7 +883,11 @@ class ReportReplyTests(TestCase):
         self.client.login(username="user", password="testpass")
         self.url = reverse(
             "report_reply",
-            kwargs={"review_id": self.review.id, "reply_id": self.reply.id, "event_id": self.event.id},
+            kwargs={
+                "review_id": self.review.id,
+                "reply_id": self.reply.id,
+                "event_id": self.event.id,
+            },
         )
 
     def test_report_reply_success(self):

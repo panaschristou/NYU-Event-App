@@ -1120,21 +1120,3 @@ function toggleButtonVisibility(sortButton) {
 }
 
 
-function showMessage(message, type) {
-  console.log("Showing message:", message, "Type:", type); // Debugging line
-  const messageContainer = document.getElementById("messages-container");
-  messageContainer.innerHTML = '';  // Clear previous messages
-
-  const messageDiv = document.createElement("div");
-  messageDiv.textContent = message;
-  messageDiv.className = `alert ${type}`;
-
-  messageContainer.appendChild(messageDiv);
-
-  setTimeout(() => {
-      if (messageContainer.contains(messageDiv)) {
-          messageContainer.removeChild(messageDiv);
-      }
-  }, 3000);
-}
-

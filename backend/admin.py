@@ -230,10 +230,12 @@ class ReportAdmin(admin.ModelAdmin):
     search_fields = ("title", "description")
     list_filter = ("created_at", "reported_by")
 
+
 class ReportReplyAdmin(admin.ModelAdmin):
-    list_display = ("title", "reported_by", "created_at", "review","reply")
+    list_display = ("title", "reported_by", "created_at", "review", "reply")
     search_fields = ("title", "description")
     list_filter = ("created_at", "reported_by")
+
 
 admin.site.register(ReportReply, ReportReplyAdmin)
 admin.site.register(Report, ReportAdmin)
