@@ -74,7 +74,7 @@
           </button>
 
           <button
-            class="btn-outline-dark"
+            class="btn-custom"
             id="write-review"
             aria-label="Write a review"
           >
@@ -99,7 +99,7 @@
           
           <a href="{% url 'chat_with_room' room_slug %}" class="top-left-button" style="display: none;"></a>
 
-          <button onclick="window.location.href='{% url 'chat_with_room' room_slug %}'" class="btn-outline-dark" id="write-review" aria-label="Write a review">
+          <button onclick="window.location.href='{% url 'chat_with_room' room_slug %}'" class="btn-custom" id="write-review" aria-label="Write a review">
               Join Group Chat
           </button>  
 
@@ -174,17 +174,15 @@
                 <strong>Average Rating:</strong>
                 <span id="average-rating">{{ event.avg_rating|default:"Not rated yet" }}</span>
               </p>
-              <!-- External Links -->
               <div class="external-links">
-                <strong>External Links:</strong>
                 {% for link in event.external_links %}
                   {% if link.href %}
-                    <p><a href="{{ link.href }}" target="_blank">{{ link.text }}</a></p>
+                    <span class="link-button"><a href="{{ link.href }}" target="_blank">{{ link.text }}</a></span>
                   {% endif %}
                 {% empty %}
                   <p>No external link available.</p>
                 {% endfor %}
-              </div>              
+              </div>                       
             </div>
           </div>
         </div>

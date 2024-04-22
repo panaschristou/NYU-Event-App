@@ -32,7 +32,8 @@ body {
 }
 
 .container-transparent {
-  background-color: #f7efe5;
+  position: relative;
+  background-color: #f5f2ed;
   border-radius: 30px;
   padding: 2rem;
   margin-top: 2rem;
@@ -58,13 +59,12 @@ body {
   line-height: 1.5;
 }
 
-.heart-button-container {
-  top: 0;
-  right: 0;
-  padding: 30px;
-}
-
 .heart-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-top: 30px;
+  padding-left: 50px;
   background: none;
   border: none;
   cursor: pointer;
@@ -83,7 +83,7 @@ body {
   fill: #77499e;
 }
 
-.btn-outline-dark {
+/* .btn-outline-dark {
   color: #77499e;
   border-color: #77499e;
   background-color: #efefe9;
@@ -95,6 +95,24 @@ body {
   color: #fff;
   background-color: #77499e;
   border-color: transparent;
+} */
+
+.btn-custom {
+  padding: 5px 10px; 
+  border: 1px solid #ccc; 
+  border-radius: 8px; 
+  background-color: #fffbf5; 
+  color: rgb(68, 66, 66); 
+  margin: 5px; 
+  height: 35px;
+  cursor: pointer; 
+  font-size: 0.9rem; 
+  outline: none; 
+  transition: background-color 0.3s, color 0.3s; 
+}
+
+.btn-custom:hover {
+  background-color: #eae8e5;
 }
 
 .modal {
@@ -377,30 +395,23 @@ body {
   visibility: hidden;
 }
 
-/* .report-button {
-  background: none;
-  border: none;
-  margin-top: -300px; 
-  margin-left: 200px; 
+.external-links {
+  display: flex; /* Use flexbox to lay out the links horizontally */
+  justify-content: center; /* Center the links in the div */
+  gap: 10px; /* Add some space between the links */
 }
 
-.report-button svg {
-  fill: #ff0000; 
-  width: 18px; 
-  height: 18px;
+.link-button a {
+  display: inline-block; 
+  padding: 10px 20px; 
+  border: 1px solid #ccc; 
+  border-radius: 8px; 
+  text-decoration: none; 
+  color: rgb(68, 66, 66); 
+  background-color: #fffbf5; 
+  transition: background-color 0.3s ease; 
 }
 
-
-.report-reply {
-  background: none;
-  border: none;
-  margin-top: -300px; 
-  margin-left: 200px; 
+.link-button a:hover {
+  background-color: #eae8e5; 
 }
-
-.report-reply svg {
-  fill: #ff0000; 
-  width: 18px; 
-  height: 18px;
-}
- */

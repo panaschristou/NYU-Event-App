@@ -98,7 +98,7 @@ function addReviewToPage(review) {
   if (review.review_text) {
     text.textContent = review.review_text;
   } else {
-    text.textContent = 'you did not leave any review text';
+    text.textContent = 'You did not leave any review text.';
     text.classList.add('lighter-text'); 
   }
   content.appendChild(text);
