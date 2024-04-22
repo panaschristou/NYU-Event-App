@@ -29,6 +29,13 @@
     {% endif %}
   </head>
   <body>
+    <script type="text/javascript">
+      var user = {
+          username: "{{ request.user.username }}",
+          isSuperuser: {{ request.user.is_superuser|yesno:"true,false" }}
+      };
+  </script>
+
     {% include "components/navbar.html" %}
 
     <div class="event-detail py-5">
@@ -190,7 +197,7 @@
           <div class="row">
             <div class="col-lg-8 mx-auto text-center">
               <h2>Reviews</h2>
-              <button id="sort" class="sort-button">Sort by likes</button>
+              <button id="sort" class="sort-button">Sort by time</button>
               <div id="reviews-container">
                 <!-- Insert reviews here -->
               </div>        

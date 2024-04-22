@@ -10,6 +10,7 @@ from backend.models import (
     Chat,
     ReplyToReview,
     Report,
+    ReportReply,
     Room3,
     ChatRoom3,
     user_rooms,
@@ -717,7 +718,6 @@ class GroupChatHandlersTestCase(TestCase):
         # )
 
     def test_chat_with_room_view(self):
-
         request = self.factory.get(
             reverse("chat_with_room", kwargs={"receiver_room_slug": self.room_slug})
         )
@@ -763,7 +763,9 @@ class GroupChatHandlersTestCase(TestCase):
                 "message": "Test message",
                 "sender_id": self.user.id,
                 "sender_name": self.user.username,
-                "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
+                "timestamp": (
+                    chat_message.timestamp - datetime.timedelta(hours=4)
+                ).strftime("%B %d, %Y, %I:%M %p"),
                 "avatar_url": None,
             },
         )
@@ -851,6 +853,82 @@ class ReportReviewTests(TestCase):
         self.assertEqual(response.status_code, 405)  # Method Not Allowed
 
     def test_report_review_without_login(self):
+        # Log out the current user
+        self.client.logout()
+
+        # Try to post a report without authentication
+        data = {"title": "Spam", "description": "This is spam."}
+        response = self.client.post(self.url, data, content_type="application/json")
+
+        # Check that redirection to login page occurs
+        self.assertEqual(response.status_code, 302)  # Redirects to login page
+
+
+class ReportReplyTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="user", password="testpass")
+        self.other_user = User.objects.create_user(
+            username="other_user", password="testpass"
+        )
+
+        # Create an Event object first if your Review model depends on it
+        self.event = Event.objects.create(title="Event Name")
+
+        # Now create Review, ensuring all FK constraints are satisfied
+        self.review = Review.objects.create(
+            review_text="Sample review",
+            rating=5,
+            user=self.other_user,
+            event=self.event,
+        )
+
+        # Create Reply
+        self.reply = ReplyToReview.objects.create(
+            reply_text="Sample reply",
+            fromUser=self.user,
+            toUser=self.other_user,  # Add this line
+            review=self.review,
+        )
+
+        self.client = Client()
+        self.client.login(username="user", password="testpass")
+        self.url = reverse(
+            "report_reply",
+            kwargs={
+                "review_id": self.review.id,
+                "reply_id": self.reply.id,
+                "event_id": self.event.id,
+            },
+        )
+
+    def test_report_reply_success(self):
+        # Data to post
+        data = {
+            "title": "Inappropriate Content",
+            "description": "This reply contains inappropriate content.",
+        }
+        response = self.client.post(self.url, data, content_type="application/json")
+
+        # Check the response
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {"success": True, "message": "Report submitted successfully."},
+        )
+
+        # Check if the report was created
+        self.assertTrue(
+            ReportReply.objects.filter(
+                title=data["title"], description=data["description"], reply=self.reply
+            ).exists()
+        )
+
+    def test_report_reply_requires_post(self):
+        # Test GET request which should fail
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 405)  # Method Not Allowed
+
+    def test_report_reply_without_login(self):
         # Log out the current user
         self.client.logout()
 

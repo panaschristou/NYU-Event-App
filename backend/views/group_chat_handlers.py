@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from backend.models import Chat, ChatRoom3
@@ -21,7 +22,6 @@ def search_rooms(request):
 
 @login_required
 def chat_with_room(request, receiver_room_slug):
-
     current_user = request.user
 
     current_room = Room3.objects.get(slug=receiver_room_slug)
@@ -83,7 +83,10 @@ def send_message(request, receiver_room_slug=None):
             "message": message,
             "sender_id": request.user.id,
             "sender_name": request.user.username,
-            "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
+            # "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
+            "timestamp": (chat_message.timestamp - timedelta(hours=4)).strftime(
+                "%B %d, %Y, %I:%M %p"
+            ),
             "avatar_url": request.user.profile.avatar.url
             if request.user.profile.avatar
             else None,
@@ -106,7 +109,6 @@ def chat_history(request, receiver_room_slug):
 
 @login_required
 def exit_group_chat(request, room_id):
-
     current_user = request.user
 
     user_id = current_user.id

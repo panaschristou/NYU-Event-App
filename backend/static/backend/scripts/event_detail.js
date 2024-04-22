@@ -3,6 +3,7 @@ const notInterestBtn = document.getElementById("remove-interest");
 const csrftoken = $('meta[name="csrf-token"]').attr("content");
 
 
+
 let re = []; 
 
 interestBtn.addEventListener("click", function () {
@@ -231,6 +232,7 @@ function loadReviews(eventId) {
 }
 
 function addReviewToPage(review) {
+  console.log(review);
   const reviewBox = document.createElement("div");
   reviewBox.className = "review-box";
   const avatarWrapper = document.createElement("div");
@@ -318,6 +320,7 @@ function addReviewToPage(review) {
   function openReportModal(reviewId) {
     const reportModal = document.getElementById('report-modal');
     const reportForm = document.getElementById('report-form');
+    
     reportForm.onsubmit = function (e) {
       e.preventDefault();
       submitReport(reviewId);
@@ -360,10 +363,20 @@ function addReviewToPage(review) {
 })
 .then(data => {
     console.log('Report submitted:', data);
-    // handle success
+    if (data.success) {
+      showTemporaryMessage(
+        "You have successfully reported this review.",
+        "alert-success"
+      );} else {
+        showTemporaryMessage(
+          "You have already reported this review.",
+          "alert-danger"
+        );
+      }
 })
 .catch(error => {
     console.error('Error submitting report:', error);
+    showMessage('An error occurred while submitting the report.', 'alert-danger');
 });
   
     // Close the modal after submitting the form
@@ -457,6 +470,7 @@ function addReviewToPage(review) {
         }
           })
           .catch((error) => {
+       
             console.error("Error:", error);
           });
       })
@@ -691,12 +705,91 @@ function addReviewToPage(review) {
           <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21 21 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21 21 0 0 0 14 7.655V1.222z"/>
           </svg>`;
       });
+      reportreply.addEventListener("click", function() {
+        openReportModal(reply.id);
+        this.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag" viewBox="0 0 16 16">
+          <path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21 21 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21 21 0 0 0 14 7.655V1.222z"/>
+          </svg>`;
+      });
+      buttonContainer.appendChild(reportreply);
+      
+    
+      function openReportModal(replyId) {
+        const reportModal = document.getElementById('report-modal');
+        const reportForm = document.getElementById('report-form');
+
+        reportForm.onsubmit = function (e) {
+          e.preventDefault();
+          submitReportReply(replyId);
+        };
+        reportModal.style.display = 'block';
+      }
+      
+      function submitReportReply(replyId) {
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        console.log(replyId)
+        // Construct the body of the POST request
+        const reportData = JSON.stringify({
+          title: title,
+          description: description,
+          reviewId: reviewId,  // Make sure your backend knows which review is being reported
+          replyId : replyId
+        });
+        console.log(reportData)
+        const url = `display-reviews/${reviewId}/display-replies/${replyId}/report/`;  // Make sure this matches the exact pattern expected by Django
+        console.log("URL being requested:", url);
+    
+        fetch(`display-reviews/${reviewId}/display-replies/${replyId}/report/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({
+            title: title,
+            description: description,
+            reviewId : reviewId,
+            replyId : replyId
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            console.log(response)
+            throw new Error('Network response was not ok: ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Report submitted:', data);
+        if (data.success) {
+        showTemporaryMessage(
+          "You have successfully reported this reply.",
+          "alert-success"
+        );} else {
+          showTemporaryMessage(
+            "You have already reported this reply.",
+            "alert-danger"
+          );
+        }
+        // handle success
+    })
+    .catch(error => {
+        console.error('Error submitting report:', error);
+    });
+      
+        // Close the modal after submitting the form
+        document.getElementById('report-modal').style.display = 'none';
+        // Optionally reset the form fields
+        document.getElementById('title').value = '';
+        document.getElementById('description').value = '';
+      }
       buttonContainer.appendChild(reportreply);
       }
 
     const replyLikeButton = document.createElement("button");
     replyLikeButton.className = "reply-like-button";
-
 
     let likeCount = reply.likes_count;
     const likeCountSpan = document.createElement("span");
@@ -758,6 +851,7 @@ function addReviewToPage(review) {
             credentials: "same-origin",
           })
             .then((response) => {
+              console.log(review);
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
               }
@@ -785,7 +879,7 @@ function addReviewToPage(review) {
 
     buttonContainer.appendChild(replyLikeButton);
 
-    if (currentUsername === reply.from_user.username) {
+    if (currentUsername === reply.from_user.username || user.isSuperuser) {
       const replyDeleteButton = document.createElement('button');
       replyDeleteButton.className = 'reply-delete-button';
       replyDeleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
@@ -808,25 +902,54 @@ function addReviewToPage(review) {
 
       const modal = document.getElementById("deleteModal");
       const confirmDeletereply = document.getElementById("confirmDeletereply");
-      const cancelDeletereply = document.getElementById("cancelDeletereply");
-      const closeButtonreply = document.getElementById("close-m");
+
       let index;
-  
       replyDeleteButton.addEventListener("click", function () {
         index = reply.id;
         modal.style.display = "block";
+        
+        modal.innerHTML = '';
+   
+        const modalContent = document.createElement("div");
+        modalContent.className = "modal-content";
+        modal.appendChild(modalContent);
+      
+        const modalHeader = document.createElement("div");
+        modalHeader.className = "modal-header";
+        modalHeader.innerHTML = '<h5 class="modal-title">Confirm Delete</h5>';
+        modalContent.appendChild(modalHeader);
+      
+        const modalBody = document.createElement("div");
+        modalBody.className = "modal-body";
+        modalBody.innerText = "Are you sure you want to delete this reply?";
+        modalContent.appendChild(modalBody);
+      
+        const modalFooter = document.createElement("div");
+        modalFooter.className = "modal-footer";
+        modalContent.appendChild(modalFooter);
+      
+        const closeButton = document.createElement("button");
+        closeButton.type = "button";
+        closeButton.className = "btn btn-secondary";
+        closeButton.innerText = "Cancel";
+        closeButton.addEventListener("click", function () {
+          index = null;
+          modal.style.display = "none";
+        });
+        modalFooter.appendChild(closeButton);
+      
+        const confirmDeleteButton = document.createElement("button");
+        confirmDeleteButton.type = "button";
+        confirmDeleteButton.className = "btn btn-danger delete_account";
+        confirmDeleteButton.innerText = "Yes";
+        confirmDeleteButton.addEventListener("click", function () {
+          deletereply(index);
+          modal.style.display = "none";
+        });
+        modalFooter.appendChild(confirmDeleteButton);
       });
   
-      closeButtonreply.addEventListener("click", function () {
-        index = null;
-        modal.style.display = "none";
-      });
-  
-      cancelDeletereply.addEventListener("click", function () {
-        index = null;
-        modal.style.display = "none";
-      });
-  
+
       function deletereply(replyId) {
         let url = `display-reviews/${reviewId}/display-replies/${replyId}/delete/`
           fetch(url, {
@@ -874,7 +997,7 @@ function addReviewToPage(review) {
   buttonContainer.appendChild(replyButton);
 
   //Delete functionality
-  if (currentUsername === review.user.username) {
+  if (currentUsername === review.user.username || user.isSuperuser) {
     const deleteButton = document.createElement("button");
     deleteButton.className = "delete-button";
     deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
@@ -997,19 +1120,19 @@ sortButton.addEventListener('click', function() {
   if (this.textContent === "Sort by time") {
     this.textContent = "Sort by likes";
     re.sort(function(a, b) {
-     return new Date(a.timestamp) - new Date(b.timestamp);
-    });
-    re.forEach((review) => {
-      addReviewToPage(review);
+      return a.likes_count - b.likes_count;
   });
+  re.forEach((review) => {
+    addReviewToPage(review);
+});
 } else {
     this.textContent = "Sort by time";
-    re.sort(function(a, b) {
-        return a.likes_count - b.likes_count;
-    });
-    re.forEach((review) => {
-      addReviewToPage(review);
-  });
+  re.sort(function(a, b) {
+    return new Date(a.timestamp) - new Date(b.timestamp);
+   });
+   re.forEach((review) => {
+     addReviewToPage(review);
+ });
 }
 });
 

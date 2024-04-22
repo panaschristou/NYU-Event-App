@@ -29,8 +29,8 @@ SECRET_KEY = "django-insecure--1vz#!np5i3v)p_(cclo9t8a40^ufcl#!tdkfq$p@6-=)ck@gf
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = "APP_ENV" not in os.environ or os.environ["APP_ENV"] not in [
-    # "develop",
-    # "production",
+    "develop",
+    "production",
 ]
 
 # ALLOWED_HOSTS = ['*','nyu-event-dev.us-east-1.elasticbeanstalk.com']
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -63,7 +64,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    # "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "nyu_event.urls"
@@ -152,7 +152,7 @@ LOGGING = {
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "America/New_York"
 
 USE_I18N = True
 

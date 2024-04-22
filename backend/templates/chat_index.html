@@ -40,6 +40,7 @@
 <script>
 const CURRENT_USER_ID = '{{ current_user_id }}'; 
 var oldChannelName = null;
+var oldGroupChannelName = null;
 var pusher = new Pusher('e44f77643020ff731b4f', {
       cluster: 'mt1'
     });    
@@ -273,10 +274,13 @@ function getCSRFToken_group() {
 
 function bindPusherEvents_group(receiver_room_slug) {  
   // Unbind any previous bindings to avoid duplicates
-  pusher.unbind_all();
+  // pusher.unbind_all();
+
+  pusher.unsubscribe(oldGroupChannelName);
 
   // Bind to a 'new-message' event within the chat channel
   var channelName = getGroupChatChannelName(CURRENT_USER_ID, receiver_room_slug); 
+  oldGroupChannelName = channelName
   var channel = pusher.subscribe(channelName);
 
   channel.bind('new-message', function(data) {    
