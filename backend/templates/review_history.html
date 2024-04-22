@@ -12,19 +12,19 @@
 </head>
 <body>
     {% include "components/navbar.html" %}
-    <button id="clearHistoryButton" class="btn btn-danger float-right mr-3 mt-3">Clear All History</button>
     {% if reviews %}
     <div class="container container-transparent">
-        <div class="container reviews py-5">
-            <div class="row">
-                <div class="col-lg-8 mx-auto text-center">
-                    <h2>Reviews History</h2>
-                    <div id="reviews-container">
-                        <!-- Insert reviews here -->
-                    </div>
-                </div>
-            </div>
-        </div>
+      <button id="clearHistoryButton" class="btn btn-danger float-right mr-3 mt-3">Clear All</button>
+      <div class="container reviews py-5">
+          <div class="row">
+              <div class="col-lg-8 mx-auto text-center">
+                  <h2>Reviews History</h2>
+                  <div id="reviews-container">
+                      <!-- Insert reviews here -->
+                  </div>
+              </div>
+          </div>
+      </div>
     </div>
     {% else %}
     <div class="container mt-5">

@@ -1,4 +1,5 @@
 import re
+import ast
 from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -101,6 +102,15 @@ def event_detail(request, event_id):
             event=event,
             user=request.user,
         ).exists()
+
+    try:
+        category_list = ast.literal_eval(event.category)
+        if isinstance(category_list, list):
+            event.category = ", ".join(category_list)
+        else:
+            event.category = event.category
+    except (ValueError, SyntaxError):
+        event.category = event.category
 
     avg_rating_result = Review.objects.filter(event=event).aggregate(Avg("rating"))
     avg_rating = avg_rating_result["rating__avg"]
