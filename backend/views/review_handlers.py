@@ -3,7 +3,14 @@ import logging
 from django.http import JsonResponse, HttpResponseServerError
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from backend.models import Event, Review, SuspendedUser, ReplyToReview, Report
+from backend.models import (
+    Event,
+    Review,
+    SuspendedUser,
+    ReplyToReview,
+    Report,
+    ReportReply,
+)
 from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Avg
 from django.db.models import F
@@ -11,6 +18,8 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 
 from backend.huggingface import censorbot
+from datetime import datetime, timedelta
+from backend.admin import send_notification_email
 
 logger = logging.getLogger(__name__)
 
@@ -345,6 +354,12 @@ def report_review(request, review_id, event_id=None):
         print(request.body)
         review = get_object_or_404(Review, pk=review_id)
 
+        # Check if the review has already been reported by this user
+        if Report.objects.filter(review=review, reported_by=request.user).exists():
+            return JsonResponse(
+                {"success": False, "message": "You have already reported this review."}
+            )
+
         # Extract title and description from the JSON data
         title = data.get("title")
         description = data.get("description")
@@ -357,8 +372,65 @@ def report_review(request, review_id, event_id=None):
             reported_by=request.user,
             reported_user=review.user,
         )
+        review.is_reported = True
+        review.save()
+
+        subject = "Report Received"
+        message = "Your report has been received. An admin will review your report and take appropriate action. Thank you for your patience."
+        send_notification_email(request.user, subject, message)
+
         return JsonResponse(
             {"success": True, "message": "Report submitted successfully."}
         )
     except Exception as e:
+        # Log the error for better debugging
+        print(f"Error reporting review: {e}")
+        return JsonResponse({"success": False, "message": str(e)})
+
+
+@login_required
+@require_POST
+def reply_report(request, review_id, reply_id, event_id=None):
+    try:
+        # Parse JSON data from request body
+        print(review_id)
+
+        data = json.loads(request.body)
+        print(request.body)
+        review = get_object_or_404(Review, pk=review_id)
+        reply = get_object_or_404(ReplyToReview, pk=reply_id)
+        print(reply)
+
+        # Check if the reply has already been reported by this user
+        if ReportReply.objects.filter(reply=reply, reported_by=request.user).exists():
+            return JsonResponse(
+                {"success": False, "message": "You have already reported this reply."}
+            )
+
+        # Extract title and description from the JSON data
+        title = data.get("title")
+        description = data.get("description")
+
+        # Create a new report
+        ReportReply.objects.create(
+            title=title,
+            description=description,
+            review=review,
+            reply=reply,
+            reported_by=request.user,
+            reported_user=reply.fromUser,  # assuming reply.user is the one who made the reply
+        )
+        reply.is_reported = True
+        reply.save()
+
+        subject = "Report Received"
+        message = "Your report has been received. An admin will review your report and take appropriate action. Thank you for your patience."
+        send_notification_email(request.user, subject, message)
+
+        return JsonResponse(
+            {"success": True, "message": "Report submitted successfully."}
+        )
+    except Exception as e:
+        # Log the error for better debugging
+        print(f"Error reporting reply: {e}")
         return JsonResponse({"success": False, "message": str(e)})

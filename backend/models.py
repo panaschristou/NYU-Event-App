@@ -49,6 +49,7 @@ class Review(models.Model):
     likes_count = models.IntegerField(default=0)
     liked_by = models.ManyToManyField(User, related_name="liked_reviews", blank=True)
     reply_count = models.IntegerField(default=0)
+    is_reported = models.BooleanField(default=False)
 
 
 class ReplyToReview(models.Model):
@@ -63,6 +64,7 @@ class ReplyToReview(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     likes_count = models.IntegerField(default=0)
     liked_by = models.ManyToManyField(User, related_name="reply_likes", blank=True)
+    is_reported = models.BooleanField(default=False)
 
     def __str__(self):
         return self.reply_text
@@ -162,6 +164,27 @@ class Report(models.Model):
     )
     reported_user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="reported_users"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Report {self.title} by {self.reported_by.username}"
+
+
+class ReportReply(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE, related_name="reports_reply"
+    )
+    reply = models.ForeignKey(
+        ReplyToReview, on_delete=models.CASCADE, related_name="reports_reply"
+    )
+    reported_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reported_reply_by"
+    )
+    reported_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reported_reply_users"
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
