@@ -236,21 +236,32 @@ function addReviewToPage(review) {
   const avatarWrapper = document.createElement("div");
   avatarWrapper.className = "avatar-wrapper";
 
+  const profileLink = document.createElement("a");
+  profileLink.href = `/user/users/${review.user.username}/`;
+
   const avatar = document.createElement("img");
   avatar.className = "user-avatar";
   avatar.src =
     review.user.profile.avatar || defaultAvatarSrc;
-  avatarWrapper.appendChild(avatar);
+  profileLink.appendChild(avatar);
+  avatarWrapper.appendChild(profileLink);
+
 
   reviewBox.appendChild(avatarWrapper);
 
   const content = document.createElement("div");
   content.className = "review-content";
 
+  const usernameLink = document.createElement("a");
+  usernameLink.href = `/user/users/${review.user.username}/`; // Use absolute path for the URL
+  usernameLink.className = "review-username-link";
+
   const username = document.createElement("h5");
   username.className = "review-username";
   username.textContent = review.user.username;
-  reviewBox.appendChild(username);
+
+  usernameLink.appendChild(username);
+  reviewBox.appendChild(usernameLink);
 
   const rating = document.createElement("p");
   rating.textContent = `Rating: ${review.rating}`;
@@ -646,22 +657,30 @@ function addReviewToPage(review) {
     const replyBox = document.createElement("div");
     replyBox.className = "reply-box";
 
+    const profileLink = document.createElement("a");
+    profileLink.href = `/user/users/${reply.from_user.username}/`;
+
     const avatarWrapper = document.createElement("div");
     avatarWrapper.className = "avatar-wrapper";
     const avatar = document.createElement("img");
     avatar.className = "reply-user-avatar";
     avatar.src =
       reply.from_user.profile.avatar || defaultAvatarSrc;
-    avatarWrapper.appendChild(avatar);
+    profileLink.appendChild(avatar);
+    avatarWrapper.appendChild(profileLink);
     replyBox.appendChild(avatarWrapper);
 
     const content = document.createElement("div");
     content.className = "reply-content";
 
+    const usernameLink = document.createElement("a");
+    usernameLink.href = `/user/users/${reply.from_user.username}/`;
+
     const username = document.createElement("h5");
     username.className = "reply-username";
     username.textContent = reply.from_user.username;
-    replyBox.appendChild(username);
+    usernameLink.appendChild(username);
+    replyBox.appendChild(usernameLink);
 
     const text = document.createElement("p");
     text.textContent = reply.reply_text;
