@@ -1,9 +1,12 @@
 # views.py
+import re
+from datetime import timezone
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from backend.models import Chat
 from backend.views.pusher_config import pusher_client
 from django.contrib.auth.models import User
+from ..models import Room3, user_rooms, Event
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.views.decorators.http import require_POST
@@ -23,10 +26,42 @@ def chat_index(request):
     # Prepare a dictionary with user data to pass to the template
     user_data = {user.id: user for user in users_with_chats}
 
+    # Group Chat
+    user_room_objects = user_rooms.objects.filter(user_detail=current_user)
+
+    event_img_urls = {}
+
+    for room in user_room_objects:
+        event_obj = Event.objects.filter(title=room.room_joined.name)
+        for objs in event_obj:
+            print("title: ", objs.title)
+            event_img_urls[room.room_joined.name] = objs.image_url
+
+    event_data = []
+    pattern = r"[^a-zA-Z0-9\s]"
+    for room in user_room_objects:
+        room_name = room.room_joined.name
+
+        # creating room_slug
+        cleaned_title = re.sub(pattern, "", room_name)
+        title_split = cleaned_title.split()
+        room_slug = ""
+        if len(title_split) >= 3:
+            room_slug = "_".join(title_split[:3])
+        else:
+            room_slug = "_".join(title_split[:])
+        room_slug = room_slug.lower()
+
+        img_url = event_img_urls.get(room_name)
+        event_data.append((room_name, img_url, room_slug))
+
     context = {
         "users_with_data": user_data,
-        "current_user_id": current_user.id,  # Pass the current user's ID to the context
+        "current_user_id": current_user.id,  # Pass the current user's ID to the context,
+        "chat_rooms": user_room_objects,
+        "event_data": event_data,
     }
+
     return render(request, "chat_index.html", context)
 
 
@@ -43,7 +78,6 @@ def send_message(request):
     chat_message = Chat.objects.create(
         sender=sender, receiver=receiver, message=message
     )
-
     # Trigger a Pusher event
     channel_name = get_chat_channel_name(request.user.id, receiver_id)
     pusher_client.trigger(
@@ -54,6 +88,21 @@ def send_message(request):
             "sender_id": request.user.id,
             "sender_name": request.user.username,  # Add the sender's username
             "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
+            "avatar_url": request.user.profile.avatar.url
+            if request.user.profile.avatar
+            else None,
+        },
+    )
+    # Trigger a notification event to the receiver's notification channel
+    notification_channel_name = f"private-notifications-{receiver_id}"
+    pusher_client.trigger(
+        notification_channel_name,
+        "new-message-notification",
+        {
+            "sender_id": request.user.id,
+            "sender_name": request.user.username,
+            "message": message,
+            "timestamp": chat_message.timestamp.strftime("%b %d, %Y, %I:%M %p"),
         },
     )
     return JsonResponse({"status": "Message sent successfully."})
@@ -84,5 +133,6 @@ def get_chat(request):
             "receiver_id": receiver_id,
             "chat_messages": chat_messages,
             "receiver_name": receiver_name,
+            "group_chat": 0,
         },
     )

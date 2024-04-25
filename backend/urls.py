@@ -8,7 +8,6 @@ from backend.views import chat_handlers
 # app_name = 'backend'
 urlpatterns = [
     path("login", views.base.login_user, name="login"),
-    path("logout", views.base.logout_user, name="logout"),
     path("register", views.base.register_user, name="register"),
     path("delete-account", views.base.delete_user, name="delete_account"),
     path(
@@ -68,8 +67,28 @@ urlpatterns = [
         views.review_handlers.get_replies_for_review,
         name="display_replies",
     ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/display-replies/<int:reply_id>/like/",
+        views.review_handlers.like_reply,
+        name="like_replies",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/display-replies/<int:reply_id>/unlike/",
+        views.review_handlers.unlike_reply,
+        name="unlike_replies",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/display-replies/<int:reply_id>/delete/",
+        views.review_handlers.delete_reply,
+        name="delete_replies",
+    ),
     path("users/<str:username>/", views.base.user_detail, name="user_detail"),
     path("profile-edit/", views.profile_handlers.profile_edit, name="profile_edit"),
+    path(
+        "profile-edit/avatar",
+        views.profile_handlers.upload_avatar,
+        name="profile_edit_avatar",
+    ),
     path("search/", views.base.search_results, name="search_results"),
     path("search_history/", views.base.search_history, name="search_history"),
     path(
@@ -84,7 +103,6 @@ urlpatterns = [
         views.base.events_by_category,
         name="events_by_category",
     ),
-    path("logout/", views.base.logout_user, name="logout"),
     # AJAX
     path(
         "events/<int:event_id>/add-interest/",
@@ -106,15 +124,30 @@ urlpatterns = [
     ),
     path("chat/get_chat/", views.chat_handlers.get_chat, name="get_chat"),
     # group chat
-    path("rooms/", views.group_chat_handlers.group_chat_index, name="search_rooms"),
+    path("chat/rooms/", views.group_chat_handlers.get_group_chat, name="search_rooms2"),
+    path(
+        "chat/send_group_message/",
+        views.group_chat_handlers.send_message,
+        name="send_group_message",
+    ),
     path(
         "chat/<str:receiver_room_slug>/",
         views.group_chat_handlers.chat_with_room,
         name="chat_with_room",
     ),
     path(
-        "chat/<str:receiver_room_slug>/send_message/",
-        views.group_chat_handlers.send_message,
-        name="send_message",
+        "exit_group_chat/<int:room_id>/",
+        views.group_chat_handlers.exit_group_chat,
+        name="exit_group_chat",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/report/",
+        views.review_handlers.report_review,
+        name="report_review",
+    ),
+    path(
+        "events/<int:event_id>/display-reviews/<int:review_id>/display-replies/<int:reply_id>/report/",
+        views.review_handlers.reply_report,
+        name="report_reply",
     ),
 ]

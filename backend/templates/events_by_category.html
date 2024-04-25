@@ -16,7 +16,31 @@
   {% block content %}
   {% include "components/navbar.html" %}
 
-  <div class="container mt-5 mb-5">
+  <div class="search-bar-container">
+    <form action="{% url 'search_results' %}" method="get" class="search-form">
+        <div class="input-group mb-1 mt-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <!-- search icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                    </svg>
+                </span>
+            </div>
+            <input type="text" class="form-control search-input col-8" id="search-input" name="search_events" placeholder="Search events or users..." aria-label="Search" value="{{ request.GET.search_events }}" />
+            <select class="custom-select col-3" id="filter" name="search_type">
+                <option selected>Shows</option>
+                <option>Users</option>
+            </select>
+            <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
+        </div>
+        <div id="recent-searches-dropdown" class="recent-searches-dropdown">
+            <!-- Recent searches will be appended here -->
+        </div>
+    </form>
+  </div>
+
+  <div class="container">
     <form method="get">
       <input type="hidden" name="search_events" value="{{ request.GET.search_events }}"/>
       <div class="row">
@@ -39,29 +63,41 @@
     </form>  
   </div>
 
-    {% if events %}
-    <div class="container">
-          <div class="events-container">
-              {% for event in events %}
-              <div class="event-card">
-                  <a href="{% url 'event_detail' event.id %}?category={{ current_category }}">
-                      <img
-                      src="{{ event.image_url }}"
-                      class="card-img-top"
-                      alt="{{ event.title }}"
-                      style="cursor: pointer; object-fit: cover"
-                      />
-                      <h5 class="card-title">{{ event.title }}</h5>
-                  </a>
-              </div>
-              {% endfor %}
-          </div>
+  <div class="category-container mt-1 mb-3">
+    <div class="btn-group" role="group" aria-label="Basic example">
+        {% for category in categories %}
+        <a href="{% url 'events_by_category' category %}" 
+           class="btn btn-outline-dark {% if current_category == category %}active{% endif %}">
+            {{ category }}
+        </a>
+        {% endfor %}
     </div>
-    {% else %}
-    <div class="container">
-      <p>No events found in this category.</p>
-    </div>
-    {% endif %}
+  </div>
+
+
+  {% if events %}
+  <div class="container">
+        <div class="events-container">
+            {% for event in events %}
+            <div class="event-card">
+                <a href="{% url 'event_detail' event.id %}?category={{ current_category }}">
+                    <img
+                    src="{{ event.image_url }}"
+                    class="card-img-top"
+                    alt="{{ event.title }}"
+                    style="cursor: pointer; object-fit: cover"
+                    />
+                    <h5 class="card-title">{{ event.title }}</h5>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+  </div>
+  {% else %}
+  <div class="container">
+    <p>No events found in this category.</p>
+  </div>
+  {% endif %}
     
   {% endblock %}
 

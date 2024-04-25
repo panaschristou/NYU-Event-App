@@ -58,7 +58,10 @@ class UserEventModelTest(TestCase):
             open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
-            external_link="http://www.broadway.org/shows/details/spamalot,812",
+            external_links=[
+                {"text": "Official Website", "href": "https://example.com"},
+                {"text": "Tickets", "href": "https://example.com/tickets"},
+            ],
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
             avg_rating=0,  # Assuming initial avg_rating
         )
@@ -86,7 +89,10 @@ class EventModelTest(TestCase):
             open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
-            external_link="http://www.broadway.org/shows/details/spamalot,812",
+            external_links=[
+                {"text": "Official Website", "href": "https://example.com"},
+                {"text": "Tickets", "href": "https://example.com/tickets"},
+            ],
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
             avg_rating=0,  # Assuming initial avg_rating
         )
@@ -106,7 +112,11 @@ class EventModelTest(TestCase):
             "St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
         )
         self.assertEqual(
-            event.external_link, "http://www.broadway.org/shows/details/spamalot,812"
+            event.external_links,
+            [
+                {"text": "Official Website", "href": "https://example.com"},
+                {"text": "Tickets", "href": "https://example.com/tickets"},
+            ],
         )
         self.assertEqual(
             event.image_url, "https://www.broadway.org/logos/shows/spamalot-2023.jpg"
@@ -124,7 +134,10 @@ class ReviewModelTest(TestCase):
             open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
-            external_link="http://www.broadway.org/shows/details/spamalot,812",
+            external_links=[
+                {"text": "Official Website", "href": "https://example.com"},
+                {"text": "Tickets", "href": "https://example.com/tickets"},
+            ],
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
             avg_rating=0,
         )
@@ -170,7 +183,10 @@ class ReplyToReviewModelTest(TestCase):
             open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
-            external_link="http://www.broadway.org/shows/details/spamalot,812",
+            external_links=[
+                {"text": "Official Website", "href": "https://example.com"},
+                {"text": "Tickets", "href": "https://example.com/tickets"},
+            ],
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
             avg_rating=0,
         )
@@ -254,8 +270,6 @@ class SuspendedUserModelTest(TestCase):
         self.assertEqual(suspended_user.user, self.user)
         self.assertEqual(suspended_user.reason, "Test reason")
         self.assertTrue(suspended_user.is_suspended)
-        self.assertIsNotNone(suspended_user.suspended_at)
-        self.assertIsNone(suspended_user.unsuspended_at)
 
     def test_unsuspend_user(self):
         self.suspended_user.unsuspend_user()
@@ -279,8 +293,6 @@ class BannedUserModelTest(TestCase):
         self.assertEqual(banned_user.user, self.user)
         self.assertEqual(banned_user.reason, "Test reason")
         self.assertFalse(self.user.is_active)
-        self.assertIsNotNone(banned_user.banned_at)
-        self.assertIsNone(banned_user.unban_at)
 
     def test_unban_user(self):
         self.banned_user.unban_user()

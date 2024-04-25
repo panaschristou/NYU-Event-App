@@ -2,6 +2,7 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
+
 from backend.storage import OverwriteStorage
 
 
@@ -30,9 +31,9 @@ class Event(models.Model):
     open_date = models.DateField(default=datetime.date.today)
     close_date = models.DateField(null=True, blank=True)
     location = models.CharField(max_length=1000)
-    external_link = models.URLField(blank=True)
     image_url = models.URLField(blank=True)
     avg_rating = models.FloatField(null=True, blank=True)
+    external_links = models.JSONField(blank=True, default=list)
 
     def __str__(self):
         return self.title
@@ -48,6 +49,7 @@ class Review(models.Model):
     likes_count = models.IntegerField(default=0)
     liked_by = models.ManyToManyField(User, related_name="liked_reviews", blank=True)
     reply_count = models.IntegerField(default=0)
+    is_reported = models.BooleanField(default=False)
 
 
 class ReplyToReview(models.Model):
@@ -60,6 +62,9 @@ class ReplyToReview(models.Model):
     )
     reply_text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    likes_count = models.IntegerField(default=0)
+    liked_by = models.ManyToManyField(User, related_name="reply_likes", blank=True)
+    is_reported = models.BooleanField(default=False)
 
     def __str__(self):
         return self.reply_text
@@ -120,8 +125,6 @@ class SearchHistory(models.Model):
 class SuspendedUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     reason = models.TextField()
-    suspended_at = models.DateTimeField(auto_now_add=True)
-    unsuspended_at = models.DateTimeField(null=True, blank=True)
     is_suspended = models.BooleanField(default=False)
 
     def __str__(self):
@@ -136,13 +139,54 @@ class SuspendedUser(models.Model):
 class BannedUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     reason = models.TextField()
-    banned_at = models.DateTimeField(auto_now_add=True)
-    unban_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.user.username
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.user.is_active = False
+            self.user.save()
+        super().save(*args, **kwargs)
 
     def unban_user(self):
         self.user.is_active = True
         self.user.save()
         self.delete()
+
+
+class Report(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name="reports")
+    reported_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reported_by"
+    )
+    reported_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reported_users"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Report {self.title} by {self.reported_by.username}"
+
+
+class ReportReply(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE, related_name="reports_reply"
+    )
+    reply = models.ForeignKey(
+        ReplyToReview, on_delete=models.CASCADE, related_name="reports_reply"
+    )
+    reported_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reported_reply_by"
+    )
+    reported_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reported_reply_users"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Report {self.title} by {self.reported_by.username}"

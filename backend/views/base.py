@@ -1,4 +1,5 @@
 import re
+import ast
 from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -22,16 +23,62 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils import timezone
-from django.db.models import Q, Avg, Count, Value, FloatField
-from django.db.models.functions import Coalesce
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from django.db.models import Avg, Count, Q, Value, FloatField
+from django.db.models.functions import Coalesce
+
+EVENT_CATEGORIES = [
+    "Musical",
+    "Original",
+    "Play",
+    "Drama",
+    "Revival",
+    "Comedy",
+    "Puppets",
+]
 
 
-def index(request):
+def index_with_categories_view(request):
+    availability_filter = request.GET.get("availability", "All")
+    sort_by = request.GET.get("sort_by", "")
+    now = timezone.now()
+
     events = Event.objects.all().order_by("title")
-    return render(request, "index.html", {"events": events})
+
+    # Filter events based on availability
+    if availability_filter == "Past":
+        events = events.filter(close_date__isnull=False, close_date__lt=now)
+    elif availability_filter == "Current":
+        events = events.filter(
+            Q(open_date__lte=now, close_date__gte=now)
+            | Q(open_date__lte=now, close_date__isnull=True)
+        )
+    elif availability_filter == "Upcoming":
+        events = events.filter(open_date__gt=now)
+
+    # Sort events based on user selection
+    if sort_by == "Average Rating":
+        events = events.annotate(
+            adjusted_avg_rating=Coalesce(
+                Avg("reviews__rating"), Value(0), output_field=FloatField()
+            )
+        ).order_by("-adjusted_avg_rating")
+    elif sort_by == "Popularity":
+        events = events.annotate(review_count=Count("reviews")).order_by(
+            "-review_count"
+        )
+
+    categories = EVENT_CATEGORIES
+
+    context = {
+        "events": events,
+        "categories": categories,
+        "current_availability": availability_filter,
+        "current_sort": sort_by,
+    }
+    return render(request, "index.html", context)
 
 
 def event_detail(request, event_id):
@@ -55,6 +102,15 @@ def event_detail(request, event_id):
             event=event,
             user=request.user,
         ).exists()
+
+    try:
+        category_list = ast.literal_eval(event.category)
+        if isinstance(category_list, list):
+            event.category = ", ".join(category_list)
+        else:
+            event.category = event.category
+    except (ValueError, SyntaxError):
+        event.category = event.category
 
     avg_rating_result = Review.objects.filter(event=event).aggregate(Avg("rating"))
     avg_rating = avg_rating_result["rating__avg"]
@@ -109,11 +165,11 @@ def search_results(request):
     availability_filter = request.GET.get("availability", "All")
     now = timezone.now()
 
-    events = (
-        Event.objects.filter(title__icontains=search_query)
-        if search_query
-        else Event.objects.none()
-    )
+    if search_query:
+        events = Event.objects.filter(title__icontains=search_query)
+    else:
+        events = Event.objects.all()
+
     users = User.objects.none()
 
     if search_query:
@@ -187,24 +243,8 @@ def recent_searches(request):
     return JsonResponse({"recent_searches": []})
 
 
-EVENT_CATEGORIES = [
-    "Musical",
-    "Original",
-    "Play",
-    "Drama",
-    "Revival",
-    "Comedy",
-    "Puppets",
-]
-
-
-def index_with_categories_view(request):
-    categories = EVENT_CATEGORIES
-    events = Event.objects.all()
-    return render(request, "index.html", {"categories": categories, "events": events})
-
-
 def events_by_category(request, category):
+    categories = EVENT_CATEGORIES
     availability_filter = request.GET.get("availability", "All")
     now = timezone.now()
     sort_by = request.GET.get("sort_by", "")
@@ -236,7 +276,7 @@ def events_by_category(request, category):
     return render(
         request,
         "events_by_category.html",
-        {"events": events, "current_category": category},
+        {"events": events, "categories": categories, "current_category": category},
     )
 
 
@@ -369,14 +409,6 @@ def login_user(request):
             return redirect("login")
     else:
         return render(request, "authenticate/login.html", {})
-
-
-def logout_user(request):
-    if request.method == "POST":
-        logout(request)
-        messages.success(request, "You have been successfully logged out.")
-        return redirect("login")
-    return render(request, "confirm_logout.html")
 
 
 def import_rooms(request):

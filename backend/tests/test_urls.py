@@ -27,7 +27,10 @@ class TestUrls(TestCase):
             open_date=datetime.date(2023, 11, 16),
             close_date=datetime.date(2023, 10, 31),
             location="St. James Theatre, 246 West 44th Street, Between Broadway and 8th Avenue",
-            external_link="http://www.broadway.org/shows/details/spamalot,812",
+            external_links=[
+                {"text": "Official Website", "href": "https://example.com"},
+                {"text": "Tickets", "href": "https://example.com/tickets"},
+            ],
             image_url="https://www.broadway.org/logos/shows/spamalot-2023.jpg",
             avg_rating=0,  # Assuming initial avg_rating
         )
@@ -76,10 +79,6 @@ class TestUrls(TestCase):
     def test_events_by_category_url_is_resolved(self):
         url = reverse("events_by_category", kwargs={"category": "music"})
         self.assertEqual(resolve(url).func, views.base.events_by_category)
-
-    def test_logout_url_is_resolved(self):
-        url = reverse("logout")
-        self.assertEqual(resolve(url).func, views.base.logout_user)
 
     def test_reset_password_url(self):
         reset_password_url = reverse("reset_password")

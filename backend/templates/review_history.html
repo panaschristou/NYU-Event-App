@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reviews History</title>
-    <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="{% static 'backend/css/index_style.css' %}" rel="stylesheet">
     <link href="{% static 'backend/css/review_history.css' %}" rel="stylesheet">
@@ -13,19 +12,19 @@
 </head>
 <body>
     {% include "components/navbar.html" %}
-    <button id="clearHistoryButton" class="btn btn-danger float-right mr-3 mt-3">Clear All History</button>
     {% if reviews %}
     <div class="container container-transparent">
-        <div class="container reviews py-5">
-            <div class="row">
-                <div class="col-lg-8 mx-auto text-center">
-                    <h2>Reviews History</h2>
-                    <div id="reviews-container">
-                        <!-- Insert reviews here -->
-                    </div>
-                </div>
-            </div>
-        </div>
+      <button id="clearHistoryButton" class="btn btn-danger float-right mr-3 mt-3">Clear All</button>
+      <div class="container reviews py-5">
+          <div class="row">
+              <div class="col-lg-8 mx-auto text-center">
+                  <h2>Reviews History</h2>
+                  <div id="reviews-container">
+                      <!-- Insert reviews here -->
+                  </div>
+              </div>
+          </div>
+      </div>
     </div>
     {% else %}
     <div class="container mt-5">
@@ -35,8 +34,7 @@
     
     <script type="text/javascript">
         let reviews = {{ reviews|safe }};
-    
-      </script>
+    </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

@@ -24,6 +24,10 @@ class UserRegistrationForm(UserCreationForm):
         email = self.cleaned_data.get("email")
         if not email.endswith("@nyu.edu"):
             raise forms.ValidationError("Email must be from NYU domain (@nyu.edu)")
+
+        if get_user_model().objects.filter(email=email).exists():
+            raise forms.ValidationError("This email is already registered.")
+
         return email
 
     def save(self, commit=True):
@@ -44,8 +48,4 @@ class UpdateUserForm(forms.ModelForm):
 class UpdateProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ["avatar", "description"]
-
-    def __init__(self, *args, **kwargs):
-        super(UpdateProfileForm, self).__init__(*args, **kwargs)
-        self.fields["avatar"].required = False
+        fields = ["description"]

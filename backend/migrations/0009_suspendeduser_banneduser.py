@@ -25,8 +25,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("reason", models.TextField()),
-                ("suspended_at", models.DateTimeField(auto_now_add=True)),
-                ("unsuspended_at", models.DateTimeField(blank=True, null=True)),
                 ("is_suspended", models.BooleanField(default=False)),
                 (
                     "user",
@@ -50,8 +48,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("reason", models.TextField()),
-                ("banned_at", models.DateTimeField(auto_now_add=True)),
-                ("unban_at", models.DateTimeField(blank=True, null=True)),
                 (
                     "user",
                     models.OneToOneField(

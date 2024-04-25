@@ -19,6 +19,8 @@ class Command(BaseCommand):
             events_data = json.load(file)
             for event_data in events_data:
                 try:
+                    if Event.objects.filter(title=event_data["title"]).exists():
+                        continue
                     # Check if close_date is neither None nor an empty string
                     close_date = None
                     if event_data["close_date"] and event_data["close_date"].strip():
@@ -41,11 +43,7 @@ class Command(BaseCommand):
                         event_data["description"] if "description" in event_data else ""
                     )
 
-                    external_link = (
-                        event_data.get("external_links")[0].get("href")
-                        if event_data.get("external_links")
-                        else ""
-                    )
+                    external_links = event_data.get("external_links", [])
 
                     event = Event.objects.create(
                         title=event_data["title"],
@@ -54,7 +52,7 @@ class Command(BaseCommand):
                         open_date=parser.parse(event_data["open_date"]).date(),
                         close_date=close_date,
                         location=location,
-                        external_link=external_link,
+                        external_links=external_links,
                         image_url=event_data["image_url"],
                         avg_rating=avg_rating,
                     )

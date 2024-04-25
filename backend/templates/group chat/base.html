@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block title %}{% endblock %}</title>
+
+        <script src="https://cdn.tailwindcss.com"></script>
+
+    {% comment %} <link href="{% static 'backend/css/room_style.css' %}" rel="stylesheet" /> {% endcomment %}
+
+        <style>
+            .messages {
+                height: 400px;
+                overflow-y: auto;
+            }
+        </style>
+    </head>
+    {% comment %} class="bg-teal-600" {% endcomment %}
+    <body>
+
+        {% block content %}
+        {% endblock %}
+
+        {% comment %} {% block scripts %}
+        {% endblock %} {% endcomment %}
+    </body>    
+</html>

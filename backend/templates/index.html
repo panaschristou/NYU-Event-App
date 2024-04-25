@@ -18,7 +18,6 @@
             <div class="input-group mb-1 mt-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text">
-                        <!-- search icon -->
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
                         </svg>
@@ -34,10 +33,30 @@
             <div id="recent-searches-dropdown" class="recent-searches-dropdown">
                 <!-- Recent searches will be appended here -->
             </div>
-            <a href="{% url 'search_history' %}">
-                <button class="btn btn-outline-dark" type="button">Search History</button>
-            </a>
         </form>
+    </div>
+
+    <div class="container">
+        <form method="get">
+          <input type="hidden" name="search_events" value="{{ request.GET.search_events }}"/>
+          <div class="row">
+              <div class="col-md-6"> 
+                  <select class="custom-select" id="filter" name="availability" onchange="this.form.submit()">
+                      <option value="All" {% if request.GET.availability == 'All' %}selected{% endif %}>All Availability</option>
+                      <option value="Past" {% if request.GET.availability == 'Past' %}selected{% endif %}>Past</option>
+                      <option value="Current" {% if request.GET.availability == 'Current' %}selected{% endif %}>Current</option>
+                      <option value="Upcoming" {% if request.GET.availability == 'Upcoming' %}selected{% endif %}>Upcoming</option>
+                  </select>
+              </div>
+              <div class="col-md-6">
+                <select class="custom-select" id="sort" name="sort_by" onchange="this.form.submit()">
+                  <option value="" {% if not request.GET.sort_by %}selected{% endif %}>Sorted by</option>
+                  <option value="Average Rating" {% if request.GET.sort_by == 'Average Rating' %}selected{% endif %}>Average Rating</option>
+                  <option value="Popularity" {% if request.GET.sort_by == 'Popularity' %}selected{% endif %}>Popularity</option>
+                </select>
+              </div>
+          </div>
+        </form>  
     </div>
 
     <div class="category-container mt-1 mb-5">
@@ -98,7 +117,7 @@
               }, 200);  // Delay to allow click event on dropdown items
           });
       });
-  </script>
+    </script>
   </body>
   </html>
   
