@@ -415,3 +415,10 @@ body {
 .link-button a:hover {
   background-color: #eae8e5; 
 }
+
+.modal-backdrop {
+  z-index: 1040; /* Value below the modal z-index */
+}
+.modal {
+  z-index: 1050; /* Bootstrap default value for modals */
+}

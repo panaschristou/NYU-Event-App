@@ -2,8 +2,6 @@ const interestBtn = document.getElementById("add-interest");
 const notInterestBtn = document.getElementById("remove-interest");
 const csrftoken = $('meta[name="csrf-token"]').attr("content");
 
-
-
 let re = []; 
 
 interestBtn.addEventListener("click", function () {
