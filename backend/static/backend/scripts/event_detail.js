@@ -45,7 +45,7 @@ notInterestBtn.addEventListener("click", function () {
     });
 });
 
-// Post rating and review functionality
+// Post review
 const reviewBtn = document.getElementById("write-review");
 const modal = document.getElementById("review-modal");
 const closeButton = document.getElementById("close-modal");
