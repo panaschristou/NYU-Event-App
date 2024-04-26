@@ -65,10 +65,10 @@ class UserAdmin(BaseUserAdmin):
             if created:
                 user.is_active = False
                 user.save()
-                # Send an email notification
-                subject = "Your Account Has Been Banned"
-                message = f"Dear {user.username},\n\nYour account has been banned \n\nIf you believe this is an error, please contact support.\n\nSincerely,\nThe Admin Team"
-                send_notification_email(user, subject, message)
+                # # Send an email notification
+                # subject = "Your Account Has Been Banned"
+                # message = f"Dear {user.username},\n\nYour account has been banned \n\nIf you believe this is an error, please contact support.\n\nSincerely,\nThe Admin Team"
+                # send_notification_email(user, subject, message)
                 self.message_user(
                     request, f"User {user.username} has been banned successfully."
                 )
@@ -111,9 +111,9 @@ class UserAdmin(BaseUserAdmin):
             )
             if created:
                 # Send an email notification
-                subject = "Your Account Has Been Suspended"
-                message = f"Dear {user.username},\n\nYour account has been suspend \n\nIf you believe this is an error, please contact support.\n\nSincerely,\nThe Admin Team"
-                send_notification_email(user, subject, message)
+                # subject = "Your Account Has Been Suspended"
+                # message = f"Dear {user.username},\n\nYour account has been suspend \n\nIf you believe this is an error, please contact support.\n\nSincerely,\nThe Admin Team"
+                # send_notification_email(user, subject, message)
                 self.message_user(
                     request, f"User {user.username} has been suspended successfully."
                 )

@@ -52,7 +52,6 @@ def send_ban_notification(sender, instance, **kwargs):
         send_mail(subject, message, sender_email, [recipient_email])
 
 
-@receiver(post_delete, sender=SuspendedUser)
 @receiver(post_delete, sender=BannedUser)
 def send_notification_email(sender, instance, **kwargs):
     user = instance.user
