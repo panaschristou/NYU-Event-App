@@ -268,6 +268,7 @@ body {
   margin-left: 85px;
   margin-top: 8px;
   font-size: 18px;
+  color: rgb(68, 66, 66);
 }
 
 .review-content,
@@ -414,4 +415,11 @@ body {
 
 .link-button a:hover {
   background-color: #eae8e5; 
+}
+
+.modal-backdrop {
+  z-index: 1040; /* Value below the modal z-index */
+}
+.modal {
+  z-index: 1050; /* Bootstrap default value for modals */
 }

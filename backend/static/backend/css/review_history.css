@@ -229,3 +229,10 @@ body {
 .like-button {
   margin-left: 3px;
 }
+
+.modal-backdrop {
+  z-index: 1040; /* Value below the modal z-index */
+}
+.modal {
+  z-index: 1050; /* Bootstrap default value for modals */
+}
