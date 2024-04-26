@@ -430,5 +430,6 @@ def import_rooms(request):
 
         Room3.objects.create(name=title, slug=room_name.lower())
 
+
 def not_found_page(request):
     return render(request, "404.html")
