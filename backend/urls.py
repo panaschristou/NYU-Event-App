@@ -103,6 +103,7 @@ urlpatterns = [
         views.base.events_by_category,
         name="events_by_category",
     ),
+    path("logout/", views.base.logout_user, name="logout"),
     # AJAX
     path(
         "events/<int:event_id>/add-interest/",
