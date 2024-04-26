@@ -43,30 +43,28 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <a href="{% url 'login' %}" class="btn btn-danger">Logout</a>
+        <!-- Logout Form -->
+        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- Include jQuery and Bootstrap JS for modal functionality -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    var logoutLink = document.getElementById('logout-link');
-
-    logoutLink.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the default link behavior
-        $('#logoutModal').modal('show');
-    });
-
-    var confirmLogoutBtn = document.querySelector('#confirm-logout');
-    if (confirmLogoutBtn) {
-        confirmLogoutBtn.addEventListener('click', function() {
-            window.location.href = '{% url 'login' %}';
-        });
-    }
-});
-</script>
+  document.addEventListener('DOMContentLoaded', function () {
+      var logoutLink = document.getElementById('logout-link');
+      logoutLink.addEventListener('click', function(event) {
+          event.preventDefault(); 
+          $('#logoutModal').modal('show');
+      });
+  });
+  </script>
+  
