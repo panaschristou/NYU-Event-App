@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import include, path, re_path
 
 from . import views
 
@@ -150,4 +150,7 @@ urlpatterns = [
         views.review_handlers.reply_report,
         name="report_reply",
     ),
+    re_path(
+        r".*", views.base.not_found_page, name="not_found"
+    ),  # only if the above routes don't trigger a match
 ]
