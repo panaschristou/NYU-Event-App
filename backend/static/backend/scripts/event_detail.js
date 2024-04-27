@@ -45,7 +45,7 @@ notInterestBtn.addEventListener("click", function () {
     });
 });
 
-// Post rating and review functionality
+//Rate and review functionality
 const reviewBtn = document.getElementById("write-review");
 const modal = document.getElementById("review-modal");
 const closeButton = document.getElementById("close-modal");
@@ -175,11 +175,10 @@ function updateAverageRating(eventId) {
 document.addEventListener("DOMContentLoaded", function () {
   loadReviews(eventId);
   window.onscroll = function () {
-    let bottomOfPage = window.innerHeight + window.scrollY >= document.body.offsetHeight;
-    if (bottomOfPage && !isLoading && hasMorePages) {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
       loadReviews(eventId);
     }
-  };  
+  };
 });
 
 let currentPage = 1;
@@ -193,7 +192,7 @@ function loadReviews(eventId) {
 
   isLoading = true;
 
-  fetch(`display-reviews?page=${currentPage}`, {
+  fetch(`display-reviews`, {
     method: "GET",
     headers: {
       "X-Requested-With": "XMLHttpRequest",
@@ -254,7 +253,7 @@ function addReviewToPage(review) {
   content.className = "review-content";
 
   const usernameLink = document.createElement("a");
-  usernameLink.href = `/user/users/${review.user.username}/`; 
+  usernameLink.href = `/user/users/${review.user.username}/`; // Use absolute path for the URL
   usernameLink.className = "review-username-link";
 
   const username = document.createElement("h5");
@@ -287,13 +286,13 @@ function addReviewToPage(review) {
   const buttonContainer = document.createElement("div");
   buttonContainer.className = "review-button-container";
   buttonContainer.style.display = "flex";
-  buttonContainer.style.justifyContent = "flex-end"; 
+  buttonContainer.style.justifyContent = "flex-end"; // Aligns buttons to the right
   buttonContainer.style.marginTop = "10px";
 
   document.getElementById('close-modal-button').addEventListener('click', function() {
     var modal = document.getElementById('report-modal');
     modal.style.display = 'none';
-  });
+});
 
   if (currentUsername != review.user.username){
   const reportButton = document.createElement("button");
@@ -346,10 +345,10 @@ function addReviewToPage(review) {
     const reportData = JSON.stringify({
       title: title,
       description: description,
-      reviewId: reviewId  
+      reviewId: reviewId  // Make sure your backend knows which review is being reported
     });
     console.log(reportData)
-    const url = 'display-reviews/${reviewId}/report/';  
+    const url = 'display-reviews/${reviewId}/report/';  // Make sure this matches the exact pattern expected by Django
     console.log("URL being requested:", url);
 
     fetch(`display-reviews/${reviewId}/report/`, {
@@ -363,15 +362,15 @@ function addReviewToPage(review) {
         description: description,
         review_id : reviewId
     })
-  })
-  .then(response => {
+})
+.then(response => {
     if (!response.ok) {
         console.log(response)
         throw new Error('Network response was not ok: ' + response.statusText);
     }
     return response.json();
-  })
-  .then(data => {
+})
+.then(data => {
     console.log('Report submitted:', data);
     if (data.success) {
       showTemporaryMessage(
@@ -383,18 +382,18 @@ function addReviewToPage(review) {
           "alert-danger"
         );
       }
-  })
-  .catch(error => {
+})
+.catch(error => {
     console.error('Error submitting report:', error);
     showMessage('An error occurred while submitting the report.', 'alert-danger');
-    });
+});
   
     // Close the modal after submitting the form
     document.getElementById('report-modal').style.display = 'none';
     // Optionally reset the form fields
     document.getElementById('title').value = '';
     document.getElementById('description').value = '';
-    }
+  }
   }
 
 
