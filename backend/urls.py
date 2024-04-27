@@ -28,7 +28,7 @@ urlpatterns = [
         name="get_average_rating",
     ),
     path(
-        "events/<int:event_id>/display-reviews/",
+        "events/<int:event_id>/display-reviews",
         views.review_handlers.get_reviews_for_event,
         name="event_reviews",
     ),
