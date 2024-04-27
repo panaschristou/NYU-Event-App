@@ -242,8 +242,12 @@ function addReviewToPage(review) {
 
   const avatar = document.createElement("img");
   avatar.className = "user-avatar";
-  avatar.src =
-    review.user.profile.avatar || defaultAvatarSrc;
+  avatar.onerror = function() {
+    this.onerror = null;  // Prevent infinite recursion in case default also fails
+    this.src = defaultAvatarSrc;
+  };
+  avatar.src = review.user.profile.avatar || defaultAvatarSrc;
+
   profileLink.appendChild(avatar);
   avatarWrapper.appendChild(profileLink);
 
@@ -665,6 +669,10 @@ function addReviewToPage(review) {
     avatarWrapper.className = "avatar-wrapper";
     const avatar = document.createElement("img");
     avatar.className = "reply-user-avatar";
+    avatar.onerror = function() {
+      this.onerror = null;  // Prevent infinite recursion in case default also fails
+      this.src = defaultAvatarSrc;
+    };
     avatar.src =
       reply.from_user.profile.avatar || defaultAvatarSrc;
     profileLink.appendChild(avatar);
