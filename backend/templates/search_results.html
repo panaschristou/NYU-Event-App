@@ -28,10 +28,10 @@
                 </span>
             </div>
             <input type="text" class="form-control search-input col-8" id="search-input" name="search_events" placeholder="Search events or users..." aria-label="Search" value="{{ request.GET.search_events }}" />
-            <select class="custom-select col-3" id="filter" name="search_type">
-                <option selected>Shows</option>
-                <option>Users</option>
-            </select>
+            <select class="custom-select" id="filter" name="search_type">
+              <option {% if search_type == 'Shows' %}selected{% endif %}>Shows</option>
+              <option {% if search_type == 'Users' %}selected{% endif %}>Users</option>
+          </select>
             <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
             
         </div>
