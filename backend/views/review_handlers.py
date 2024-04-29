@@ -90,7 +90,7 @@ def get_average_rating(request, event_id):
 def get_reviews_for_event(request, event_id):
     try:
         page_number = request.GET.get("page", 1)
-        reviews_per_page = 10  # Set how many reviews you want per page
+        reviews_per_page = 100
 
         reviews = Review.objects.filter(event__id=event_id).order_by("timestamp")
 
