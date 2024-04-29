@@ -1,6 +1,6 @@
 # views.py
 import re
-from datetime import timezone
+from datetime import timedelta, timezone
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from backend.models import Chat
@@ -87,10 +87,13 @@ def send_message(request):
             "message": message,
             "sender_id": request.user.id,
             "sender_name": request.user.username,  # Add the sender's username
-            "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
-            "avatar_url": request.user.profile.avatar.url
-            if request.user.profile.avatar
-            else None,
+            # "timestamp": chat_message.timestamp.strftime("%B %d, %Y, %I:%M %p"),
+            "timestamp": (chat_message.timestamp - timedelta(hours=4)).strftime(
+                "%B %d, %Y, %I:%M %p"
+            ),
+            "avatar_url": (
+                request.user.profile.avatar.url if request.user.profile.avatar else None
+            ),
         },
     )
     # Trigger a notification event to the receiver's notification channel
