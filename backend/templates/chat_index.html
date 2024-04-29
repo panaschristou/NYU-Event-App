@@ -96,11 +96,11 @@ function addMessageToChat(data) {
     
     const defaultImagePath = '{% static "backend/img/generic_user_image.png" %}';
     const avatarHTML = data.avatar_url
-      ? `<img class="user-avatar avatar"" 
-      src=${data.avatar_url}  
-      onerror="this.onerror=null; this.src=${defaultImagePath}"
+      ? `<img class="user-avatar avatar"
+      src="${data.avatar_url}"
+      onerror="this.onerror=null; this.src='${defaultImagePath}'"
       alt="profile picture"/>`
-      : `<img class="user-avatar avatar" src=${defaultImagePath} alt="profile picture"/>`;    
+      : `<img class="user-avatar avatar" src='${defaultImagePath}' alt="profile picture"/>`;    
     // Create the message element
     var messageElement = $(`
         <div class="message ${messageClass}">
