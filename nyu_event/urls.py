@@ -16,15 +16,15 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 from backend import views
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     path("user/", include("backend.urls")),
+    path("admin/", admin.site.urls),
     path(
         "reset_password/",
         auth_views.PasswordResetView.as_view(template_name="reset_password.html"),
@@ -50,4 +50,8 @@ urlpatterns = [
         name="password_reset_complete",
     ),
     path("pusher/auth", views.pusher_config.pusher_authentication, name="pusher_auth"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + [
+    re_path(
+        r".*", views.base.not_found_page, name="not_found"
+    ),  # only if the above routes don't trigger a match
+]
