@@ -198,7 +198,9 @@
               <h2>Reviews</h2>
               <button id="sort" class="sort-button">Sort by time</button>
               <div id="reviews-container">
-                <!-- Insert reviews here -->
+                {% if not loggedIn %}
+                  <p>Please log in to see the reviews by NYU community</p>
+                {% endif %}
               </div>        
             </div>                     
           </div>                    
