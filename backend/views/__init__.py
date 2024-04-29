@@ -8,6 +8,7 @@ from .base import (
     activateEmail,
     register_user,
     login_user,
+    logout_user,
     delete_user,
 )
 from .interest_list_handlers import interest_list, add_interest, remove_interest

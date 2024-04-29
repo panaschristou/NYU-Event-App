@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import include, path, re_path
 
 from . import views
 
@@ -28,7 +28,7 @@ urlpatterns = [
         name="get_average_rating",
     ),
     path(
-        "events/<int:event_id>/display-reviews/",
+        "events/<int:event_id>/display-reviews",
         views.review_handlers.get_reviews_for_event,
         name="event_reviews",
     ),
@@ -103,6 +103,7 @@ urlpatterns = [
         views.base.events_by_category,
         name="events_by_category",
     ),
+    path("logout/", views.base.logout_user, name="logout"),
     # AJAX
     path(
         "events/<int:event_id>/add-interest/",
@@ -150,4 +151,7 @@ urlpatterns = [
         views.review_handlers.reply_report,
         name="report_reply",
     ),
+    re_path(
+        r".*", views.base.not_found_page, name="not_found"
+    ),  # only if the above routes don't trigger a match
 ]

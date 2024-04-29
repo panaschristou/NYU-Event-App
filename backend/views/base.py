@@ -411,6 +411,12 @@ def login_user(request):
         return render(request, "authenticate/login.html", {})
 
 
+def logout_user(request):
+    logout(request)
+    messages.success(request, "You have been successfully logged out.")
+    return redirect("login")
+
+
 def import_rooms(request):
     event_titles = Event.objects.values_list("title", flat=True)
 
@@ -429,3 +435,7 @@ def import_rooms(request):
             room_name = "_".join(title_split[:])
 
         Room3.objects.create(name=title, slug=room_name.lower())
+
+
+def not_found_page(request):
+    return render(request, "404.html")

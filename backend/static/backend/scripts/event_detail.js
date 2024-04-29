@@ -2,8 +2,6 @@ const interestBtn = document.getElementById("add-interest");
 const notInterestBtn = document.getElementById("remove-interest");
 const csrftoken = $('meta[name="csrf-token"]').attr("content");
 
-
-
 let re = []; 
 
 interestBtn.addEventListener("click", function () {
@@ -47,7 +45,7 @@ notInterestBtn.addEventListener("click", function () {
     });
 });
 
-//Rate and review functionality
+// Post rating and review functionality
 const reviewBtn = document.getElementById("write-review");
 const modal = document.getElementById("review-modal");
 const closeButton = document.getElementById("close-modal");
@@ -177,10 +175,11 @@ function updateAverageRating(eventId) {
 document.addEventListener("DOMContentLoaded", function () {
   loadReviews(eventId);
   window.onscroll = function () {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+    let bottomOfPage = window.innerHeight + window.scrollY >= document.body.offsetHeight;
+    if (bottomOfPage && !isLoading && hasMorePages) {
       loadReviews(eventId);
     }
-  };
+  };  
 });
 
 let currentPage = 1;
@@ -194,7 +193,7 @@ function loadReviews(eventId) {
 
   isLoading = true;
 
-  fetch(`display-reviews`, {
+  fetch(`display-reviews?page=${currentPage}`, {
     method: "GET",
     headers: {
       "X-Requested-With": "XMLHttpRequest",
@@ -238,21 +237,36 @@ function addReviewToPage(review) {
   const avatarWrapper = document.createElement("div");
   avatarWrapper.className = "avatar-wrapper";
 
+  const profileLink = document.createElement("a");
+  profileLink.href = `/user/users/${review.user.username}/`;
+
   const avatar = document.createElement("img");
   avatar.className = "user-avatar";
-  avatar.src =
-    review.user.profile.avatar || defaultAvatarSrc;
-  avatarWrapper.appendChild(avatar);
+  avatar.onerror = function() {
+    this.onerror = null;  // Prevent infinite recursion in case default also fails
+    this.src = defaultAvatarSrc;
+  };
+  avatar.src = review.user.profile.avatar || defaultAvatarSrc;
+
+  profileLink.appendChild(avatar);
+  avatarWrapper.appendChild(profileLink);
+
 
   reviewBox.appendChild(avatarWrapper);
 
   const content = document.createElement("div");
   content.className = "review-content";
 
+  const usernameLink = document.createElement("a");
+  usernameLink.href = `/user/users/${review.user.username}/`; 
+  usernameLink.className = "review-username-link";
+
   const username = document.createElement("h5");
   username.className = "review-username";
   username.textContent = review.user.username;
-  reviewBox.appendChild(username);
+
+  usernameLink.appendChild(username);
+  reviewBox.appendChild(usernameLink);
 
   const rating = document.createElement("p");
   rating.textContent = `Rating: ${review.rating}`;
@@ -277,13 +291,13 @@ function addReviewToPage(review) {
   const buttonContainer = document.createElement("div");
   buttonContainer.className = "review-button-container";
   buttonContainer.style.display = "flex";
-  buttonContainer.style.justifyContent = "flex-end"; // Aligns buttons to the right
+  buttonContainer.style.justifyContent = "flex-end"; 
   buttonContainer.style.marginTop = "10px";
 
   document.getElementById('close-modal-button').addEventListener('click', function() {
     var modal = document.getElementById('report-modal');
     modal.style.display = 'none';
-});
+  });
 
   if (currentUsername != review.user.username){
   const reportButton = document.createElement("button");
@@ -336,10 +350,10 @@ function addReviewToPage(review) {
     const reportData = JSON.stringify({
       title: title,
       description: description,
-      reviewId: reviewId  // Make sure your backend knows which review is being reported
+      reviewId: reviewId  
     });
     console.log(reportData)
-    const url = 'display-reviews/${reviewId}/report/';  // Make sure this matches the exact pattern expected by Django
+    const url = 'display-reviews/${reviewId}/report/';  
     console.log("URL being requested:", url);
 
     fetch(`display-reviews/${reviewId}/report/`, {
@@ -353,15 +367,15 @@ function addReviewToPage(review) {
         description: description,
         review_id : reviewId
     })
-})
-.then(response => {
+  })
+  .then(response => {
     if (!response.ok) {
         console.log(response)
         throw new Error('Network response was not ok: ' + response.statusText);
     }
     return response.json();
-})
-.then(data => {
+  })
+  .then(data => {
     console.log('Report submitted:', data);
     if (data.success) {
       showTemporaryMessage(
@@ -373,18 +387,18 @@ function addReviewToPage(review) {
           "alert-danger"
         );
       }
-})
-.catch(error => {
+  })
+  .catch(error => {
     console.error('Error submitting report:', error);
     showMessage('An error occurred while submitting the report.', 'alert-danger');
-});
+    });
   
     // Close the modal after submitting the form
     document.getElementById('report-modal').style.display = 'none';
     // Optionally reset the form fields
     document.getElementById('title').value = '';
     document.getElementById('description').value = '';
-  }
+    }
   }
 
 
@@ -648,22 +662,34 @@ function addReviewToPage(review) {
     const replyBox = document.createElement("div");
     replyBox.className = "reply-box";
 
+    const profileLink = document.createElement("a");
+    profileLink.href = `/user/users/${reply.from_user.username}/`;
+
     const avatarWrapper = document.createElement("div");
     avatarWrapper.className = "avatar-wrapper";
     const avatar = document.createElement("img");
     avatar.className = "reply-user-avatar";
+    avatar.onerror = function() {
+      this.onerror = null;  // Prevent infinite recursion in case default also fails
+      this.src = defaultAvatarSrc;
+    };
     avatar.src =
       reply.from_user.profile.avatar || defaultAvatarSrc;
-    avatarWrapper.appendChild(avatar);
+    profileLink.appendChild(avatar);
+    avatarWrapper.appendChild(profileLink);
     replyBox.appendChild(avatarWrapper);
 
     const content = document.createElement("div");
     content.className = "reply-content";
 
+    const usernameLink = document.createElement("a");
+    usernameLink.href = `/user/users/${reply.from_user.username}/`;
+
     const username = document.createElement("h5");
     username.className = "reply-username";
     username.textContent = reply.from_user.username;
-    replyBox.appendChild(username);
+    usernameLink.appendChild(username);
+    replyBox.appendChild(usernameLink);
 
     const text = document.createElement("p");
     text.textContent = reply.reply_text;
