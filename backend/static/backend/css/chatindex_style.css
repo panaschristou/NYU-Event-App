@@ -157,3 +157,7 @@
   right: 10px; 
   transform: translate(-50%, -50%); /* this will center it vertically */
 }
+
+.chat-user-active {
+  background-color: #d2cad5; 
+}
