@@ -231,7 +231,6 @@ function loadReviews(eventId) {
 }
 
 function addReviewToPage(review) {
-  console.log(review);
   const reviewBox = document.createElement("div");
   reviewBox.className = "review-box";
   const avatarWrapper = document.createElement("div");
