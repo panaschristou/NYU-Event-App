@@ -15,7 +15,7 @@ Important: Pip freeze into installed_dependencies.txt, and leave requirements.tx
 python manage.py runserver (To run on local host)
 
 # Project Description
-We created an event for NYU students using Django with Python, Javascript, PostGres, Bootstrap and Pusher to find events on Broadway and to connect with other students from NYU who are interested in similar events to discuss, chat about, review and rate those events. Project was deployed on Amazon AWS, used Travis CI/CD and Automated Testing using Coveralls. \\
+We created an event for NYU students using Django with Python, Javascript, PostGres, Bootstrap and Pusher to find events on Broadway and to connect with other students from NYU who are interested in similar events to discuss, chat about, review and rate those events. Project was deployed on Amazon AWS, used Travis CI/CD and Automated Testing using Coveralls. \
 Feel free to look at the images below taken directly from the web application during operation.
 
 # Project Features
