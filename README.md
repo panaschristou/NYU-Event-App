@@ -15,10 +15,22 @@ Important: Pip freeze into installed_dependencies.txt, and leave requirements.tx
 python manage.py runserver (To run on local host)
 
 # Project Description
-We created an event for NYU students to find events on Broadway and to connect with other students from NYU who are interested in similar events to discuss, review and rate those events.
+We created an event for NYU students using Django with Python, Javascript, PostGres, Bootstrap and Pusher to find events on Broadway and to connect with other students from NYU who are interested in similar events to discuss, chat about, review and rate those events. Project was deployed on Amazon AWS, used Travis CI/CD and Automated Testing using Coveralls. \\
+Feel free to look at the images below taken directly from the web application during operation.
 
 # Project Features
-
+- Login and Logout for Users and Admins.
+- Profile page with user image, name etc.
+- Database of events that can be updated programmatically through broadway website.
+- Database of reviews, ratings  on event pages.
+- Database of review replies from one user to another.
+- Chat functionality. Chat between 2 users and group chat of all users for each individual event.
+- Search and filter bar on main page for effective event and user search.
+- Report feature for rude/inappropriate replies.
+- Suspension and ban functionality in admin page.
+- Lost password/username functionality.
+- Emailing functionality to reset password/username or to be informed or account ban/suspension.
+- Updated admin page to ban/suspend people, change passwords etc.
 
 # Project Images
 ## Login
