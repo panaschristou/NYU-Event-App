@@ -1,18 +1,10 @@
-# Team Project repo
+# Forked Project from my Team's Project repo
 
 NYU Event Application
 
-#
+# Coverage and Badges
+Coverage and badges are shown in the original repo. The server on AWS has been shut down so the badges may not reflect that.
 
-develop
-[![Build Status](https://app.travis-ci.com/gcivil-nyu-org/INT2-Monday-Spring2024-Team-3.svg?branch=develop)](https://app.travis-ci.com/gcivil-nyu-org/INT2-Monday-Spring2024-Team-3)
-[![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/INT2-Monday-Spring2024-Team-3/badge.svg?branch=develop)](https://coveralls.io/github/gcivil-nyu-org/INT2-Monday-Spring2024-Team-3?branch=develop)
-
-#
-
-main:
-[![Build Status](https://app.travis-ci.com/gcivil-nyu-org/INT2-Monday-Spring2024-Team-3.svg?token=6jLhZJWMW7WGTRM7fyVY&branch=master)](https://app.travis-ci.com/gcivil-nyu-org/INT2-Monday-Spring2024-Team-3)
-[![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/INT2-Monday-Spring2024-Team-3/badge.svg?branch=master)](https://coveralls.io/github/gcivil-nyu-org/INT2-Monday-Spring2024-Team-3?branch=master)
 
 # How to start
 
@@ -20,8 +12,13 @@ main:
 
 Important: Pip freeze into installed_dependencies.txt, and leave requirements.txt empty
 
-# AWS
+python manage.py runserver (To run on local host)
 
-dev environment:
+# Project Description
+We created an event for NYU students to find events on Broadway and to connect with other students from NYU who are interested in similar events to discuss, review and rate those events.
 
-https://us-east-1.console.aws.amazon.com/elasticbeanstalk/home?region=us-east-1#/environment/dashboard?environmentId=e-hqiczmtmh5
+# Project Features
+
+
+# Project Images
+
