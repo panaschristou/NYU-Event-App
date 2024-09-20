@@ -21,4 +21,19 @@ We created an event for NYU students to find events on Broadway and to connect w
 
 
 # Project Images
-
+## Login
+![Login Page](images/NYU-Event-Login.jpg)
+## Logout
+![Logout Page](images/NYU-Event-Logout.png)
+## Profile
+![Profile Page](images/NYU-Event-Profile.jpg)
+## Interest List
+![Interest List](images/NYU-Event-Interest-List.jpg)
+## Review
+![Write Review Page](images/NYU-Event-Review.jpg)
+## Review Shown
+![Review Page](images/NYU-Event-Review-Shown.jpg)
+## Search Bar
+![Search Bar in Index Page](images/NYU-Event-Search-Bar.jpg)
+## Title Page
+![Event Title Page](images/NYU-Event-Title-Page.jpg)
